@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國中數學教學駕駛艙</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:#1a2a1a;color:#e8e4d8;font-family:'Segoe UI',sans-serif;min-height:100vh;}
+header{background:linear-gradient(135deg,#8d6e4a,#6d4c41);padding:24px 32px;
+  border-bottom:4px solid #5d4037;}
+header h1{font-size:1.8rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
+header p{color:#d7ccc8;margin-top:6px;}
+main{max-width:900px;margin:40px auto;padding:0 20px;}
+h2{font-size:1.1rem;color:#a5d6a7;margin-bottom:20px;padding-bottom:8px;
+  border-bottom:1px dashed #4a6741;}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+.unit-card{
+  display:block;text-decoration:none;
+  background:#1e301e;border:1px solid #4a6741;border-radius:10px;
+  padding:20px;transition:all 0.2s;
+}
+.unit-card:hover{background:#2a3a2a;border-color:#8d6e4a;transform:translateY(-2px);}
+.unit-card h3{color:#ffd54f;font-size:1.05rem;margin-bottom:8px;}
+.unit-card p{font-size:0.85rem;color:#a5a5a5;line-height:1.5;}
+.badges{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;}
+.badge{background:#2a3a2a;border:1px solid #4a6741;border-radius:12px;
+  padding:2px 10px;font-size:0.75rem;color:#81d4fa;}
+footer{text-align:center;padding:30px;color:#555;font-size:0.8rem;}
+</style>
+</head>
+<body>
+<header>
+  <h1>📐 國中數學教學駕駛艙</h1>
+  <p>互動式黑板粉筆風格教學平台 ｜ AI 共創</p>
+</header>
+<main>
+  <h2>📚 已完成單元</h2>
+  <div class="grid">
+    <a class="unit-card" href="3-1-proportion/index.html">
+      <h3>📐 3-1 比例式</h3>
+      <p>比與比值、相等的比、比例式外內項性質、設 r 法、比例應用</p>
+      <div class="badges">
+        <span class="badge">七年級下</span>
+        <span class="badge">第三章 比例</span>
+        <span class="badge">5 重點</span>
+      </div>
+    </a>
+  </div>
+</main>
+<footer>Powered by NotebookLM × Claude Code</footer>
+</body>
+</html>

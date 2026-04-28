@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3-1 比例式 教學駕駛艙</title>
+<style>
+:root{
+  --bg:#1a2a1a;--panel:#1e301e;--header:#8d6e4a;--chalk:#e8e4d8;
+  --yellow:#ffd54f;--pink:#ff8a80;--blue:#81d4fa;--green:#a5d6a7;
+  --border:#4a6741;--wood1:#8d6e4a;--wood2:#6d4c41;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--chalk);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+
+/* Header */
+header{
+  background:linear-gradient(135deg,var(--wood1),var(--wood2));
+  padding:12px 20px;position:sticky;top:0;z-index:100;
+  box-shadow:0 3px 10px rgba(0,0,0,0.5);
+  border-bottom:4px solid #5d4037;
+}
+header h1{font-size:1.4rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
+header p{font-size:0.8rem;color:#d7ccc8;margin-top:2px;}
+
+/* Mode Bar */
+#mode-bar{
+  background:#0d1a0d;padding:8px 20px;display:flex;align-items:center;gap:12px;
+  flex-wrap:wrap;border-bottom:1px solid var(--border);
+}
+#mode-bar label{font-size:0.85rem;color:var(--green);}
+#mode-toggle{padding:4px 14px;border-radius:20px;border:2px solid var(--green);
+  background:transparent;color:var(--green);cursor:pointer;font-size:0.85rem;}
+#mode-toggle.teacher{background:var(--green);color:#1a2a1a;}
+#teacher-content{display:none;}
+body.teacher-mode #teacher-content{display:block;}
+
+/* Chips */
+.chip-row{padding:12px 20px;display:flex;flex-wrap:wrap;gap:8px;}
+.chip{background:#2a3a2a;border:1px solid var(--border);border-radius:20px;
+  padding:4px 12px;font-size:0.8rem;color:var(--yellow);}
+
+/* Nav Pills */
+nav.pills{padding:8px 20px;display:flex;flex-wrap:wrap;gap:8px;background:#0d1a0d;}
+nav.pills a{background:#2a3a2a;color:var(--chalk);text-decoration:none;
+  padding:5px 14px;border-radius:20px;font-size:0.85rem;border:1px solid var(--border);
+  transition:background 0.2s;}
+nav.pills a:hover{background:var(--border);}
+
+/* Section */
+.section{padding:20px;border-bottom:2px solid var(--border);}
+.section-title{
+  font-size:1.3rem;color:var(--yellow);margin-bottom:16px;
+  padding-bottom:6px;border-bottom:1px dashed var(--border);
+}
+.section-title span{font-size:0.9rem;color:var(--blue);margin-left:8px;}
+
+/* Carousel */
+.carousel{position:relative;width:100%;max-width:900px;margin:0 auto 16px;}
+.carousel-inner{position:relative;}
+.carousel-inner img{
+  width:100%;display:none;border-radius:8px;border:2px solid var(--border);
+  loading:lazy;
+}
+.carousel-inner img.active{display:block;}
+.carousel-controls{display:flex;justify-content:center;align-items:center;gap:16px;margin-top:8px;}
+.carousel-btn{
+  background:var(--border);border:none;color:var(--chalk);
+  width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.2rem;
+  display:flex;align-items:center;justify-content:center;
+}
+.carousel-btn:hover{background:var(--header);}
+.carousel-indicator{color:var(--chalk);font-size:0.85rem;}
+
+/* Canvas */
+.canvas-wrap{background:#162716;border:1px solid var(--border);border-radius:8px;
+  padding:12px;margin-bottom:16px;}
+.canvas-wrap h3{font-size:0.95rem;color:var(--blue);margin-bottom:8px;}
+canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
+.canvas-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.ctrl-btn{padding:4px 12px;border-radius:4px;border:1px solid var(--border);
+  background:#2a3a2a;color:var(--chalk);cursor:pointer;font-size:0.8rem;}
+.ctrl-btn:hover{background:var(--border);}
+.slider-row{display:flex;align-items:center;gap:8px;font-size:0.8rem;}
+.slider-row input[type=range]{flex:1;}
+
+/* Quiz */
+.quiz-block{background:#162716;border:1px solid var(--border);border-radius:8px;
+  padding:16px;margin-bottom:12px;}
+.quiz-block p{margin-bottom:10px;font-size:0.95rem;}
+.quiz-options{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+.quiz-opt{padding:7px 16px;border-radius:6px;border:1px solid var(--border);
+  background:#2a3a2a;color:var(--chalk);cursor:pointer;font-size:0.85rem;min-width:44px;min-height:44px;
+  display:flex;align-items:center;justify-content:center;}
+.quiz-opt:hover{background:var(--border);}
+.quiz-opt.correct{background:#2e7d32;border-color:#4caf50;color:#fff;}
+.quiz-opt.wrong{background:#b71c1c;border-color:#f44336;color:#fff;}
+.quiz-feedback{display:none;padding:8px 12px;border-radius:4px;font-size:0.85rem;margin-top:4px;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:#1b5e20;color:#a5d6a7;}
+.quiz-feedback.no{background:#4a0000;color:#ff8a80;}
+
+/* Infographic */
+.infographic-wrap{margin:12px 0;}
+.infographic-wrap img{
+  width:100%;max-width:900px;display:block;margin:0 auto;border-radius:8px;
+  border:2px solid var(--border);cursor:pointer;
+}
+.infographic-wrap img:hover{opacity:0.9;}
+
+/* Fullscreen overlay */
+#img-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,0.92);z-index:999;justify-content:center;align-items:center;cursor:pointer;}
+#img-overlay.show{display:flex;}
+#img-overlay img{max-width:95%;max-height:95%;object-fit:contain;}
+
+/* Cheat sheet */
+.cheat-sheet{background:#0d1a0d;border:1px solid var(--border);border-radius:8px;
+  padding:16px;margin:8px 0;}
+.cheat-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.cheat-item{background:#162716;border-left:3px solid var(--yellow);padding:8px 12px;border-radius:4px;}
+.cheat-item h4{color:var(--yellow);font-size:0.9rem;margin-bottom:4px;}
+.cheat-item p{font-size:0.85rem;line-height:1.6;}
+.formula{color:var(--blue);font-family:monospace;}
+
+/* Video */
+.video-wrap{max-width:900px;margin:12px auto;position:relative;}
+.video-wrap video{width:100%;border-radius:8px;border:2px solid var(--border);}
+.yt-placeholder{width:100%;aspect-ratio:16/9;background:#162716;border:2px dashed var(--border);
+  border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  color:var(--chalk);font-size:0.9rem;}
+
+/* Teacher box */
+.teacher-box{background:#1a1000;border:1px solid #5d4e00;border-radius:8px;
+  padding:12px 16px;margin:12px 0;}
+.teacher-box h4{color:var(--yellow);font-size:0.9rem;margin-bottom:6px;}
+.teacher-box ul{padding-left:18px;font-size:0.85rem;line-height:1.7;}
+.teacher-box li{margin-bottom:4px;}
+
+/* Float tools */
+#float-tools{
+  position:fixed;right:12px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;z-index:200;
+}
+.tool-card{background:#1e301e;border:1px solid var(--border);border-radius:8px;
+  padding:10px;min-width:120px;}
+.tool-card h4{font-size:0.75rem;color:var(--green);margin-bottom:6px;text-align:center;}
+.tool-card input[type=number]{width:50px;background:#0d1a0d;border:1px solid var(--border);
+  color:var(--chalk);border-radius:4px;padding:2px 4px;font-size:0.8rem;}
+.roll-btn{width:100%;padding:5px;background:var(--border);border:none;color:var(--chalk);
+  border-radius:4px;cursor:pointer;font-size:0.85rem;margin-top:4px;}
+.roll-btn:hover{background:var(--header);}
+#roll-result{font-size:1.3rem;text-align:center;color:var(--yellow);font-weight:bold;min-height:28px;}
+.timer-display{font-size:1.2rem;text-align:center;color:var(--chalk);font-family:monospace;}
+.timer-btns{display:flex;gap:4px;margin-top:4px;}
+.timer-btns button{flex:1;padding:3px;background:var(--border);border:none;color:var(--chalk);
+  border-radius:3px;cursor:pointer;font-size:0.75rem;}
+
+/* Draw btn */
+#draw-toggle{
+  position:fixed;left:12px;bottom:60px;z-index:200;
+  width:44px;height:44px;border-radius:50%;background:var(--border);
+  border:2px solid var(--chalk);color:var(--chalk);font-size:1.2rem;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+#draw-canvas{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  z-index:150;cursor:crosshair;}
+#draw-canvas.active{display:block;}
+#clear-draw{display:none;position:fixed;left:12px;bottom:110px;z-index:200;
+  padding:5px 10px;background:#b71c1c;border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:0.8rem;}
+#clear-draw.show{display:block;}
+
+/* Responsive */
+@media(max-width:1024px){
+  #float-tools{right:8px;}
+  .cheat-row{grid-template-columns:1fr;}
+}
+@media(max-width:768px){
+  header h1{font-size:1.1rem;}
+  .section-title{font-size:1.1rem;}
+  #float-tools{display:none;}
+  .quiz-options{flex-direction:column;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 3-1 比例式 教學駕駛艙</h1>
+  <p>七年級下學期 ｜ 第三章 比例</p>
+</header>
+
+<div id="mode-bar">
+  <label>目前模式：<strong id="mode-label">學生</strong></label>
+  <button id="mode-toggle" onclick="toggleMode()">切換教師模式</button>
+</div>
+
+<div class="chip-row">
+  <div class="chip">🎯 學習目標：理解比與比值</div>
+  <div class="chip">🎯 掌握比例式性質 ad=bc</div>
+  <div class="chip">🎯 用設 r 法解比例問題</div>
+  <div class="chip">🎯 應用比例式解決生活問題</div>
+</div>
+
+<nav class="pills">
+  <a href="#sec0">📽 開場簡報</a>
+  <a href="#sec1">① 比與比值</a>
+  <a href="#sec2">② 相等的比</a>
+  <a href="#sec3">③ 比例式</a>
+  <a href="#sec4">④ 運算性質</a>
+  <a href="#sec5">⑤ 比例應用</a>
+  <a href="#summary">📋 重點整理</a>
+  <a href="#video">🎬 自學影片</a>
+</nav>
+
+<!-- 開場簡報 -->
+<div class="section" id="sec0">
+  <div class="section-title">📽 開場簡報 <span>（15頁，點 ‹ › 翻頁）</span></div>
+  <div class="carousel" id="car0">
+    <div class="carousel-inner">
+      <img src="assets/slide_01.jpg" class="active" alt="slide 1" loading="lazy">
+      <img src="assets/slide_02.jpg" alt="slide 2" loading="lazy">
+      <img src="assets/slide_03.jpg" alt="slide 3" loading="lazy">
+      <img src="assets/slide_04.jpg" alt="slide 4" loading="lazy">
+      <img src="assets/slide_05.jpg" alt="slide 5" loading="lazy">
+      <img src="assets/slide_06.jpg" alt="slide 6" loading="lazy">
+      <img src="assets/slide_07.jpg" alt="slide 7" loading="lazy">
+      <img src="assets/slide_08.jpg" alt="slide 8" loading="lazy">
+      <img src="assets/slide_09.jpg" alt="slide 9" loading="lazy">
+      <img src="assets/slide_10.jpg" alt="slide 10" loading="lazy">
+      <img src="assets/slide_11.jpg" alt="slide 11" loading="lazy">
+      <img src="assets/slide_12.jpg" alt="slide 12" loading="lazy">
+      <img src="assets/slide_13.jpg" alt="slide 13" loading="lazy">
+      <img src="assets/slide_14.jpg" alt="slide 14" loading="lazy">
+      <img src="assets/slide_15.jpg" alt="slide 15" loading="lazy">
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="carGo('car0',-1)">‹</button>
+      <span class="carousel-indicator" id="car0-ind">1 / 15</span>
+      <button class="carousel-btn" onclick="carGo('car0',1)">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- sec1: 比與比值 -->
+<div class="section" id="sec1">
+  <div class="section-title">① 比與比值的意義 <span>sec1</span></div>
+
+  <div class="canvas-wrap">
+    <h3>🎨 互動視覺化：比值探索器</h3>
+    <canvas id="c1" height="200"></canvas>
+    <div class="canvas-controls">
+      <div class="slider-row">
+        <span>前項 a：</span>
+        <input type="range" id="s1a" min="1" max="20" value="4" oninput="drawC1()">
+        <span id="s1a-val">4</span>
+      </div>
+      <div class="slider-row">
+        <span>後項 b：</span>
+        <input type="range" id="s1b" min="1" max="20" value="10" oninput="drawC1()">
+        <span id="s1b-val">10</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【記憶題】臺北市面積約 270 平方公里，新竹市約 100 平方公里。臺北市與新竹市的面積比為？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'A1','A')">A. 100：270</div>
+      <div class="quiz-opt" onclick="answer(this,'A1','B')">B. 270：100</div>
+      <div class="quiz-opt" onclick="answer(this,'A1','C')">C. 27：10</div>
+      <div class="quiz-opt" onclick="answer(this,'A1','D')">D. 2.7：1</div>
+    </div>
+    <div class="quiz-feedback" id="A1">正確答案是 B。比 a：b，a 為前項、b 為後項，臺北市在前，新竹市在後，故 270：100。</div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】16：(−4) 的比值是？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'A2','A')">A. 4</div>
+      <div class="quiz-opt" onclick="answer(this,'A2','B')">B. −4</div>
+      <div class="quiz-opt" onclick="answer(this,'A2','C')">C. 1/4</div>
+      <div class="quiz-opt" onclick="answer(this,'A2','D')">D. −1/4</div>
+    </div>
+    <div class="quiz-feedback" id="A2">正確答案是 B。比值 = 16 ÷ (−4) = −4。比值可以是負數。</div>
+  </div>
+
+  <div class="infographic-wrap">
+    <img src="assets/01_ratio.jpg" alt="比與比值資訊圖表" loading="lazy" onclick="showImg(this.src)">
+  </div>
+
+  <div id="teacher-content" class="teacher-box">
+    <h4>🧑‍🏫 教師提示</h4>
+    <ul>
+      <li>強調：比值 = 前項 ÷ 後項，表示「前項是後項的幾倍」</li>
+      <li>常見錯誤：把比和比值混淆。270：100 是比，2.7 是比值</li>
+      <li>同類量比較要先換算相同單位（如 700cc：1000cc）</li>
+      <li>台灣課綱允許前後項為負數，可舉例說明</li>
+    </ul>
+  </div>
+</div>
+
+<!-- sec2: 相等的比 -->
+<div class="section" id="sec2">
+  <div class="section-title">② 相等的比與最簡整數比 <span>sec2</span></div>
+
+  <div class="canvas-wrap">
+    <h3>🎨 互動視覺化：比的等價關係</h3>
+    <canvas id="c2" height="200"></canvas>
+    <div class="canvas-controls">
+      <button class="ctrl-btn" onclick="c2Mode('expand')">✕ 擴分示範</button>
+      <button class="ctrl-btn" onclick="c2Mode('reduce')">÷ 約分示範</button>
+      <button class="ctrl-btn" onclick="c2Mode('simplest')">最簡整數比</button>
+    </div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【記憶題】下列哪個比與 2：3 相等？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'B1','A')">A. 3：2</div>
+      <div class="quiz-opt" onclick="answer(this,'B1','B')">B. 4：6</div>
+      <div class="quiz-opt" onclick="answer(this,'B1','C')">C. 6：4</div>
+      <div class="quiz-opt" onclick="answer(this,'B1','D')">D. 2：5</div>
+    </div>
+    <div class="quiz-feedback" id="B1">正確答案是 B。4：6 = (4÷2)：(6÷2) = 2：3。前後項同除以 2 得相等的比。</div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】將 3.6：0.24 化成最簡整數比，結果是？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'B2','A')">A. 3：2</div>
+      <div class="quiz-opt" onclick="answer(this,'B2','B')">B. 36：24</div>
+      <div class="quiz-opt" onclick="answer(this,'B2','C')">C. 15：1</div>
+      <div class="quiz-opt" onclick="answer(this,'B2','D')">D. 30：2</div>
+    </div>
+    <div class="quiz-feedback" id="B2">正確答案是 C。3.6：0.24 = 360：24 = (360÷24)：(24÷24) = 15：1。</div>
+  </div>
+
+  <div class="infographic-wrap">
+    <img src="assets/02_equal.jpg" alt="相等的比資訊圖表" loading="lazy" onclick="showImg(this.src)">
+  </div>
+
+  <div id="teacher-content" class="teacher-box">
+    <h4>🧑‍🏫 教師提示</h4>
+    <ul>
+      <li>最簡整數比：前後項皆整數且最大公因數為 1</li>
+      <li>分數比：先乘以 LCD，如 2/3：3/4 乘以 12 得 8：9</li>
+      <li>小數比：先乘以 10 的適當次方化為整數再約分</li>
+    </ul>
+  </div>
+</div>
+
+<!-- sec3: 比例式 -->
+<div class="section" id="sec3">
+  <div class="section-title">③ 比例式與外內項乘積性質 <span>sec3</span></div>
+
+  <div class="canvas-wrap">
+    <h3>🎨 互動視覺化：外項×外項 = 內項×內項</h3>
+    <canvas id="c3" height="220"></canvas>
+    <div class="canvas-controls">
+      <div class="slider-row">
+        <span>a：</span>
+        <input type="range" id="s3a" min="1" max="12" value="4" oninput="drawC3()">
+        <span id="s3a-v">4</span>
+      </div>
+      <div class="slider-row">
+        <span>b：</span>
+        <input type="range" id="s3b" min="1" max="12" value="6" oninput="drawC3()">
+        <span id="s3b-v">6</span>
+      </div>
+      <div class="slider-row">
+        <span>c：</span>
+        <input type="range" id="s3c" min="1" max="12" value="2" oninput="drawC3()">
+        <span id="s3c-v">2</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【記憶題】比例式 a：b = c：d 中，哪些是外項？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'C1','A')">A. a 和 b</div>
+      <div class="quiz-opt" onclick="answer(this,'C1','B')">B. b 和 c</div>
+      <div class="quiz-opt" onclick="answer(this,'C1','C')">C. a 和 d</div>
+      <div class="quiz-opt" onclick="answer(this,'C1','D')">D. c 和 d</div>
+    </div>
+    <div class="quiz-feedback" id="C1">正確答案是 C。a：b = c：d 中，a、d 在最外側，稱外項；b、c 在內側，稱內項。外項乘積 ad = 內項乘積 bc。</div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】7：5 = 3：x，求 x = ？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'C2','A')">A. 7/15</div>
+      <div class="quiz-opt" onclick="answer(this,'C2','B')">B. 15/7</div>
+      <div class="quiz-opt" onclick="answer(this,'C2','C')">C. 21/5</div>
+      <div class="quiz-opt" onclick="answer(this,'C2','D')">D. 5/3</div>
+    </div>
+    <div class="quiz-feedback" id="C2">正確答案是 B。外項乘積 = 內項乘積：7x = 5×3 = 15，故 x = 15/7。</div>
+  </div>
+
+  <div class="infographic-wrap">
+    <img src="assets/03_prop.jpg" alt="比例式外內項資訊圖表" loading="lazy" onclick="showImg(this.src)">
+  </div>
+
+  <div id="teacher-content" class="teacher-box">
+    <h4>🧑‍🏫 教師提示</h4>
+    <ul>
+      <li>口訣：「外外相乘 = 內內相乘」，ad = bc</li>
+      <li>推導：a/b = c/d → 兩邊同乘 bd → ad = bc</li>
+      <li>重點：此性質把比例式轉為一次方程式，利於解 x</li>
+    </ul>
+  </div>
+</div>
+
+<!-- sec4: 運算性質 -->
+<div class="section" id="sec4">
+  <div class="section-title">④ 比例式的運算性質（設 r 法） <span>sec4</span></div>
+
+  <div class="canvas-wrap">
+    <h3>🎨 互動視覺化：設 r 解題流程</h3>
+    <canvas id="c4" height="240"></canvas>
+    <div class="canvas-controls">
+      <div class="slider-row">
+        <span>比 x：y = </span>
+        <input type="range" id="s4a" min="1" max="9" value="5" oninput="drawC4()">
+        <span id="s4a-v">5</span>
+        <span>：</span>
+        <input type="range" id="s4b" min="1" max="9" value="2" oninput="drawC4()">
+        <span id="s4b-v">2</span>
+      </div>
+      <div class="slider-row">
+        <span>x − y = </span>
+        <input type="range" id="s4c" min="1" max="30" value="21" oninput="drawC4()">
+        <span id="s4c-v">21</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【記憶題】已知 x：y = 4：3，則可設 x = ？，y = ？（r ≠ 0）</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'D1','A')">A. x=3r, y=4r</div>
+      <div class="quiz-opt" onclick="answer(this,'D1','B')">B. x=4r, y=3r</div>
+      <div class="quiz-opt" onclick="answer(this,'D1','C')">C. x=4/r, y=3/r</div>
+      <div class="quiz-opt" onclick="answer(this,'D1','D')">D. x=4, y=3</div>
+    </div>
+    <div class="quiz-feedback" id="D1">正確答案是 B。x：y = a：b，則設 x = ar, y = br（r ≠ 0）。此處 a=4, b=3，故 x=4r, y=3r。</div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】已知 x：y = 5：2，且 x − y = 21，求 x + y = ？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'D2','A')">A. 35</div>
+      <div class="quiz-opt" onclick="answer(this,'D2','B')">B. 42</div>
+      <div class="quiz-opt" onclick="answer(this,'D2','C')">C. 49</div>
+      <div class="quiz-opt" onclick="answer(this,'D2','D')">D. 63</div>
+    </div>
+    <div class="quiz-feedback" id="D2">正確答案是 C。設 x=5r, y=2r，5r−2r=21 → r=7 → x=35, y=14，x+y=49。</div>
+  </div>
+
+  <div class="infographic-wrap">
+    <img src="assets/04_calc.jpg" alt="運算性質資訊圖表" loading="lazy" onclick="showImg(this.src)">
+  </div>
+
+  <div id="teacher-content" class="teacher-box">
+    <h4>🧑‍🏫 教師提示</h4>
+    <ul>
+      <li>設 r 法的優點：把比轉為代數，解聯立省去消元步驟</li>
+      <li>常見錯誤：已知 3x=2y → 誤設 x=3r, y=2r（應設 x=2r, y=3r）</li>
+      <li>口訣：3x=2y → x/2 = y/3，分母為比值中該變數的係數</li>
+    </ul>
+  </div>
+</div>
+
+<!-- sec5: 應用 -->
+<div class="section" id="sec5">
+  <div class="section-title">⑤ 比例式的應用 <span>sec5</span></div>
+
+  <div class="canvas-wrap">
+    <h3>🎨 互動視覺化：比例尺計算器</h3>
+    <canvas id="c5" height="220"></canvas>
+    <div class="canvas-controls">
+      <div class="slider-row">
+        <span>圖上距離 (cm)：</span>
+        <input type="range" id="s5map" min="1" max="20" value="10" oninput="drawC5()">
+        <span id="s5map-v">10</span>
+      </div>
+      <div class="slider-row">
+        <span>比例尺 1：</span>
+        <input type="range" id="s5scale" min="100" max="5000" step="100" value="500" oninput="drawC5()">
+        <span id="s5scale-v">500</span>
+        <span> 公尺</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】黑糖珍奶每 100ml 含糖 9 公克，喝一杯 700ml 攝取了幾公克糖？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'E1','A')">A. 54</div>
+      <div class="quiz-opt" onclick="answer(this,'E1','B')">B. 63</div>
+      <div class="quiz-opt" onclick="answer(this,'E1','C')">C. 70</div>
+      <div class="quiz-opt" onclick="answer(this,'E1','D')">D. 45</div>
+    </div>
+    <div class="quiz-feedback" id="E1">正確答案是 B。設糖 x 公克：100：700 = 9：x → 100x = 6300 → x = 63 公克。</div>
+  </div>
+
+  <div class="quiz-block">
+    <p>【理解題】兩正方形邊長比 7：5，面積比為？</p>
+    <div class="quiz-options">
+      <div class="quiz-opt" onclick="answer(this,'E2','A')">A. 7：5</div>
+      <div class="quiz-opt" onclick="answer(this,'E2','B')">B. 14：10</div>
+      <div class="quiz-opt" onclick="answer(this,'E2','C')">C. 49：25</div>
+      <div class="quiz-opt" onclick="answer(this,'E2','D')">D. 35：25</div>
+    </div>
+    <div class="quiz-feedback" id="E2">正確答案是 C。邊長比 7：5，設邊長 7r 和 5r，面積比 (7r)²：(5r)² = 49r²：25r² = 49：25。</div>
+  </div>
+
+  <div class="infographic-wrap">
+    <img src="assets/05_app.jpg" alt="比例式應用資訊圖表" loading="lazy" onclick="showImg(this.src)">
+  </div>
+
+  <div id="teacher-content" class="teacher-box">
+    <h4>🧑‍🏫 教師提示</h4>
+    <ul>
+      <li>含量問題：找「每份」與「總量」的比，建立比例式</li>
+      <li>比例尺：圖上距離 / 實際距離 = 比例尺（注意單位換算）</li>
+      <li>幾何：邊長比 k → 周長比 k → 面積比 k²（重要！）</li>
+      <li>迷思：人數增加後，原比例不能直接加（需設實際人數計算）</li>
+    </ul>
+  </div>
+</div>
+
+<!-- 重點整理 -->
+<div class="section" id="summary">
+  <div class="section-title">📋 重點整理 Cheat Sheet</div>
+  <div class="cheat-sheet">
+    <div class="cheat-row">
+      <div class="cheat-item">
+        <h4>① 比與比值</h4>
+        <p>a：b 的比值 = <span class="formula">a÷b = a/b</span>（b≠0）<br>表示前項是後項的 a/b 倍</p>
+      </div>
+      <div class="cheat-item">
+        <h4>② 相等的比</h4>
+        <p><span class="formula">a：b = (a×m)：(b×m)</span><br>最簡整數比：GCD(前,後) = 1</p>
+      </div>
+    </div>
+    <div class="cheat-row">
+      <div class="cheat-item">
+        <h4>③ 比例式</h4>
+        <p>a：b = c：d<br><span class="formula">外項乘積 = 內項乘積：ad = bc</span></p>
+      </div>
+      <div class="cheat-item">
+        <h4>④ 設 r 法</h4>
+        <p>x：y = a：b<br><span class="formula">設 x=ar, y=br（r≠0）</span><br>代入已知條件求 r</p>
+      </div>
+    </div>
+    <div class="cheat-row">
+      <div class="cheat-item">
+        <h4>⑤ 含量問題</h4>
+        <p>建立比例式：<span class="formula">單位量：總量 = 分量：求量</span></p>
+      </div>
+      <div class="cheat-item">
+        <h4>⑤ 幾何應用</h4>
+        <p>邊長比 k → 周長比 k<br><span class="formula">面積比 k²</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 自學影片 -->
+<div class="section" id="video">
+  <div class="section-title">🎬 學生自學影片</div>
+  <div class="video-wrap">
+    <div class="yt-placeholder">
+      <span style="font-size:2rem">🎬</span>
+      <p>NotebookLM 自學影片</p>
+      <p style="font-size:0.8rem;color:#888">影片生成完成後，可在 NotebookLM 筆記本下載並嵌入</p>
+      <a href="https://notebooklm.google.com/notebook/c39c9998-2896-45f7-a355-e9136e050174" target="_blank"
+         style="color:var(--blue);font-size:0.85rem;">🔗 前往 NotebookLM 筆記本</a>
+    </div>
+  </div>
+  <div class="video-wrap" style="margin-top:16px;">
+    <div class="yt-placeholder">
+      <span style="font-size:2rem">▶️</span>
+      <p>YouTube 教學影片</p>
+      <p style="font-size:0.8rem;color:#888">請提供 YouTube 網址以嵌入影片</p>
+    </div>
+  </div>
+</div>
+
+<!-- 浮動工具 -->
+<div id="float-tools">
+  <div class="tool-card">
+    <h4>🎲 抽籤器</h4>
+    <div style="display:flex;align-items:center;gap:4px;font-size:0.75rem;margin-bottom:4px;">
+      <span>座號</span>
+      <input type="number" id="seat-min" value="1" min="1" max="50">
+      <span>~</span>
+      <input type="number" id="seat-max" value="30" min="1" max="50">
+    </div>
+    <div id="roll-result">—</div>
+    <button class="roll-btn" onclick="rollSeat()">抽！</button>
+  </div>
+  <div class="tool-card">
+    <h4>⏱ 計時器</h4>
+    <div class="timer-display" id="timer-display">00:00</div>
+    <div class="timer-btns">
+      <button onclick="timerStart()">▶</button>
+      <button onclick="timerPause()">⏸</button>
+      <button onclick="timerReset()">↺</button>
+    </div>
+  </div>
+</div>
+
+<!-- 畫筆 -->
+<button id="draw-toggle" onclick="toggleDraw()" title="黑板畫筆">✏</button>
+<button id="clear-draw" onclick="clearDraw()">清除畫筆</button>
+<canvas id="draw-canvas"></canvas>
+
+<!-- 圖片全螢幕 -->
+<div id="img-overlay" onclick="this.classList.remove('show')">
+  <img id="overlay-img" src="" alt="">
+</div>
+
+<script>
+// ==================== 模式切換 ====================
+function toggleMode(){
+  document.body.classList.toggle('teacher-mode');
+  const isTeacher = document.body.classList.contains('teacher-mode');
+  document.getElementById('mode-label').textContent = isTeacher ? '教師' : '學生';
+  const btn = document.getElementById('mode-toggle');
+  btn.textContent = isTeacher ? '切換學生模式' : '切換教師模式';
+  btn.classList.toggle('teacher', isTeacher);
+}
+
+// ==================== 翻頁器 ====================
+const carIdx = {};
+function carGo(id, delta){
+  const imgs = document.querySelectorAll(`#${id} .carousel-inner img`);
+  const n = imgs.length;
+  if(!carIdx[id]) carIdx[id] = 0;
+  carIdx[id] = (carIdx[id] + delta + n) % n;
+  imgs.forEach((img, i) => img.classList.toggle('active', i === carIdx[id]));
+  const ind = document.getElementById(`${id}-ind`);
+  if(ind) ind.textContent = `${carIdx[id]+1} / ${n}`;
+}
+
+// ==================== 測驗 ====================
+const answers = {A1:'B',A2:'B',B1:'B',B2:'C',C1:'C',C2:'B',D1:'B',D2:'C',E1:'B',E2:'C'};
+function answer(el, qid, choice){
+  const opts = el.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o => o.classList.remove('correct','wrong'));
+  const correct = answers[qid];
+  if(choice === correct){
+    el.classList.add('correct');
+  } else {
+    el.classList.add('wrong');
+    opts.forEach(o => { if(o.textContent.startsWith(correct)) o.classList.add('correct'); });
+  }
+  const fb = document.getElementById(qid);
+  fb.classList.add('show', choice === correct ? 'ok' : 'no');
+}
+
+// ==================== 全螢幕圖片 ====================
+function showImg(src){
+  document.getElementById('overlay-img').src = src;
+  document.getElementById('img-overlay').classList.add('show');
+}
+
+// ==================== Canvas 互動 ====================
+// sec1: 比值探索
+function drawC1(){
+  const canvas = document.getElementById('c1');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 200;
+  const a = parseInt(document.getElementById('s1a').value);
+  const b = parseInt(document.getElementById('s1b').value);
+  document.getElementById('s1a-val').textContent = a;
+  document.getElementById('s1b-val').textContent = b;
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d1a0d'; ctx.fillRect(0,0,W,H);
+
+  // Draw bars
+  const barH = 40, pad = 20;
+  const maxW = W - 100;
+  const scale = maxW / Math.max(a, b, 1);
+
+  ctx.fillStyle = '#ffd54f';
+  ctx.fillRect(pad, 30, a * scale, barH);
+  ctx.fillStyle = '#81d4fa';
+  ctx.fillRect(pad, 90, b * scale, barH);
+
+  ctx.fillStyle = '#e8e4d8'; ctx.font = '14px monospace';
+  ctx.fillText(`前項 a = ${a}`, pad, 25);
+  ctx.fillText(`後項 b = ${b}`, pad, 85);
+  ctx.fillStyle = '#ff8a80'; ctx.font = 'bold 16px monospace';
+  ctx.fillText(`a：b = ${a}：${b}`, pad, 160);
+  ctx.fillStyle = '#a5d6a7';
+  const ratio = (a/b).toFixed(3);
+  ctx.fillText(`比值 = ${a}/${b} ≈ ${ratio}`, pad, 185);
+}
+
+// sec2: 比的等價
+let c2ModeVal = 'expand';
+function c2Mode(m){ c2ModeVal = m; drawC2(); }
+function drawC2(){
+  const canvas = document.getElementById('c2');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 200;
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d1a0d'; ctx.fillRect(0,0,W,H);
+  ctx.fillStyle = '#e8e4d8'; ctx.font = '14px monospace';
+
+  const demos = {
+    expand: {label:'擴分：同乘 m', steps:['2 : 3', '×2', '4 : 6', '×3', '6 : 9'], color:'#ffd54f'},
+    reduce: {label:'約分：同除 m', steps:['8 : 12', '÷2', '4 : 6', '÷2', '2 : 3'], color:'#81d4fa'},
+    simplest:{label:'最簡整數比', steps:['75 : 25', '÷25', '3 : 1', 'GCD=1', '最簡!'], color:'#a5d6a7'},
+  };
+  const d = demos[c2ModeVal];
+  ctx.fillStyle = d.color; ctx.font = 'bold 16px monospace';
+  ctx.fillText(d.label, 20, 30);
+
+  const xs = [30, 130, 200, 300, 380];
+  ctx.font = '15px monospace';
+  d.steps.forEach((s,i) => {
+    ctx.fillStyle = i%2===0 ? '#e8e4d8' : '#ff8a80';
+    ctx.fillText(s, xs[i], 100);
+    if(i<4){ ctx.fillStyle='#888'; ctx.fillText('→', xs[i]+60, 100); }
+  });
+  ctx.fillStyle='#a5d6a7'; ctx.font='13px monospace';
+  ctx.fillText('規則：a：b = (a×m)：(b×m) = (a÷m)：(b÷m)', 20, 150);
+  ctx.fillText('最簡整數比：GCD(前項, 後項) = 1', 20, 175);
+}
+
+// sec3: 比例式外內項
+function drawC3(){
+  const canvas = document.getElementById('c3');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 220;
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d1a0d'; ctx.fillRect(0,0,W,H);
+
+  const a = parseInt(document.getElementById('s3a').value);
+  const b = parseInt(document.getElementById('s3b').value);
+  const c = parseInt(document.getElementById('s3c').value);
+  document.getElementById('s3a-v').textContent = a;
+  document.getElementById('s3b-v').textContent = b;
+  document.getElementById('s3c-v').textContent = c;
+
+  // d = bc/a
+  const d = (b * c / a).toFixed(2);
+  const isInt = Number.isInteger(b*c/a);
+
+  ctx.font = '20px monospace'; ctx.fillStyle = '#ffd54f';
+  ctx.fillText(`${a} : ${b} = ${c} : ${d}`, 30, 50);
+
+  ctx.font = '14px monospace';
+  ctx.fillStyle = '#ff8a80';
+  ctx.fillText(`外項：${a} 和 ${d}`, 30, 90);
+  ctx.fillStyle = '#81d4fa';
+  ctx.fillText(`內項：${b} 和 ${c}`, 30, 115);
+
+  ctx.fillStyle = '#a5d6a7';
+  ctx.fillText(`外項乘積 = ${a} × ${d} = ${(a * parseFloat(d)).toFixed(2)}`, 30, 155);
+  ctx.fillText(`內項乘積 = ${b} × ${c} = ${b*c}`, 30, 180);
+
+  const eq = Math.abs(a * parseFloat(d) - b*c) < 0.01;
+  ctx.fillStyle = eq ? '#69f0ae' : '#ff5252';
+  ctx.font = 'bold 15px monospace';
+  ctx.fillText(eq ? '✓ 外積 = 內積' : '✗ 不相等（請調整滑桿）', 30, 210);
+}
+
+// sec4: 設 r 法
+function drawC4(){
+  const canvas = document.getElementById('c4');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 240;
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d1a0d'; ctx.fillRect(0,0,W,H);
+
+  const a = parseInt(document.getElementById('s4a').value);
+  const b = parseInt(document.getElementById('s4b').value);
+  const diff = parseInt(document.getElementById('s4c').value);
+  document.getElementById('s4a-v').textContent = a;
+  document.getElementById('s4b-v').textContent = b;
+  document.getElementById('s4c-v').textContent = diff;
+
+  const r = diff / (a - b);
+  const x = a * r, y = b * r;
+
+  ctx.font = '15px monospace';
+  const lines = [
+    {t:`已知 x：y = ${a}：${b}，且 x − y = ${diff}`, c:'#ffd54f'},
+    {t:`步驟①：設 x = ${a}r, y = ${b}r (r≠0)`, c:'#81d4fa'},
+    {t:`步驟②：${a}r − ${b}r = ${diff}`, c:'#e8e4d8'},
+    {t:`        ${a-b}r = ${diff}`, c:'#e8e4d8'},
+    {t:`        r = ${r.toFixed(2)}`, c:'#ff8a80'},
+    {t:`步驟③：x = ${a}×${r.toFixed(2)} = ${x.toFixed(2)}`, c:'#a5d6a7'},
+    {t:`        y = ${b}×${r.toFixed(2)} = ${y.toFixed(2)}`, c:'#a5d6a7'},
+  ];
+  lines.forEach((l,i) => {
+    ctx.fillStyle = l.c;
+    ctx.fillText(l.t, 20, 25 + i*30);
+  });
+}
+
+// sec5: 比例尺
+function drawC5(){
+  const canvas = document.getElementById('c5');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvas.offsetWidth; canvas.height = 220;
+  const W = canvas.width, H = canvas.height;
+  ctx.fillStyle = '#0d1a0d'; ctx.fillRect(0,0,W,H);
+
+  const mapDist = parseInt(document.getElementById('s5map').value);
+  const scale = parseInt(document.getElementById('s5scale').value);
+  document.getElementById('s5map-v').textContent = mapDist;
+  document.getElementById('s5scale-v').textContent = scale;
+
+  const realDist = mapDist * scale;
+
+  ctx.font = '14px monospace'; ctx.fillStyle = '#e8e4d8';
+
+  // Map line
+  ctx.strokeStyle = '#ffd54f'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(30, 60); ctx.lineTo(30 + mapDist * 15, 60); ctx.stroke();
+  ctx.fillStyle = '#ffd54f';
+  ctx.fillText(`地圖上 ${mapDist} cm`, 30, 50);
+
+  // Real line (scaled down for display)
+  const dispLen = Math.min(realDist / 50, W - 60);
+  ctx.strokeStyle = '#81d4fa'; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(30, 120); ctx.lineTo(30 + dispLen, 120); ctx.stroke();
+  ctx.fillStyle = '#81d4fa';
+  ctx.fillText(`實際 ${realDist >= 1000 ? (realDist/1000).toFixed(1)+'km' : realDist+'m'}`, 30, 110);
+
+  ctx.fillStyle = '#ff8a80'; ctx.font = '13px monospace';
+  ctx.fillText(`比例尺 1：${scale}`, 30, 160);
+  ctx.fillStyle = '#a5d6a7';
+  ctx.fillText(`比例式：2：${scale} = ${mapDist}：x`, 30, 185);
+  ctx.fillText(`→ x = ${mapDist} × ${scale/2} = ${realDist/2} 公尺`, 30, 210);
+}
+
+// ==================== 抽籤器 ====================
+function rollSeat(){
+  const min = parseInt(document.getElementById('seat-min').value);
+  const max = parseInt(document.getElementById('seat-max').value);
+  const n = Math.floor(Math.random()*(max-min+1))+min;
+  document.getElementById('roll-result').textContent = `座號 ${n}`;
+}
+
+// ==================== 計時器 ====================
+let timerSec = 0, timerRunning = false, timerInterval = null;
+function timerStart(){
+  if(timerRunning) return;
+  timerRunning = true;
+  timerInterval = setInterval(()=>{
+    timerSec++;
+    const m = String(Math.floor(timerSec/60)).padStart(2,'0');
+    const s = String(timerSec%60).padStart(2,'0');
+    document.getElementById('timer-display').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function timerPause(){ timerRunning = false; clearInterval(timerInterval); }
+function timerReset(){
+  timerPause(); timerSec = 0;
+  document.getElementById('timer-display').textContent = '00:00';
+}
+
+// ==================== 畫筆 ====================
+let drawing = false, drawActive = false, lastX=0, lastY=0;
+const drawCanvas = document.getElementById('draw-canvas');
+const drawCtx = drawCanvas.getContext('2d');
+
+function toggleDraw(){
+  drawActive = !drawActive;
+  drawCanvas.classList.toggle('active', drawActive);
+  document.getElementById('clear-draw').classList.toggle('show', drawActive);
+  if(drawActive){ resizeDrawCanvas(); }
+}
+function clearDraw(){ drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height); }
+function resizeDrawCanvas(){
+  drawCanvas.width = window.innerWidth;
+  drawCanvas.height = window.innerHeight;
+}
+
+drawCanvas.addEventListener('mousedown', e=>{
+  drawing=true; lastX=e.clientX; lastY=e.clientY;
+});
+drawCanvas.addEventListener('mousemove', e=>{
+  if(!drawing) return;
+  drawCtx.strokeStyle='#ffd54f'; drawCtx.lineWidth=3;
+  drawCtx.lineCap='round';
+  drawCtx.beginPath();
+  drawCtx.moveTo(lastX,lastY);
+  drawCtx.lineTo(e.clientX,e.clientY);
+  drawCtx.stroke();
+  lastX=e.clientX; lastY=e.clientY;
+});
+drawCanvas.addEventListener('mouseup',()=>drawing=false);
+drawCanvas.addEventListener('touchstart', e=>{
+  e.preventDefault();
+  drawing=true;
+  lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
+},{passive:false});
+drawCanvas.addEventListener('touchmove', e=>{
+  e.preventDefault();
+  if(!drawing) return;
+  const t=e.touches[0];
+  drawCtx.strokeStyle='#ffd54f'; drawCtx.lineWidth=3; drawCtx.lineCap='round';
+  drawCtx.beginPath();
+  drawCtx.moveTo(lastX,lastY);
+  drawCtx.lineTo(t.clientX,t.clientY);
+  drawCtx.stroke();
+  lastX=t.clientX; lastY=t.clientY;
+},{passive:false});
+drawCanvas.addEventListener('touchend',()=>drawing=false);
+
+// ==================== Resize ====================
+function resizeCanvases(){
+  drawC1(); drawC2(); drawC3(); drawC4(); drawC5();
+  if(drawActive) resizeDrawCanvas();
+}
+window.addEventListener('resize', resizeCanvases);
+
+// ==================== 初始化 ====================
+window.addEventListener('load', ()=>{
+  drawC1(); drawC2(); drawC3(); drawC4(); drawC5();
+});
+</script>
+</body>
+</html>
