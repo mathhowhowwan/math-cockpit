@@ -11,7 +11,7 @@
   --border:#4a6741;--wood1:#8d6e4a;--wood2:#6d4c41;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
-body{background:var(--bg);color:var(--chalk);font-family:'Segoe UI',sans-serif;min-height:100vh;}
+body{background:var(--bg);color:var(--chalk);font-family:'Segoe UI',sans-serif;min-height:100vh;font-size:20px;}
 
 /* Header */
 header{
@@ -163,12 +163,26 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
   border:2px solid var(--chalk);color:var(--chalk);font-size:1.2rem;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
 }
+#draw-toggle.active{background:var(--header);border-color:#fff;}
 #draw-canvas{display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-  z-index:150;cursor:crosshair;}
+  z-index:150;cursor:crosshair;background:transparent;}
 #draw-canvas.active{display:block;}
 #clear-draw{display:none;position:fixed;left:12px;bottom:110px;z-index:200;
   padding:5px 10px;background:#b71c1c;border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:0.8rem;}
 #clear-draw.show{display:block;}
+/* Draw toolbar */
+#draw-toolbar{
+  position:fixed;left:12px;bottom:168px;z-index:200;display:none;
+  background:#1e301e;border:1px solid var(--border);border-radius:8px;
+  padding:8px 10px;flex-direction:column;gap:6px;
+}
+#draw-toolbar.show{display:flex;}
+.dc-row{display:flex;gap:5px;align-items:center;}
+.dc-btn{width:24px;height:24px;border-radius:4px;border:2px solid transparent;cursor:pointer;padding:0;}
+.dc-btn.active{border-color:#fff;}
+.ds-btn{padding:3px 8px;background:#2a3a2a;border:1px solid var(--border);
+  color:var(--chalk);border-radius:3px;cursor:pointer;font-size:0.75rem;}
+.ds-btn.active{background:var(--header);}
 
 /* Responsive */
 @media(max-width:1024px){
@@ -178,7 +192,13 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
 @media(max-width:768px){
   header h1{font-size:1.1rem;}
   .section-title{font-size:1.1rem;}
-  #float-tools{display:none;}
+  #float-tools{
+    right:auto;left:0;top:auto;bottom:0;transform:none;
+    flex-direction:row;width:100%;background:#0d1a0d;
+    border-top:2px solid var(--border);padding:8px 12px;
+    box-shadow:0 -3px 10px rgba(0,0,0,0.5);
+  }
+  .tool-card{flex:1;min-width:auto;}
   .quiz-options{flex-direction:column;}
 }
 </style>
@@ -597,7 +617,7 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
       <span>座號</span>
       <input type="number" id="seat-min" value="1" min="1" max="50">
       <span>~</span>
-      <input type="number" id="seat-max" value="30" min="1" max="50">
+      <input type="number" id="seat-max" value="36" min="1" max="36">
     </div>
     <div id="roll-result">—</div>
     <button class="roll-btn" onclick="rollSeat()">抽！</button>
@@ -613,6 +633,21 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
   </div>
 </div>
 
+<!-- 畫筆工具列 -->
+<div id="draw-toolbar">
+  <div class="dc-row">
+    <button class="dc-btn active" id="dc-yellow" onclick="setDC('#ffd54f','dc-yellow')" style="background:#ffd54f" title="黃色"></button>
+    <button class="dc-btn" id="dc-pink" onclick="setDC('#ff8a80','dc-pink')" style="background:#ff8a80" title="紅色"></button>
+    <button class="dc-btn" id="dc-blue" onclick="setDC('#81d4fa','dc-blue')" style="background:#81d4fa" title="藍色"></button>
+    <button class="dc-btn" id="dc-white" onclick="setDC('#ffffff','dc-white')" style="background:#ffffff" title="白色"></button>
+    <button class="dc-btn" id="dc-eraser" onclick="setEraser()" style="background:#2a3a2a;color:var(--chalk);font-size:0.7rem;display:flex;align-items:center;justify-content:center;" title="橡皮擦">⌫</button>
+  </div>
+  <div class="dc-row">
+    <button class="ds-btn active" id="ds-s" onclick="setDS(2,'ds-s')">細</button>
+    <button class="ds-btn" id="ds-m" onclick="setDS(5,'ds-m')">中</button>
+    <button class="ds-btn" id="ds-l" onclick="setDS(10,'ds-l')">粗</button>
+  </div>
+</div>
 <!-- 畫筆 -->
 <button id="draw-toggle" onclick="toggleDraw()" title="黑板畫筆">✏</button>
 <button id="clear-draw" onclick="clearDraw()">清除畫筆</button>
@@ -870,19 +905,56 @@ function timerReset(){
 
 // ==================== 畫筆 ====================
 let drawing = false, drawActive = false, lastX=0, lastY=0;
+let drawColor = '#ffd54f', drawSize = 2, eraserMode = false;
 const drawCanvas = document.getElementById('draw-canvas');
 const drawCtx = drawCanvas.getContext('2d');
+
+function setDC(color, btnId){
+  drawColor = color; eraserMode = false;
+  document.querySelectorAll('.dc-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(btnId).classList.add('active');
+}
+function setDS(size, btnId){
+  drawSize = size;
+  document.querySelectorAll('.ds-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(btnId).classList.add('active');
+}
+function setEraser(){
+  eraserMode = true;
+  document.querySelectorAll('.dc-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('dc-eraser').classList.add('active');
+}
+function applyDrawStyle(){
+  if(eraserMode){
+    drawCtx.globalCompositeOperation='destination-out';
+    drawCtx.strokeStyle='rgba(0,0,0,1)';
+    drawCtx.lineWidth = drawSize * 4;
+  } else {
+    drawCtx.globalCompositeOperation='source-over';
+    drawCtx.strokeStyle = drawColor;
+    drawCtx.lineWidth = drawSize;
+  }
+  drawCtx.lineCap='round';
+  drawCtx.lineJoin='round';
+}
 
 function toggleDraw(){
   drawActive = !drawActive;
   drawCanvas.classList.toggle('active', drawActive);
   document.getElementById('clear-draw').classList.toggle('show', drawActive);
+  document.getElementById('draw-toggle').classList.toggle('active', drawActive);
+  document.getElementById('draw-toolbar').classList.toggle('show', drawActive);
   if(drawActive){ resizeDrawCanvas(); }
 }
-function clearDraw(){ drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height); }
+function clearDraw(){
+  drawCtx.globalCompositeOperation='source-over';
+  drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height);
+}
 function resizeDrawCanvas(){
+  const imgData = drawCtx.getImageData(0,0,drawCanvas.width,drawCanvas.height);
   drawCanvas.width = window.innerWidth;
   drawCanvas.height = window.innerHeight;
+  drawCtx.putImageData(imgData,0,0);
 }
 
 drawCanvas.addEventListener('mousedown', e=>{
@@ -890,8 +962,7 @@ drawCanvas.addEventListener('mousedown', e=>{
 });
 drawCanvas.addEventListener('mousemove', e=>{
   if(!drawing) return;
-  drawCtx.strokeStyle='#ffd54f'; drawCtx.lineWidth=3;
-  drawCtx.lineCap='round';
+  applyDrawStyle();
   drawCtx.beginPath();
   drawCtx.moveTo(lastX,lastY);
   drawCtx.lineTo(e.clientX,e.clientY);
@@ -899,6 +970,7 @@ drawCanvas.addEventListener('mousemove', e=>{
   lastX=e.clientX; lastY=e.clientY;
 });
 drawCanvas.addEventListener('mouseup',()=>drawing=false);
+drawCanvas.addEventListener('mouseleave',()=>drawing=false);
 drawCanvas.addEventListener('touchstart', e=>{
   e.preventDefault();
   drawing=true;
@@ -908,7 +980,7 @@ drawCanvas.addEventListener('touchmove', e=>{
   e.preventDefault();
   if(!drawing) return;
   const t=e.touches[0];
-  drawCtx.strokeStyle='#ffd54f'; drawCtx.lineWidth=3; drawCtx.lineCap='round';
+  applyDrawStyle();
   drawCtx.beginPath();
   drawCtx.moveTo(lastX,lastY);
   drawCtx.lineTo(t.clientX,t.clientY);
