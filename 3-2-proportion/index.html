@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>3-2 正比與反比｜七年級數學教學駕駛艙</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#1a2a1a;--card:#1e301e;--border:#4a6741;
+  --chalk:#e8e4d8;--yellow:#ffd54f;--pink:#ff8a80;--blue:#81d4fa;
+  --green:#a5d6a7;--wood:#8d6e4a;--wood2:#6d4c41;
+}
+body{background:var(--bg);color:var(--chalk);font-family:'Segoe UI',sans-serif;min-height:100vh;padding-bottom:60px;}
+/* Header */
+header{background:linear-gradient(135deg,var(--wood),var(--wood2));padding:16px 24px;
+  border-bottom:4px solid #5d4037;position:sticky;top:0;z-index:100;
+  box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+header h1{font-size:1.5rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
+header p{color:#d7ccc8;font-size:0.85rem;margin-top:4px;}
+/* Mode Bar */
+#modebar{background:#162816;border-bottom:2px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+.mode-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);cursor:pointer;font-size:0.82rem;transition:all 0.2s;background:transparent;color:var(--chalk);}
+.mode-btn.active{background:var(--wood);border-color:var(--wood);color:#fff8e1;}
+#teacher-area{display:none;}
+/* Container */
+.container{max-width:1200px;margin:0 auto;padding:20px 16px;}
+/* Objectives */
+.objectives{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.chip{background:rgba(161,214,167,0.15);border:1px solid var(--green);border-radius:20px;
+  padding:4px 14px;font-size:0.8rem;color:var(--green);}
+/* Nav pills */
+.nav-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.nav-pill{padding:6px 16px;border-radius:20px;border:1px solid var(--border);
+  background:transparent;color:var(--chalk);cursor:pointer;font-size:0.82rem;
+  text-decoration:none;transition:all 0.2s;}
+.nav-pill:hover,.nav-pill.active{background:var(--yellow);border-color:var(--yellow);color:#1a1a1a;font-weight:600;}
+/* Section cards */
+.section{background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:24px;margin-bottom:28px;scroll-margin-top:120px;}
+.section h2{font-size:1.2rem;color:var(--yellow);border-bottom:1px dashed var(--border);
+  padding-bottom:8px;margin-bottom:16px;}
+.section h3{font-size:1rem;color:var(--blue);margin:16px 0 8px;}
+/* Carousel */
+.carousel{position:relative;background:#111;border-radius:8px;overflow:hidden;}
+.carousel-inner{display:flex;}
+.carousel-inner img{min-width:100%;display:none;border-radius:8px;}
+.carousel-inner img.active{display:block;}
+.carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;background:#111;border-radius:0 0 8px 8px;}
+.carousel-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
+  color:var(--chalk);padding:4px 14px;border-radius:6px;cursor:pointer;font-size:1rem;}
+.carousel-btn:hover{background:var(--wood);}
+.slide-counter{color:var(--chalk);font-size:0.82rem;min-width:60px;text-align:center;}
+/* Canvas */
+canvas{display:block;width:100%;border-radius:8px;background:#0d1f0d;border:1px solid var(--border);}
+.canvas-controls{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.ctrl-btn{padding:5px 12px;border-radius:6px;border:1px solid var(--border);
+  background:var(--card);color:var(--chalk);cursor:pointer;font-size:0.8rem;}
+.ctrl-btn:hover,.ctrl-btn.active{background:var(--wood);border-color:var(--wood);}
+input[type=range]{accent-color:var(--yellow);width:140px;}
+/* Quiz */
+.quiz-box{background:#132013;border:1px solid var(--border);border-radius:8px;padding:16px;margin-top:12px;}
+.quiz-box p{font-size:0.9rem;margin-bottom:10px;line-height:1.6;}
+.quiz-options{display:flex;flex-direction:column;gap:6px;}
+.quiz-opt{background:rgba(255,255,255,0.08);border:1px solid #5a7a52;border-radius:6px;
+  padding:10px 16px;cursor:pointer;font-size:0.9rem;transition:all 0.15s;text-align:left;
+  color:#f0ece0;font-weight:500;}
+.quiz-opt:hover{background:rgba(255,255,255,0.16);border-color:#8d9e7a;color:#fff;}
+.quiz-opt.correct{background:rgba(100,200,100,0.25);border-color:#66bb6a;color:#c8f0c8;font-weight:700;}
+.quiz-opt.wrong{background:rgba(200,80,80,0.25);border-color:#ef5350;color:#ffb0a8;font-weight:700;}
+.quiz-opt:disabled{cursor:default;}
+.quiz-feedback{font-size:0.82rem;margin-top:8px;padding:8px;border-radius:6px;display:none;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:rgba(100,200,100,0.15);color:#a5d6a7;}
+.quiz-feedback.no{background:rgba(200,80,80,0.15);color:#ff8a80;}
+/* Infographic */
+.infographic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin-top:12px;}
+.infographic-thumb{cursor:pointer;border-radius:8px;overflow:hidden;border:1px solid var(--border);}
+.infographic-thumb img{width:100%;display:block;transition:transform 0.2s;}
+.infographic-thumb:hover img{transform:scale(1.03);}
+.infographic-thumb p{font-size:0.75rem;color:var(--chalk);padding:4px 8px;background:#111;text-align:center;}
+/* Lightbox */
+#lightbox{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.9);z-index:200;
+  align-items:center;justify-content:center;}
+#lightbox.show{display:flex;}
+#lightbox img{max-width:94vw;max-height:90vh;border-radius:8px;}
+#lightbox-close{position:fixed;top:16px;right:20px;font-size:2rem;color:#fff;cursor:pointer;background:none;border:none;}
+/* Cheat sheet */
+.cheat-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+.cheat-card{background:#132013;border:1px solid var(--border);border-radius:8px;padding:16px;}
+.cheat-card h4{color:var(--pink);margin-bottom:10px;font-size:0.95rem;}
+.formula{font-family:monospace;font-size:1.1rem;color:var(--yellow);background:#0d1a0d;
+  padding:6px 12px;border-radius:6px;display:inline-block;margin:4px 0;}
+.cheat-card ul{margin-left:16px;font-size:0.85rem;line-height:1.8;color:#ccc;}
+/* Teacher tips */
+.teacher-tip{background:rgba(255,138,128,0.1);border:1px solid var(--pink);
+  border-radius:8px;padding:12px;margin-top:12px;}
+.teacher-tip h4{color:var(--pink);margin-bottom:8px;font-size:0.9rem;}
+.teacher-tip ul{margin-left:16px;font-size:0.82rem;line-height:1.8;}
+/* Floating tools */
+#float-tools{position:fixed;right:12px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:10px;z-index:90;}
+.float-btn{width:44px;height:44px;border-radius:50%;border:1px solid var(--border);
+  background:var(--card);color:var(--chalk);cursor:pointer;font-size:1.1rem;
+  display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.float-btn:hover{background:var(--wood);border-color:var(--wood);}
+/* Tool panels */
+.tool-panel{position:fixed;right:64px;top:50%;transform:translateY(-50%);
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:16px;z-index:91;min-width:200px;display:none;}
+.tool-panel.show{display:block;}
+.tool-panel h4{color:var(--yellow);margin-bottom:12px;font-size:0.9rem;}
+#lottery-result{font-size:2rem;font-weight:bold;color:var(--yellow);text-align:center;padding:10px;}
+#timer-display{font-size:2rem;font-weight:bold;color:var(--blue);text-align:center;padding:10px;}
+/* Drawing tool */
+#draw-btn{position:fixed;left:12px;bottom:80px;z-index:90;}
+#draw-canvas{position:fixed;inset:0;z-index:80;pointer-events:none;display:none;}
+#draw-canvas.active{pointer-events:all;}
+/* Responsive */
+@media(max-width:1024px){.cheat-grid{grid-template-columns:1fr;}}
+@media(max-width:768px){
+  header h1{font-size:1.2rem;}
+  .section{padding:16px;}
+  .infographic-grid{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>📐 3-2 正比與反比｜七年級數學教學駕駛艙</h1>
+  <p>互動黑板粉筆風格教學平台 ｜ 七年級下學期 第三章 比例</p>
+</header>
+
+<!-- Mode Bar -->
+<div id="modebar">
+  <button class="mode-btn active" onclick="setMode('student')">🎓 學生模式</button>
+  <button class="mode-btn" onclick="setMode('teacher')">👨‍🏫 教師模式</button>
+  <span style="color:#888;font-size:0.8rem;margin-left:8px;">教師模式密碼：math2026</span>
+</div>
+
+<div class="container">
+
+<!-- Learning Objectives -->
+<div class="objectives" style="margin-top:16px;">
+  <span class="chip">✓ 理解正比定義 y=kx</span>
+  <span class="chip">✓ 判別兩量是否成正比</span>
+  <span class="chip">✓ 列出正比關係式</span>
+  <span class="chip">✓ 理解反比定義 xy=k</span>
+  <span class="chip">✓ 判別兩量是否成反比</span>
+  <span class="chip">✓ 列出反比關係式與應用</span>
+</div>
+
+<!-- Nav Pills -->
+<div class="nav-pills">
+  <a class="nav-pill" href="#sec1">① 正比概念</a>
+  <a class="nav-pill" href="#sec2">② 判別正比</a>
+  <a class="nav-pill" href="#sec3">③ 正比關係式</a>
+  <a class="nav-pill" href="#sec4">④ 反比概念</a>
+  <a class="nav-pill" href="#sec5">⑤ 判別反比</a>
+  <a class="nav-pill" href="#sec6">⑥ 反比關係式</a>
+  <a class="nav-pill" href="#cheatsheet">📋 重點整理</a>
+  <a class="nav-pill" href="#infographics">🖼 圖解卡片</a>
+</div>
+
+<!-- === 開場簡報 === -->
+<div class="section" id="opening">
+  <h2>📽 授課簡報</h2>
+  <div class="carousel" id="opening-carousel">
+    <div class="carousel-inner" id="opening-slides"></div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="carouselPrev('opening')">‹</button>
+      <span class="slide-counter" id="opening-counter">1 / 20</span>
+      <button class="carousel-btn" onclick="carouselNext('opening')">›</button>
+    </div>
+  </div>
+</div>
+
+<!-- === Section 1: 正比概念 === -->
+<div class="section" id="sec1">
+  <h2>① 正比的概念 — y = kx</h2>
+
+  <h3>定義</h3>
+  <p style="line-height:1.8;font-size:0.9rem;">
+    設 x 與 y 為兩個數量，k 是不為 0 的常數。<br>
+    當 x 值改變時，y 值也隨之改變，且 <strong style="color:var(--yellow)">y 值恆為 x 值的 k 倍</strong>，<br>
+    即 <span class="formula">y = kx（k ≠ 0）</span><br>
+    滿足此關係式，稱 y 與 x 成<strong style="color:var(--pink)">正比</strong>。
+  </p>
+
+  <h3>🎮 互動：正比圖形觀察</h3>
+  <canvas id="canvas-sec1" height="240"></canvas>
+  <div class="canvas-controls">
+    <label style="font-size:0.82rem;color:var(--chalk);">比例常數 k =&nbsp;
+      <span id="k1-val" style="color:var(--yellow);font-weight:bold;">2</span>
+    </label>
+    <input type="range" id="k1" min="-4" max="4" step="0.5" value="2" oninput="updateSec1()">
+    <button class="ctrl-btn" onclick="resetK1()">重設</button>
+  </div>
+  <p style="font-size:0.78rem;color:#888;margin-top:4px;">拖曳滑桿改變 k 值，觀察直線斜率如何變化</p>
+
+  <!-- 形成性評量 -->
+  <h3>📝 形成性評量</h3>
+
+  <div class="quiz-box" id="q1a">
+    <p>【記憶】下列哪個關係式表示 y 與 x <strong>成正比</strong>？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q1a',this,false)">A. y = x² + 1</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1a',this,true)">B. y = 3x</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1a',this,false)">C. y = x + 3</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1a',this,false)">D. xy = 6</button>
+    </div>
+    <div class="quiz-feedback" id="q1a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q1b" style="margin-top:10px;">
+    <p>【理解】若 y 與 x 成正比，當 x 增加為原來的 5 倍，則 y 變成原來的幾倍？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q1b',this,false)">A. 1/5 倍</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1b',this,false)">B. 不一定</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1b',this,true)">C. 5 倍</button>
+      <button class="quiz-opt" onclick="checkQuiz('q1b',this,false)">D. 25 倍</button>
+    </div>
+    <div class="quiz-feedback" id="q1b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示</h4>
+    <ul>
+      <li>強調 k ≠ 0，k 為正則兩者同向變化，k 為負則反向</li>
+      <li>y = x² 不是正比（y 不是 x 的固定倍數）</li>
+      <li>xy = 6 是反比，別讓學生混淆</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === Section 2: 判別正比 === -->
+<div class="section" id="sec2">
+  <h2>② 判別兩量是否成正比</h2>
+
+  <h3>判斷步驟</h3>
+  <ol style="margin-left:20px;line-height:2;font-size:0.9rem;">
+    <li>寫出 y 與 x 的關係式</li>
+    <li>檢查關係式能否寫成 <span class="formula">y = kx（k ≠ 0）</span> 的形式</li>
+    <li>若能，y 與 x 成正比；若不能，則不成正比</li>
+  </ol>
+
+  <h3>🎮 互動：正比 vs 非正比比較</h3>
+  <canvas id="canvas-sec2" height="240"></canvas>
+  <div class="canvas-controls">
+    <button class="ctrl-btn active" id="btn2-prop" onclick="setSec2('prop')">✓ 正比 y=2x</button>
+    <button class="ctrl-btn" id="btn2-noprop" onclick="setSec2('noprop')">✗ 非正比 y=x+3</button>
+    <button class="ctrl-btn" id="btn2-sq" onclick="setSec2('sq')">✗ 非正比 y=x²</button>
+  </div>
+
+  <h3>📝 形成性評量</h3>
+  <div class="quiz-box" id="q2a">
+    <p>【記憶】以 x 為邊長的正方形，周長為 y，y 與 x 的關係式為何？y 與 x 是否成正比？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q2a',this,false)">A. y = x²，不成正比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2a',this,true)">B. y = 4x，成正比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2a',this,false)">C. y = x + 4，不成正比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2a',this,false)">D. y = 4，不成正比</button>
+    </div>
+    <div class="quiz-feedback" id="q2a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q2b" style="margin-top:10px;">
+    <p>【理解】小明和姐姐歲數相差 6 歲，小明 x 歲，姐姐 y 歲，y 與 x 是否成正比？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q2b',this,true)">A. 不成正比，因為 y = x + 6，y 值不是 x 值的固定倍數</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2b',this,false)">B. 成正比，因為兩人年齡都在增加</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2b',this,false)">C. 不成正比，因為 x·y ≠ 常數</button>
+      <button class="quiz-opt" onclick="checkQuiz('q2b',this,false)">D. 成正比，k = 6</button>
+    </div>
+    <div class="quiz-feedback" id="q2b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示</h4>
+    <ul>
+      <li>常見錯誤：「兩量一起增加就是正比」——讓學生代入驗證比值是否固定</li>
+      <li>列表法：若 y/x 比值固定，則成正比</li>
+      <li>正三角形周長 y=3x（正比）vs 正方形面積 y=x²（非正比）—— 好的對照例</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === Section 3: 正比關係式 === -->
+<div class="section" id="sec3">
+  <h2>③ 列出正比關係式</h2>
+
+  <h3>解題步驟</h3>
+  <ol style="margin-left:20px;line-height:2;font-size:0.9rem;">
+    <li>設 <span class="formula">y = kx（k ≠ 0）</span></li>
+    <li>將已知的 (x, y) 代入，求出 k</li>
+    <li>寫出完整關係式，再代入求解</li>
+  </ol>
+
+  <h3>🎮 互動：求 k 值計算機</h3>
+  <canvas id="canvas-sec3" height="240"></canvas>
+  <div class="canvas-controls">
+    <label style="font-size:0.82rem;">已知點 x =&nbsp;
+      <input type="number" id="k3-x" value="4" style="width:50px;background:#0d1a0d;border:1px solid var(--border);color:var(--yellow);padding:2px 6px;border-radius:4px;" oninput="updateSec3()">
+    </label>
+    <label style="font-size:0.82rem;">y =&nbsp;
+      <input type="number" id="k3-y" value="-12" style="width:60px;background:#0d1a0d;border:1px solid var(--border);color:var(--yellow);padding:2px 6px;border-radius:4px;" oninput="updateSec3()">
+    </label>
+    <span id="k3-result" style="color:var(--green);font-size:0.82rem;"></span>
+  </div>
+
+  <h3>📝 形成性評量</h3>
+  <div class="quiz-box" id="q3a">
+    <p>【理解】已知 y 與 x 成正比，x = 3 時 y = 15，則比例常數 k = ？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q3a',this,false)">A. k = 3</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3a',this,true)">B. k = 5</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3a',this,false)">C. k = 45</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3a',this,false)">D. k = 1/5</button>
+    </div>
+    <div class="quiz-feedback" id="q3a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q3b" style="margin-top:10px;">
+    <p>【應用】承上（k=5），當 x = −4 時，y = ？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q3b',this,false)">A. y = 20</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3b',this,false)">B. y = 1</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3b',this,true)">C. y = −20</button>
+      <button class="quiz-opt" onclick="checkQuiz('q3b',this,false)">D. y = −1/4</button>
+    </div>
+    <div class="quiz-feedback" id="q3b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示</h4>
+    <ul>
+      <li>k 可以是負數！不要讓學生認為 k 一定是正的</li>
+      <li>驗證：將 k 代回關係式，再用另一組數值驗算</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === Section 4: 反比概念 === -->
+<div class="section" id="sec4">
+  <h2>④ 反比的概念 — xy = k</h2>
+
+  <h3>定義</h3>
+  <p style="line-height:1.8;font-size:0.9rem;">
+    設 x 與 y 為兩個數量，k 是不為 0 的常數。<br>
+    當 x 值改變時，y 值也隨之改變，且 <strong style="color:var(--yellow)">x 與 y 的乘積恆為定值</strong>，<br>
+    即 <span class="formula">xy = k（k ≠ 0）</span><br>
+    滿足此關係式，稱 y 與 x 成<strong style="color:var(--pink)">反比</strong>。
+  </p>
+
+  <h3>🎮 互動：反比圖形觀察（雙曲線）</h3>
+  <canvas id="canvas-sec4" height="240"></canvas>
+  <div class="canvas-controls">
+    <label style="font-size:0.82rem;color:var(--chalk);">k =&nbsp;
+      <span id="k4-val" style="color:var(--yellow);font-weight:bold;">24</span>
+    </label>
+    <input type="range" id="k4" min="-48" max="48" step="6" value="24" oninput="updateSec4()">
+    <button class="ctrl-btn" onclick="resetK4()">重設</button>
+  </div>
+  <p style="font-size:0.78rem;color:#888;margin-top:4px;">拖曳滑桿改變 k 值，觀察雙曲線位置</p>
+
+  <h3>📝 形成性評量</h3>
+  <div class="quiz-box" id="q4a">
+    <p>【記憶】xy = k（k≠0），當 k = 12，x = 3，則 y = ？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q4a',this,false)">A. y = 36</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4a',this,true)">B. y = 4</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4a',this,false)">C. y = 9</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4a',this,false)">D. y = 3</button>
+    </div>
+    <div class="quiz-feedback" id="q4a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q4b" style="margin-top:10px;">
+    <p>【理解】若 y 與 x 成反比，當 x 變成原來的 3 倍，y 變成原來的？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q4b',this,false)">A. 3 倍</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4b',this,true)">B. 1/3 倍</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4b',this,false)">C. 9 倍</button>
+      <button class="quiz-opt" onclick="checkQuiz('q4b',this,false)">D. 不一定</button>
+    </div>
+    <div class="quiz-feedback" id="q4b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示</h4>
+    <ul>
+      <li>與正比的關鍵差異：正比看「比值 y/x」是否固定；反比看「乘積 xy」是否固定</li>
+      <li>迷思：「x 增加時 y 減少」≠ 反比（k 為負時 x 增加 y 也增加！）</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === Section 5: 判別反比 === -->
+<div class="section" id="sec5">
+  <h2>⑤ 判別兩量是否成反比</h2>
+
+  <h3>判斷步驟</h3>
+  <ol style="margin-left:20px;line-height:2;font-size:0.9rem;">
+    <li>寫出 y 與 x 的關係式</li>
+    <li>檢查關係式能否寫成 <span class="formula">xy = k（k ≠ 0）</span></li>
+    <li>若能，y 與 x 成反比；若不能，則不成反比</li>
+  </ol>
+
+  <h3>🎮 互動：乘積檢驗器</h3>
+  <canvas id="canvas-sec5" height="200"></canvas>
+  <div class="canvas-controls">
+    <button class="ctrl-btn active" id="btn5-inv" onclick="setSec5('inv')">反比示例 xy=36</button>
+    <button class="ctrl-btn" id="btn5-add" onclick="setSec5('add')">非反比 x+y=36</button>
+  </div>
+
+  <h3>📝 形成性評量</h3>
+  <div class="quiz-box" id="q5a">
+    <p>【記憶】36 個糖果<strong>均分</strong>給 x 人，每人 y 顆，y 與 x 成？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q5a',this,false)">A. 正比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5a',this,true)">B. 反比（xy = 36）</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5a',this,false)">C. 不成正比也不成反比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5a',this,false)">D. 以上皆非</button>
+    </div>
+    <div class="quiz-feedback" id="q5a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q5b" style="margin-top:10px;">
+    <p>【理解】面積為 60 的三角形，底為 x，高為 y，則 y 與 x 成？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q5b',this,false)">A. 正比</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5b',this,true)">B. 反比（因為 ½·x·y = 60，即 xy = 120）</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5b',this,false)">C. 不成反比（xy ≠ 常數）</button>
+      <button class="quiz-opt" onclick="checkQuiz('q5b',this,false)">D. 無法判斷</button>
+    </div>
+    <div class="quiz-feedback" id="q5b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示</h4>
+    <ul>
+      <li>「均分」情境幾乎都是反比；「加總固定」情境幾乎都不是反比</li>
+      <li>三角形面積題需先推導 xy = 2×面積，才確認是反比</li>
+      <li>y = 100 − x 這種「找零」情境：x+y=100 不是反比！</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === Section 6: 反比關係式與應用 === -->
+<div class="section" id="sec6">
+  <h2>⑥ 列出反比關係式與應用</h2>
+
+  <h3>解題步驟</h3>
+  <ol style="margin-left:20px;line-height:2;font-size:0.9rem;">
+    <li>設 <span class="formula">xy = k（k ≠ 0）</span></li>
+    <li>將已知的 (x, y) 代入，求出 k</li>
+    <li>寫出完整關係式，再代入求解</li>
+  </ol>
+
+  <h3>🎮 互動：反比關係式計算機</h3>
+  <canvas id="canvas-sec6" height="240"></canvas>
+  <div class="canvas-controls">
+    <label style="font-size:0.82rem;">已知點 x =&nbsp;
+      <input type="number" id="k6-x" value="-4" style="width:50px;background:#0d1a0d;border:1px solid var(--border);color:var(--yellow);padding:2px 6px;border-radius:4px;" oninput="updateSec6()">
+    </label>
+    <label style="font-size:0.82rem;">y =&nbsp;
+      <input type="number" id="k6-y" value="12" style="width:60px;background:#0d1a0d;border:1px solid var(--border);color:var(--yellow);padding:2px 6px;border-radius:4px;" oninput="updateSec6()">
+    </label>
+    <span id="k6-result" style="color:var(--green);font-size:0.82rem;"></span>
+  </div>
+
+  <h3>📝 形成性評量</h3>
+  <div class="quiz-box" id="q6a">
+    <p>【理解】已知 y 與 x 成反比，x = 6，y = −2，則 xy = ？k = ？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q6a',this,false)">A. k = 3</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6a',this,true)">B. k = −12（xy = −12）</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6a',this,false)">C. k = 12</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6a',this,false)">D. k = −3</button>
+    </div>
+    <div class="quiz-feedback" id="q6a-fb"></div>
+  </div>
+
+  <div class="quiz-box" id="q6b" style="margin-top:10px;">
+    <p>【應用】背完 1200 個英文單字，每天背 x 個，需要 y 天，若每天背 30 個，需幾天？</p>
+    <div class="quiz-options">
+      <button class="quiz-opt" onclick="checkQuiz('q6b',this,false)">A. 30 天</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6b',this,true)">B. 40 天（xy=1200，y=1200/30=40）</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6b',this,false)">C. 360 天</button>
+      <button class="quiz-opt" onclick="checkQuiz('q6b',this,false)">D. 12 天</button>
+    </div>
+    <div class="quiz-feedback" id="q6b-fb"></div>
+  </div>
+
+  <div class="teacher-tip teacher-area">
+    <h4>👨‍🏫 教師提示 + 迷思診療</h4>
+    <ul>
+      <li>迷思：「反比」≠「x 增加 y 就減少」（k 為負時相反）</li>
+      <li>用 xy=12 vs xy=−12 比較：xy=12 時 x 增加 y 減少；xy=−12 時 x 增加 y 也增加</li>
+      <li>生活情境：oil price x × oil amount y = 1000（fixed budget）→ 反比</li>
+    </ul>
+  </div>
+</div>
+
+<!-- === 重點整理 === -->
+<div class="section" id="cheatsheet">
+  <h2>📋 重點整理 Cheat Sheet</h2>
+  <div class="cheat-grid">
+    <div class="cheat-card">
+      <h4>✦ 正比</h4>
+      <div class="formula">y = kx（k ≠ 0）</div>
+      <ul>
+        <li>y 值 = x 值 × k（固定倍數）</li>
+        <li>圖形：過原點的直線</li>
+        <li>判別：y ÷ x 比值是否固定</li>
+        <li>求 k：代入已知 (x, y) 求解</li>
+        <li>x 增 k 倍 → y 也增 k 倍</li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4>✦ 反比</h4>
+      <div class="formula">xy = k（k ≠ 0）</div>
+      <ul>
+        <li>x × y = 固定乘積 k</li>
+        <li>圖形：雙曲線（不過原點）</li>
+        <li>判別：x × y 乘積是否固定</li>
+        <li>求 k：代入已知 (x, y) 求解</li>
+        <li>x 增 k 倍 → y 縮 1/k 倍（k>0 時）</li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4>✗ 常見錯誤</h4>
+      <ul>
+        <li>y = x + 5 ≠ 正比（有常數項）</li>
+        <li>y = x² ≠ 正比（指數不是 1）</li>
+        <li>x + y = 常數 ≠ 反比</li>
+        <li>「y 隨 x 減少」≠ 反比（k 為負時不成立）</li>
+      </ul>
+    </div>
+    <div class="cheat-card">
+      <h4>✓ 判別口訣</h4>
+      <ul>
+        <li><strong style="color:var(--yellow)">正比</strong>：比值固定（y/x = k）</li>
+        <li><strong style="color:var(--pink)">反比</strong>：乘積固定（xy = k）</li>
+        <li>「均分」→ 反比</li>
+        <li>「含量百分比」→ 正比</li>
+        <li>「找零」x+y=定值 → 都不是！</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- === 資訊圖表 === -->
+<div class="section" id="infographics">
+  <h2>🖼 NotebookLM 圖解卡片（點擊放大）</h2>
+  <div class="infographic-grid">
+    <div class="infographic-thumb" onclick="showLightbox('assets/infographic_02.jpg')">
+      <img src="assets/infographic_02.jpg" alt="正比定義" loading="lazy">
+      <p>正比定義與應用</p>
+    </div>
+    <div class="infographic-thumb" onclick="showLightbox('assets/infographic_04.jpg')">
+      <img src="assets/infographic_04.jpg" alt="正比圖解" loading="lazy">
+      <p>正比關係式圖解</p>
+    </div>
+    <div class="infographic-thumb" onclick="showLightbox('assets/infographic_05.jpg')">
+      <img src="assets/infographic_05.jpg" alt="反比定義" loading="lazy">
+      <p>反比定義與應用</p>
+    </div>
+    <div class="infographic-thumb" onclick="showLightbox('assets/infographic_01.jpg')">
+      <img src="assets/infographic_01.jpg" alt="反比判別" loading="lazy">
+      <p>反比判別與運算</p>
+    </div>
+    <div class="infographic-thumb" onclick="showLightbox('assets/infographic_03.jpg')">
+      <img src="assets/infographic_03.jpg" alt="正反比對照" loading="lazy">
+      <p>正比與反比教學對照</p>
+    </div>
+  </div>
+</div>
+
+<!-- === YouTube 佔位 === -->
+<div class="section" id="video-section">
+  <h2>▶ 學習影片</h2>
+  <div style="background:#111;border:2px dashed var(--border);border-radius:10px;
+    padding:40px;text-align:center;color:#888;">
+    <div style="font-size:3rem;margin-bottom:12px;">🎬</div>
+    <p>YouTube 教學影片</p>
+    <p style="font-size:0.82rem;margin-top:6px;">請提供 YouTube 網址以嵌入影片</p>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- Lightbox -->
+<div id="lightbox">
+  <button id="lightbox-close" onclick="hideLightbox()">✕</button>
+  <img id="lightbox-img" src="" alt="">
+</div>
+
+<!-- Floating Tools -->
+<div id="float-tools">
+  <button class="float-btn" onclick="togglePanel('lottery-panel')" title="抽籤">🎲</button>
+  <button class="float-btn" onclick="togglePanel('timer-panel')" title="計時器">⏱</button>
+</div>
+
+<div class="tool-panel" id="lottery-panel">
+  <h4>🎲 隨機抽籤</h4>
+  <div id="lottery-result">−</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+    <label style="font-size:0.78rem;">最大座號<br>
+      <input type="number" id="lottery-max" value="30" min="1"
+        style="width:50px;background:#0d1a0d;border:1px solid var(--border);color:var(--yellow);padding:2px;border-radius:4px;">
+    </label>
+  </div>
+  <button class="ctrl-btn" style="width:100%;margin-top:10px;" onclick="doLottery()">抽！</button>
+</div>
+
+<div class="tool-panel" id="timer-panel">
+  <h4>⏱ 計時器</h4>
+  <div id="timer-display">00:00</div>
+  <div style="display:flex;gap:6px;margin-top:8px;">
+    <button class="ctrl-btn" onclick="startTimer()">開始</button>
+    <button class="ctrl-btn" onclick="pauseTimer()">暫停</button>
+    <button class="ctrl-btn" onclick="resetTimer()">重設</button>
+  </div>
+  <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+    <button class="ctrl-btn" onclick="setTimer(60)">1分</button>
+    <button class="ctrl-btn" onclick="setTimer(120)">2分</button>
+    <button class="ctrl-btn" onclick="setTimer(300)">5分</button>
+  </div>
+</div>
+
+<!-- Drawing Tool Button -->
+<button class="float-btn" id="draw-btn" onclick="toggleDraw()" style="position:fixed;left:12px;bottom:80px;z-index:90;" title="畫筆">✏️</button>
+<canvas id="draw-canvas"></canvas>
+
+<script>
+// ===== MODE =====
+function setMode(m){
+  const isTeacher = m==='teacher';
+  if(isTeacher){
+    const pw = prompt('請輸入教師模式密碼：');
+    if(pw!=='math2026'){alert('密碼錯誤');return;}
+  }
+  document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
+  event.target.classList.add('active');
+  document.querySelectorAll('.teacher-area').forEach(el=>{
+    el.style.display = isTeacher?'block':'none';
+  });
+}
+
+// ===== CAROUSEL =====
+const carouselState = {};
+function initCarousel(id, startSlide, endSlide){
+  carouselState[id] = {cur:0, slides:[]};
+  const inner = document.getElementById(id+'-slides');
+  for(let i=startSlide;i<=endSlide;i++){
+    const img = document.createElement('img');
+    img.src = `assets/slide_${String(i).padStart(2,'0')}.jpg`;
+    img.alt = `Slide ${i}`;
+    img.loading = 'lazy';
+    if(i===startSlide) img.classList.add('active');
+    inner.appendChild(img);
+    carouselState[id].slides.push(img);
+  }
+  updateCounter(id);
+}
+function carouselGo(id, idx){
+  const s = carouselState[id];
+  s.slides.forEach((img,i)=>img.classList.toggle('active',i===idx));
+  s.cur = idx;
+  updateCounter(id);
+}
+function carouselPrev(id){
+  const s = carouselState[id];
+  carouselGo(id,(s.cur-1+s.slides.length)%s.slides.length);
+}
+function carouselNext(id){
+  const s = carouselState[id];
+  carouselGo(id,(s.cur+1)%s.slides.length);
+}
+function updateCounter(id){
+  const s = carouselState[id];
+  const el = document.getElementById(id+'-counter');
+  if(el) el.textContent = `${s.cur+1} / ${s.slides.length}`;
+}
+
+// ===== QUIZ =====
+const quizFeedback = {
+  q1a:{t:'正確！y=3x 符合 y=kx（k=3≠0）的形式，成正比。',f:'再想想！正比的定義是 y=kx，只有 B 選項符合。'},
+  q1b:{t:'正確！正比中 y 與 x 的比值固定，x 增加幾倍，y 也增加幾倍。',f:'正比中 y=kx，x 乘以 5，y 也乘以 5。'},
+  q2a:{t:'正確！正方形周長 y = 4x，符合 y=kx，k=4，成正比。',f:'正方形周長 = 4 × 邊長，即 y=4x，成正比。'},
+  q2b:{t:'正確！y=x+6 有常數項，y/x 不固定，不成正比。',f:'y=x+6 不能寫成 y=kx 的形式，所以不成正比。'},
+  q3a:{t:'正確！k = y/x = 15/3 = 5。',f:'代入計算：k = y ÷ x = 15 ÷ 3 = 5。'},
+  q3b:{t:'正確！y = 5×(−4) = −20。',f:'y = kx = 5×(−4) = −20。'},
+  q4a:{t:'正確！xy=12，x=3，所以 y=12/3=4。',f:'代入：3×y=12，y=4。'},
+  q4b:{t:'正確！反比中 xy=k，x 增 3 倍時 y 縮為 1/3 倍。',f:'xy=k，x 乘以 3，y 就除以 3（×1/3）。'},
+  q5a:{t:'正確！36 顆均分給 x 人，xy=36，成反比。',f:'均分情境：人數×每人顆數=總數，即 xy=36，成反比。'},
+  q5b:{t:'正確！½×x×y=60，即 xy=120，成反比。',f:'三角形面積：½×底×高=60，xy=120，成反比。'},
+  q6a:{t:'正確！k = xy = 6×(−2) = −12。',f:'k = x×y = 6×(−2) = −12。'},
+  q6b:{t:'正確！xy=1200，x=30，y=1200÷30=40 天。',f:'代入：30×y=1200，y=40 天。'},
+};
+function checkQuiz(qid, btn, isCorrect){
+  const box = document.getElementById(qid);
+  if(box.dataset.answered) return;
+  box.dataset.answered = '1';
+  box.querySelectorAll('.quiz-opt').forEach(b=>b.disabled=true);
+  btn.classList.add(isCorrect?'correct':'wrong');
+  if(!isCorrect){
+    box.querySelectorAll('.quiz-opt').forEach(b=>{
+      if(b.getAttribute('onclick').includes('true')) b.classList.add('correct');
+    });
+  }
+  const fb = document.getElementById(qid+'-fb');
+  const data = quizFeedback[qid];
+  fb.textContent = isCorrect ? '✓ '+data.t : '✗ '+data.f;
+  fb.className = 'quiz-feedback show '+(isCorrect?'ok':'no');
+}
+
+// ===== LIGHTBOX =====
+function showLightbox(src){
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox').classList.add('show');
+}
+function hideLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
+}
+document.getElementById('lightbox').addEventListener('click',function(e){
+  if(e.target===this) hideLightbox();
+});
+
+// ===== CANVAS HELPERS =====
+function getCtx(id){
+  const c = document.getElementById(id);
+  c.width = c.offsetWidth * (window.devicePixelRatio||1);
+  c.height = c.height * (window.devicePixelRatio||1) / (window.devicePixelRatio||1);
+  // Actually set CSS height from attribute, then scale canvas
+  const dpr = window.devicePixelRatio || 1;
+  const cssW = c.offsetWidth;
+  const cssH = parseInt(c.getAttribute('height')) || 240;
+  c.width = cssW * dpr;
+  c.height = cssH * dpr;
+  c.style.height = cssH + 'px';
+  const ctx = c.getContext('2d');
+  ctx.scale(dpr, dpr);
+  ctx.cssW = cssW; ctx.cssH = cssH;
+  return ctx;
+}
+function drawGrid(ctx, cx, cy, scale, color='rgba(255,255,255,0.08)'){
+  const W=ctx.cssW, H=ctx.cssH;
+  ctx.strokeStyle=color; ctx.lineWidth=0.5;
+  for(let x=cx%scale;x<W;x+=scale){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=cy%scale;y<H;y+=scale){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+}
+function drawAxes(ctx, cx, cy){
+  const W=ctx.cssW, H=ctx.cssH;
+  ctx.strokeStyle='rgba(255,255,255,0.3)'; ctx.lineWidth=1.5;
+  ctx.beginPath();ctx.moveTo(0,cy);ctx.lineTo(W,cy);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx,0);ctx.lineTo(cx,H);ctx.stroke();
+  // Arrow
+  ctx.beginPath();ctx.moveTo(W-8,cy-4);ctx.lineTo(W,cy);ctx.lineTo(W-8,cy+4);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(cx-4,8);ctx.lineTo(cx,0);ctx.lineTo(cx+4,8);ctx.stroke();
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px sans-serif';
+  ctx.fillText('x',W-10,cy-8); ctx.fillText('y',cx+6,12);
+}
+
+// ===== SEC 1: 正比直線 =====
+let k1 = 2;
+function updateSec1(){
+  k1 = parseFloat(document.getElementById('k1').value);
+  document.getElementById('k1-val').textContent = k1;
+  drawSec1();
+}
+function resetK1(){document.getElementById('k1').value=2;updateSec1();}
+function drawSec1(){
+  const ctx = getCtx('canvas-sec1');
+  const W=ctx.cssW, H=ctx.cssH;
+  const cx=W/2, cy=H/2, scale=30;
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx,cx,cy,scale);
+  drawAxes(ctx,cx,cy);
+  // Draw y=kx
+  ctx.strokeStyle='#ffd54f'; ctx.lineWidth=2;
+  ctx.beginPath();
+  const x0=-cx/scale, x1=(W-cx)/scale;
+  ctx.moveTo(cx+x0*scale, cy-k1*x0*scale);
+  ctx.lineTo(cx+x1*scale, cy-k1*x1*scale);
+  ctx.stroke();
+  // Label
+  ctx.fillStyle='#ffd54f'; ctx.font='bold 13px sans-serif';
+  ctx.fillText(`y = ${k1}x`, cx+8, k1>0?cy-20:cy+30);
+  // Formula
+  ctx.fillStyle='rgba(255,213,79,0.7)'; ctx.font='12px sans-serif';
+  ctx.fillText(`k = ${k1} ${k1>0?'> 0 (同向)':k1<0?'< 0 (反向)':'= 0 無效'}`,10,H-10);
+}
+
+// ===== SEC 2: 比較 =====
+let sec2Mode='prop';
+function setSec2(m){
+  sec2Mode=m;
+  ['prop','noprop','sq'].forEach(n=>{
+    document.getElementById('btn2-'+n).classList.toggle('active',n===m);
+  });
+  drawSec2();
+}
+function drawSec2(){
+  const ctx = getCtx('canvas-sec2');
+  const W=ctx.cssW, H=ctx.cssH;
+  const cx=W*0.4, cy=H/2, scale=25;
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx,cx,cy,scale);
+  drawAxes(ctx,cx,cy);
+  if(sec2Mode==='prop'){
+    ctx.strokeStyle='#a5d6a7'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(cx-cx, cy-2*(-cx/scale)*scale);
+    ctx.lineTo(cx+(W-cx), cy-2*((W-cx)/scale)*scale);
+    ctx.stroke();
+    ctx.fillStyle='#a5d6a7'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('y = 2x',cx+10,cy-40);
+    ctx.fillStyle='rgba(165,214,167,0.8)'; ctx.font='12px sans-serif';
+    ctx.fillText('✓ 成正比：y/x = 2 固定',10,H-10);
+  } else if(sec2Mode==='noprop'){
+    ctx.strokeStyle='#ff8a80'; ctx.lineWidth=2;
+    ctx.beginPath();
+    ctx.moveTo(cx-cx, cy-(0+3)*scale);
+    ctx.lineTo(cx+(W-cx), cy-((W-cx)/scale+3)*scale);
+    ctx.stroke();
+    ctx.fillStyle='#ff8a80'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('y = x + 3',cx+10,cy-50);
+    ctx.fillStyle='rgba(255,138,128,0.8)'; ctx.font='12px sans-serif';
+    ctx.fillText('✗ 不成正比：不過原點，y/x 不固定',10,H-10);
+  } else {
+    ctx.strokeStyle='#81d4fa'; ctx.lineWidth=2;
+    ctx.beginPath();
+    let first=true;
+    for(let px=0;px<W;px++){
+      const xv=(px-cx)/scale;
+      const yv=xv*xv;
+      const py=cy-yv*scale;
+      if(py<0||py>H){first=true;continue;}
+      if(first){ctx.moveTo(px,py);first=false;}
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+    ctx.fillStyle='#81d4fa'; ctx.font='bold 13px sans-serif';
+    ctx.fillText('y = x²',cx+10,cy-50);
+    ctx.fillStyle='rgba(129,212,250,0.8)'; ctx.font='12px sans-serif';
+    ctx.fillText('✗ 不成正比：y/x = x，不固定',10,H-10);
+  }
+}
+
+// ===== SEC 3: 正比關係式計算機 =====
+function updateSec3(){
+  const xv=parseFloat(document.getElementById('k3-x').value)||0;
+  const yv=parseFloat(document.getElementById('k3-y').value)||0;
+  const k = xv!==0 ? yv/xv : NaN;
+  const el=document.getElementById('k3-result');
+  if(isNaN(k)||!isFinite(k)){el.textContent='x 不能為 0';return;}
+  el.textContent = `→ k = ${yv}÷${xv} = ${k.toFixed(2)}，關係式：y = ${k.toFixed(2)}x`;
+  drawSec3(xv,yv,k);
+}
+function drawSec3(xv,yv,k){
+  const ctx = getCtx('canvas-sec3');
+  const W=ctx.cssW, H=ctx.cssH;
+  const cx=W*0.4, cy=H/2, scale=Math.min(25, H/(2*Math.abs(k)+1));
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx,cx,cy,25);
+  drawAxes(ctx,cx,cy);
+  // Draw y=kx
+  ctx.strokeStyle='#ffd54f'; ctx.lineWidth=2;
+  ctx.beginPath();
+  ctx.moveTo(0, cy-k*(-cx/25)*25);
+  ctx.lineTo(W, cy-k*((W-cx)/25)*25);
+  ctx.stroke();
+  // Draw point
+  ctx.fillStyle='#ff8a80'; ctx.strokeStyle='#ff8a80';
+  ctx.beginPath();
+  ctx.arc(cx+xv*25, cy-yv*25, 5, 0, Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#ff8a80'; ctx.font='12px sans-serif';
+  ctx.fillText(`(${xv}, ${yv})`, cx+xv*25+8, cy-yv*25-5);
+  ctx.fillStyle='rgba(255,213,79,0.8)'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`y = ${k.toFixed(2)}x`, cx+8, 20);
+}
+
+// ===== SEC 4: 反比雙曲線 =====
+let k4 = 24;
+function updateSec4(){
+  k4 = parseFloat(document.getElementById('k4').value);
+  document.getElementById('k4-val').textContent = k4;
+  drawSec4();
+}
+function resetK4(){document.getElementById('k4').value=24;updateSec4();}
+function drawSec4(){
+  const ctx = getCtx('canvas-sec4');
+  const W=ctx.cssW, H=ctx.cssH;
+  const cx=W/2, cy=H/2, scale=12;
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx,cx,cy,scale);
+  drawAxes(ctx,cx,cy);
+  // Draw xy=k4 (two branches)
+  ctx.strokeStyle='#ffd54f'; ctx.lineWidth=2;
+  for(let branch=0;branch<2;branch++){
+    ctx.beginPath(); let first=true;
+    for(let px=1;px<W;px++){
+      const xv=(px-cx)/scale*(branch===0?1:-1);
+      if(Math.abs(xv)<0.1){first=true;continue;}
+      const yv=k4/xv;
+      const py=cy-yv*scale;
+      if(py<-10||py>H+10){first=true;continue;}
+      if(first){ctx.moveTo(px,py);first=false;}
+      else ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  ctx.fillStyle='#ffd54f'; ctx.font='bold 13px sans-serif';
+  ctx.fillText(`xy = ${k4}`, 10, 20);
+  ctx.fillStyle='rgba(255,213,79,0.6)'; ctx.font='11px sans-serif';
+  ctx.fillText(`k = ${k4} ${k4>0?'（第一、三象限）':'（第二、四象限）'}`, 10, H-10);
+}
+
+// ===== SEC 5: 乘積檢驗 =====
+let sec5Mode='inv';
+function setSec5(m){
+  sec5Mode=m;
+  document.getElementById('btn5-inv').classList.toggle('active',m==='inv');
+  document.getElementById('btn5-add').classList.toggle('active',m==='add');
+  drawSec5();
+}
+function drawSec5(){
+  const ctx = getCtx('canvas-sec5');
+  const W=ctx.cssW, H=ctx.cssH;
+  ctx.clearRect(0,0,W,H);
+  const rows = sec5Mode==='inv'
+    ? [{x:2,y:18},{x:3,y:12},{x:4,y:9},{x:6,y:6},{x:9,y:4},{x:12,y:3}]
+    : [{x:6,y:30},{x:12,y:24},{x:18,y:18},{x:24,y:12},{x:30,y:6}];
+  const colW = W/4, rowH = (H-50)/rows.length;
+  // Header
+  ctx.fillStyle=sec5Mode==='inv'?'#a5d6a7':'#ff8a80';
+  ctx.font='bold 13px sans-serif';
+  ctx.fillText('x', colW*0.5, 30);
+  ctx.fillText('y', colW*1.5, 30);
+  ctx.fillText('x × y', colW*2.5, 30);
+  ctx.fillText('判斷', colW*3.5, 30);
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.fillRect(0,36,W,1);
+  rows.forEach((row,i)=>{
+    const y = 50 + i*rowH;
+    const prod = row.x * row.y;
+    const ok = sec5Mode==='inv' ? prod===36 : false;
+    ctx.fillStyle=ok?'#a5d6a7':'rgba(255,255,255,0.8)';
+    ctx.font='12px sans-serif';
+    ctx.fillText(row.x, colW*0.5, y+rowH*0.6);
+    ctx.fillText(row.y, colW*1.5, y+rowH*0.6);
+    ctx.fillText(prod, colW*2.5, y+rowH*0.6);
+    ctx.fillStyle=sec5Mode==='inv'?'#a5d6a7':'#ff8a80';
+    ctx.fillText(sec5Mode==='inv'?'= 36 ✓':'≠ 36 ✗', colW*3.5, y+rowH*0.6);
+  });
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='11px sans-serif';
+  if(sec5Mode==='inv') ctx.fillText('乘積固定 → 成反比 xy=36',10,H-8);
+  else ctx.fillText('和固定 x+y=36，但乘積不固定 → 不成反比',10,H-8);
+}
+
+// ===== SEC 6: 反比計算機 =====
+function updateSec6(){
+  const xv=parseFloat(document.getElementById('k6-x').value)||0;
+  const yv=parseFloat(document.getElementById('k6-y').value)||0;
+  const k=xv*yv;
+  document.getElementById('k6-result').textContent=
+    `→ k = ${xv}×${yv} = ${k}，關係式：xy = ${k}`;
+  drawSec6(xv,yv,k);
+}
+function drawSec6(xv,yv,k){
+  const ctx = getCtx('canvas-sec6');
+  const W=ctx.cssW, H=ctx.cssH;
+  const cx=W/2, cy=H/2, scale=10;
+  ctx.clearRect(0,0,W,H);
+  drawGrid(ctx,cx,cy,scale);
+  drawAxes(ctx,cx,cy);
+  if(k!==0){
+    ctx.strokeStyle='#ffd54f'; ctx.lineWidth=2;
+    for(let branch=0;branch<2;branch++){
+      ctx.beginPath(); let first=true;
+      for(let px=1;px<W;px++){
+        const x=(px-cx)/scale*(branch===0?1:-1);
+        if(Math.abs(x)<0.2){first=true;continue;}
+        const y=k/x;
+        const py=cy-y*scale;
+        if(py<-20||py>H+20){first=true;continue;}
+        if(first){ctx.moveTo(px,py);first=false;}
+        else ctx.lineTo(px,py);
+      }
+      ctx.stroke();
+    }
+  }
+  // Mark known point
+  ctx.fillStyle='#ff8a80';
+  ctx.beginPath();
+  ctx.arc(cx+xv*scale, cy-yv*scale, 5,0,Math.PI*2);
+  ctx.fill();
+  ctx.fillStyle='#ff8a80'; ctx.font='12px sans-serif';
+  ctx.fillText(`(${xv}, ${yv})`, cx+xv*scale+8, cy-yv*scale-5);
+  ctx.fillStyle='rgba(255,213,79,0.8)'; ctx.font='bold 12px sans-serif';
+  ctx.fillText(`xy = ${k}`, 10, 20);
+}
+
+// ===== LOTTERY =====
+function doLottery(){
+  const max=parseInt(document.getElementById('lottery-max').value)||30;
+  const n=Math.floor(Math.random()*max)+1;
+  document.getElementById('lottery-result').textContent='🎯 '+n;
+}
+
+// ===== TIMER =====
+let timerSec=0, timerRunning=false, timerInterval=null, timerTarget=0;
+function updateTimerDisplay(){
+  const s=timerTarget>0?Math.max(0,timerTarget-timerSec):timerSec;
+  const m=Math.floor(s/60), sec=s%60;
+  document.getElementById('timer-display').textContent=
+    String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
+}
+function startTimer(){
+  if(timerRunning)return;
+  timerRunning=true;
+  timerInterval=setInterval(()=>{timerSec++;updateTimerDisplay();},1000);
+}
+function pauseTimer(){
+  timerRunning=false;
+  clearInterval(timerInterval);
+}
+function resetTimer(){
+  pauseTimer();timerSec=0;timerTarget=0;updateTimerDisplay();
+}
+function setTimer(s){
+  resetTimer();timerTarget=s;updateTimerDisplay();
+  startTimer();
+}
+
+// ===== DRAW =====
+let drawActive=false, drawCtx=null, drawColor='#ffd54f', drawPainting=false;
+function toggleDraw(){
+  drawActive=!drawActive;
+  const dc=document.getElementById('draw-canvas');
+  const btn=document.getElementById('draw-btn');
+  dc.classList.toggle('active',drawActive);
+  btn.style.background=drawActive?'var(--yellow)':'var(--card)';
+  btn.style.color=drawActive?'#1a1a1a':'var(--chalk)';
+  if(!drawCtx){
+    dc.width=window.innerWidth;dc.height=window.innerHeight;
+    drawCtx=dc.getContext('2d');
+    dc.addEventListener('mousedown',e=>{if(!drawActive)return;drawPainting=true;drawCtx.beginPath();drawCtx.moveTo(e.clientX,e.clientY);});
+    dc.addEventListener('mousemove',e=>{if(!drawPainting)return;drawCtx.lineTo(e.clientX,e.clientY);drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=3;drawCtx.lineCap='round';drawCtx.stroke();});
+    dc.addEventListener('mouseup',()=>{drawPainting=false;});
+    dc.addEventListener('touchstart',e=>{if(!drawActive)return;e.preventDefault();drawPainting=true;const t=e.touches[0];drawCtx.beginPath();drawCtx.moveTo(t.clientX,t.clientY);});
+    dc.addEventListener('touchmove',e=>{if(!drawPainting)return;e.preventDefault();const t=e.touches[0];drawCtx.lineTo(t.clientX,t.clientY);drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=3;drawCtx.stroke();});
+    dc.addEventListener('touchend',()=>{drawPainting=false;});
+  }
+}
+
+// ===== TOOL PANELS =====
+function togglePanel(id){
+  document.querySelectorAll('.tool-panel').forEach(p=>{
+    if(p.id!==id) p.classList.remove('show');
+  });
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  // Init opening carousel with all 20 slides
+  initCarousel('opening',1,20);
+  // Init all canvases
+  drawSec1();drawSec2();updateSec3();drawSec4();drawSec5();updateSec6();
+  // Nav pill active state
+  const pills=document.querySelectorAll('.nav-pill');
+  const sections=document.querySelectorAll('.section[id]');
+  const observer=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        pills.forEach(p=>p.classList.toggle('active',p.getAttribute('href')==='#'+e.target.id));
+      }
+    });
+  },{threshold:0.3});
+  sections.forEach(s=>observer.observe(s));
+});
+
+window.addEventListener('resize',()=>{
+  drawSec1();drawSec2();drawSec4();drawSec5();
+  updateSec3(); updateSec6();
+});
+</script>
+</body>
+</html>
