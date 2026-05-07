@@ -888,23 +888,46 @@ function drawCvs2(){
       ex3:{title:'例③ 小貨車',context:'車重2600kg，每臺電視32kg，總重不超過3500kg',var:'運送 x 臺',expr:'2600 + 32x',sym:'≤',val:'3500',ans:'2600 + 32x ≤ 3500',color:'#ffd54f'},
     };
     const e = exs[cvs2Mode] || exs.ex1;
-    ctx.fillStyle=e.color; ctx.font=`bold ${Math.min(W*.04,20)}px sans-serif`; ctx.textAlign='center';
-    ctx.fillText(e.title, W/2, H*.15);
-    ctx.fillStyle='#e8e4d8cc'; ctx.font=`${Math.min(W*.025,14)}px sans-serif`;
-    wrapText(ctx, e.context, W/2, H*.28, W-60, 22);
-    const row = H*.52;
+    // 標題
+    let t2Size = H * 0.1;
+    ctx.font = `bold ${t2Size}px sans-serif`;
+    while(ctx.measureText(e.title).width > W*0.8 && t2Size > 8){ t2Size-=0.5; ctx.font=`bold ${t2Size}px sans-serif`; }
+    ctx.fillStyle=e.color; ctx.textAlign='center';
+    ctx.fillText(e.title, W/2, H*0.1+t2Size);
+    // 情境說明
+    let ctxSize = H * 0.07;
+    ctx.font = `${ctxSize}px sans-serif`;
+    while(ctx.measureText(e.context).width > W*0.85 && ctxSize > 6){ ctxSize-=0.5; ctx.font=`${ctxSize}px sans-serif`; }
+    ctx.fillStyle='#e8e4d8cc';
+    wrapText(ctx, e.context, W/2, H*0.26, W*0.85, ctxSize*1.5);
+    // 三個方塊
     const items=[e.expr, e.sym, e.val];
     const lbs=['數量式','符號','數值'];
+    const boxMaxW = W * 0.22;
+    let bSize = H * 0.09;
+    ctx.font = `bold ${bSize}px serif`;
+    const longest = items.reduce((a,b)=>ctx.measureText(a).width>ctx.measureText(b).width?a:b);
+    while(ctx.measureText(longest).width > boxMaxW-24 && bSize > 8){ bSize-=0.5; ctx.font=`bold ${bSize}px serif`; }
+    const boxW = Math.min(boxMaxW, ctx.measureText(longest).width+40);
+    const boxH = bSize * 2.2;
+    const row = H * 0.54;
+    let lblSize = Math.max(8, bSize * 0.55);
+    ctx.textBaseline='middle';
     items.forEach((v,i)=>{
       const cx=W*(0.25+i*0.25);
-      ctx.fillStyle=e.color+'33'; roundRect(ctx,cx-50,row-20,100,36,6); ctx.fill();
-      ctx.fillStyle=e.color; ctx.font=`bold ${Math.min(W*.04,18)}px serif`; ctx.textAlign='center';
-      ctx.fillText(v,cx,row+4);
-      ctx.fillStyle='#888'; ctx.font=`${Math.min(W*.025,12)}px sans-serif`;
-      ctx.fillText(lbs[i],cx,row+22);
+      ctx.fillStyle=e.color+'33'; roundRect(ctx,cx-boxW/2,row-boxH/2,boxW,boxH,8); ctx.fill();
+      ctx.fillStyle=e.color; ctx.font=`bold ${bSize}px serif`; ctx.textAlign='center';
+      ctx.fillText(v,cx,row);
+      ctx.fillStyle='#888'; ctx.font=`${lblSize}px sans-serif`;
+      ctx.fillText(lbs[i],cx,row+boxH/2+lblSize+4);
     });
-    ctx.fillStyle=e.color; ctx.font=`bold ${Math.min(W*.05,22)}px serif`; ctx.textAlign='center';
-    ctx.fillText('→ ' + e.ans, W/2, H*.82);
+    ctx.textBaseline='alphabetic';
+    // 答案列
+    let ansSize = H * 0.09;
+    ctx.font = `bold ${ansSize}px serif`;
+    while(ctx.measureText('→ '+e.ans).width > W*0.85 && ansSize > 8){ ansSize-=0.5; ctx.font=`bold ${ansSize}px serif`; }
+    ctx.fillStyle=e.color; ctx.textAlign='center';
+    ctx.fillText('→ '+e.ans, W/2, H*0.88);
   }
 }
 
@@ -922,48 +945,84 @@ function drawCvs3(){
   const ctx=c3.getContext('2d'); const W=c3.width,H=c3.height;
   ctx.clearRect(0,0,W,H); ctx.fillStyle='#1a2d1a'; ctx.fillRect(0,0,W,H);
   if(cvs3Mode==='def'){
-    ctx.fillStyle='#ffd54f'; ctx.font=`bold ${Math.min(W*.04,20)}px sans-serif`; ctx.textAlign='center';
-    ctx.fillText('一元一次不等式的定義', W/2, H*.12);
+    // 標題
+    let t3Size = H * 0.09;
+    ctx.font = `bold ${t3Size}px sans-serif`;
+    while(ctx.measureText('一元一次不等式的定義').width > W*0.85 && t3Size > 8){ t3Size-=0.5; ctx.font=`bold ${t3Size}px sans-serif`; }
+    ctx.fillStyle='#ffd54f'; ctx.textAlign='center';
+    ctx.fillText('一元一次不等式的定義', W/2, H*0.06+t3Size);
     const defs=[
       {k:'一元',v:'只含一種未知數（如：只有 x）',c:'#ffd54f'},
       {k:'一次',v:'未知數最高次方為 1（如：x，非 x²）',c:'#81d4fa'},
       {k:'不等式',v:'含有 >、<、≥、≤ 符號的式子',c:'#a5d6a7'},
     ];
+    const rowStart = H*0.18, rowTotal = H*0.72, rowH = rowTotal/defs.length;
     defs.forEach((d,i)=>{
-      const y=H*(0.28+i*0.22);
-      ctx.fillStyle=d.c+'33'; roundRect(ctx,40,y-16,W-80,30,6); ctx.fill();
-      ctx.fillStyle=d.c; ctx.font=`bold ${Math.min(W*.035,16)}px sans-serif`; ctx.textAlign='left';
-      ctx.fillText(d.k+'：',50,y+4);
-      ctx.fillStyle='#e8e4d8cc'; ctx.font=`${Math.min(W*.03,14)}px sans-serif`;
-      ctx.fillText(d.v, 50+(d.k.length+1)*Math.min(W*.035,16)*0.65, y+4);
+      const ry = rowStart + i*rowH, rmid = ry + rowH*0.5;
+      ctx.fillStyle=d.c+'33'; roundRect(ctx,24,ry+4,W-48,rowH-8,8); ctx.fill();
+      const keyText = d.k+'：';
+      let kSize = rowH * 0.38;
+      ctx.font=`bold ${kSize}px sans-serif`;
+      while(ctx.measureText(keyText).width > W*0.16 && kSize>8){ kSize-=0.5; ctx.font=`bold ${kSize}px sans-serif`; }
+      let vSize = rowH * 0.34;
+      ctx.font=`${vSize}px sans-serif`;
+      while(ctx.measureText(d.v).width > W*0.72 && vSize>8){ vSize-=0.5; ctx.font=`${vSize}px sans-serif`; }
+      ctx.fillStyle=d.c; ctx.font=`bold ${kSize}px sans-serif`; ctx.textAlign='left'; ctx.textBaseline='middle';
+      const kw = ctx.measureText(keyText).width;
+      ctx.fillText(keyText, 40, rmid);
+      ctx.fillStyle='#e8e4d8cc'; ctx.font=`${vSize}px sans-serif`;
+      ctx.fillText(d.v, 40+kw+8, rmid);
+      ctx.textBaseline='alphabetic';
     });
-    ctx.fillStyle='#a5d6a7aa'; ctx.font=`${Math.min(W*.028,13)}px sans-serif`; ctx.textAlign='center';
-    ctx.fillText('例：8x > 100，1200 + 250x ≥ 3999，0.9x − 500 ≤ 6000', W/2, H*.9);
+    // 範例
+    const exText='例：8x > 100，1200 + 250x ≥ 3999，0.9x − 500 ≤ 6000';
+    let exSize = H*0.055;
+    ctx.font=`${exSize}px sans-serif`;
+    while(ctx.measureText(exText).width > W*0.88 && exSize>6){ exSize-=0.5; ctx.font=`${exSize}px sans-serif`; }
+    ctx.fillStyle='#a5d6a7aa'; ctx.textAlign='center';
+    ctx.fillText(exText, W/2, H*0.96);
   } else {
-    ctx.fillStyle='#81d4fa'; ctx.font=`bold ${Math.min(W*.04,18)}px sans-serif`; ctx.textAlign='center';
-    ctx.fillText('驗算：3x + 2 ≤ 14', W/2, H*.1);
+    // 驗算標題
+    let t3vSize = H * 0.09;
+    ctx.font=`bold ${t3vSize}px sans-serif`;
+    while(ctx.measureText('驗算：3x + 2 ≤ 14').width > W*0.8 && t3vSize>8){ t3vSize-=0.5; ctx.font=`bold ${t3vSize}px sans-serif`; }
+    ctx.fillStyle='#81d4fa'; ctx.textAlign='center';
+    ctx.fillText('驗算：3x + 2 ≤ 14', W/2, H*0.06+t3vSize);
     const rows=[
       {x:'x = 2',calc:'3×2+2 = 8',cmp:'8 ≤ 14',ok:true},
       {x:'x = 4',calc:'3×4+2 = 14',cmp:'14 ≤ 14',ok:true},
       {x:'x = 6',calc:'3×6+2 = 20',cmp:'20 ≤ 14',ok:false},
     ];
     const cols=['代入','計算','判斷','是否為解'];
-    const cw=W/4.2, startX=W*.05;
-    ctx.fillStyle='#81d4fa66'; ctx.fillRect(startX,H*.18,W*.9,24);
-    cols.forEach((c,i)=>{ctx.fillStyle='#81d4fa';ctx.font=`bold ${Math.min(W*.03,13)}px sans-serif`;ctx.textAlign='center';ctx.fillText(c,startX+cw*(i+.5),H*.18+16)});
+    // 動態表格字體
+    let tblSize = H * 0.07;
+    ctx.font=`bold ${tblSize}px sans-serif`;
+    while(ctx.measureText('3×6+2 = 20').width > W*0.18 && tblSize>6){ tblSize-=0.5; ctx.font=`bold ${tblSize}px sans-serif`; }
+    const tblStart=W*0.04, tblW=W*0.92, colW=tblW/4;
+    const hdrH=tblSize*2.5, rowH2=(H*0.68)/rows.length, tblY=H*0.18;
+    ctx.fillStyle='#81d4fa33'; ctx.fillRect(tblStart,tblY,tblW,hdrH);
+    cols.forEach((c,i)=>{
+      ctx.fillStyle='#81d4fa'; ctx.font=`bold ${tblSize}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+      ctx.fillText(c, tblStart+colW*(i+0.5), tblY+hdrH*0.5);
+    });
     rows.forEach((r,i)=>{
-      const y=H*(0.32+i*0.2);
-      ctx.fillStyle=r.ok?'#a5d6a722':'#ff8a8022';
-      ctx.fillRect(startX,y-14,W*.9,26);
+      const ry=tblY+hdrH+i*rowH2;
+      ctx.fillStyle=r.ok?'#a5d6a722':'#ff8a8022'; ctx.fillRect(tblStart,ry,tblW,rowH2);
       const vs=[r.x,r.calc,r.cmp,r.ok?'✓ 是':'✗ 否'];
       vs.forEach((v,j)=>{
         ctx.fillStyle=j===3?(r.ok?'#a5d6a7':'#ff8a80'):'#e8e4d8';
-        ctx.font=`${Math.min(W*.03,13)}px sans-serif`; ctx.textAlign='center';
-        ctx.fillText(v,startX+cw*(j+.5),y+4);
+        ctx.font=`${tblSize}px sans-serif`; ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(v, tblStart+colW*(j+0.5), ry+rowH2*0.5);
       });
     });
-    ctx.fillStyle='#ffd54fcc'; ctx.font=`${Math.min(W*.028,13)}px sans-serif`; ctx.textAlign='center';
-    ctx.fillText('→ x = 2 和 x = 4 都是解；x = 6 不是解', W/2, H*.9);
+    ctx.textBaseline='alphabetic';
+    // 結論
+    const sumText='→ x = 2 和 x = 4 都是解；x = 6 不是解';
+    let sumSize=H*0.065;
+    ctx.font=`${sumSize}px sans-serif`;
+    while(ctx.measureText(sumText).width>W*0.85&&sumSize>6){sumSize-=0.5;ctx.font=`${sumSize}px sans-serif`;}
+    ctx.fillStyle='#ffd54fcc'; ctx.textAlign='center';
+    ctx.fillText(sumText, W/2, H*0.95);
   }
 }
 
@@ -988,16 +1047,28 @@ function drawCvs4(){
     lte:{label:'x ≤ 2',desc:'所有小於或等於 2 的數（含 2）',val:2,dir:-1,filled:true,color:'#ff8a80'},
   };
   const cfg=configs[cvs4Mode];
-  ctx.fillStyle=cfg.color; ctx.font=`bold ${Math.min(W*.06,28)}px serif`; ctx.textAlign='center';
-  ctx.fillText(cfg.label, W/2, H*.2);
-  ctx.fillStyle='#e8e4d8bb'; ctx.font=`${Math.min(W*.035,16)}px sans-serif`;
-  ctx.fillText(cfg.desc, W/2, H*.33);
+  // 主標題
+  let c4LabelSize = H * 0.13;
+  ctx.font=`bold ${c4LabelSize}px serif`;
+  while(ctx.measureText(cfg.label).width > W*0.5 && c4LabelSize>10){ c4LabelSize--; ctx.font=`bold ${c4LabelSize}px serif`; }
+  ctx.fillStyle=cfg.color; ctx.textAlign='center';
+  ctx.fillText(cfg.label, W/2, H*0.08+c4LabelSize);
+  // 說明文字
+  let c4DescSize = H * 0.07;
+  ctx.font=`${c4DescSize}px sans-serif`;
+  while(ctx.measureText(cfg.desc).width > W*0.85 && c4DescSize>8){ c4DescSize-=0.5; ctx.font=`${c4DescSize}px sans-serif`; }
+  ctx.fillStyle='#e8e4d8bb';
+  ctx.fillText(cfg.desc, W/2, H*0.08+c4LabelSize+c4DescSize+10);
   drawNumberLine(ctx, W, H, cfg.val, cfg.dir, cfg.filled, cfg.color);
   // 端點說明
   const ptLabel = cfg.filled ? '實心圓 ● ：含端點' : '空心圓 ○ ：不含端點';
   const dirLabel = cfg.dir===1 ? '向右延伸（數值增大方向）' : '向左延伸（數值減小方向）';
-  ctx.fillStyle=cfg.color+'cc'; ctx.font=`${Math.min(W*.03,14)}px sans-serif`; ctx.textAlign='center';
-  ctx.fillText(ptLabel + '　' + dirLabel, W/2, H*.9);
+  const noteText = ptLabel + '　' + dirLabel;
+  let c4NoteSize = H * 0.06;
+  ctx.font=`${c4NoteSize}px sans-serif`;
+  while(ctx.measureText(noteText).width > W*0.88 && c4NoteSize>6){ c4NoteSize-=0.5; ctx.font=`${c4NoteSize}px sans-serif`; }
+  ctx.fillStyle=cfg.color+'cc'; ctx.textAlign='center';
+  ctx.fillText(noteText, W/2, H*0.93);
 }
 function drawNumberLine(ctx, W, H, val, dir, filled, color){
   const y=H*.62, lx=W*.1, rx=W*.9;
@@ -1053,11 +1124,19 @@ function drawCvs5(){
     co:{label:'-2 ≤ x < 1',a:-2,b:1,fa:true,fb:false,color:'#ff8a80'},
   };
   const cfg=configs[cvs5Mode];
-  ctx.fillStyle=cfg.color; ctx.font=`bold ${Math.min(W*.06,28)}px serif`; ctx.textAlign='center';
-  ctx.fillText(cfg.label, W/2, H*.2);
+  // 主標題
+  let c5LabelSize = H * 0.13;
+  ctx.font=`bold ${c5LabelSize}px serif`;
+  while(ctx.measureText(cfg.label).width > W*0.6 && c5LabelSize>10){ c5LabelSize--; ctx.font=`bold ${c5LabelSize}px serif`; }
+  ctx.fillStyle=cfg.color; ctx.textAlign='center';
+  ctx.fillText(cfg.label, W/2, H*0.08+c5LabelSize);
+  // 提示文字
   const hint=(cfg.fa?'含左端點（≥）':'不含左端點（>）') + '　' + (cfg.fb?'含右端點（≤）':'不含右端點（<）');
-  ctx.fillStyle='#e8e4d8bb'; ctx.font=`${Math.min(W*.03,14)}px sans-serif`;
-  ctx.fillText(hint, W/2, H*.33);
+  let c5HintSize = H * 0.07;
+  ctx.font=`${c5HintSize}px sans-serif`;
+  while(ctx.measureText(hint).width > W*0.85 && c5HintSize>8){ c5HintSize-=0.5; ctx.font=`${c5HintSize}px sans-serif`; }
+  ctx.fillStyle='#e8e4d8bb';
+  ctx.fillText(hint, W/2, H*0.08+c5LabelSize+c5HintSize+10);
   drawDoubleNumberLine(ctx,W,H,cfg.a,cfg.b,cfg.fa,cfg.fb,cfg.color);
 }
 function drawDoubleNumberLine(ctx,W,H,a,b,fa,fb,color){
@@ -1086,8 +1165,12 @@ function drawDoubleNumberLine(ctx,W,H,a,b,fa,fb,color){
     if(pt.filled){ctx.fillStyle=color;ctx.fill();}else{ctx.fillStyle='#1a2d1a';ctx.fill();}
     ctx.stroke();
   });
-  ctx.fillStyle=color+'cc'; ctx.font=`${Math.min(W*.03,14)}px sans-serif`; ctx.textAlign='center';
-  ctx.fillText('介於 '+a+' 到 '+b+' 之間的所有數', W/2, H*.88);
+  const c5BotText = '介於 '+a+' 到 '+b+' 之間的所有數';
+  let c5BotSize = H * 0.07;
+  ctx.font=`${c5BotSize}px sans-serif`;
+  while(ctx.measureText(c5BotText).width > W*0.7 && c5BotSize>6){ c5BotSize-=0.5; ctx.font=`${c5BotSize}px sans-serif`; }
+  ctx.fillStyle=color+'cc'; ctx.textAlign='center';
+  ctx.fillText(c5BotText, W/2, H*0.93);
 }
 
 // ===== INIT =====
