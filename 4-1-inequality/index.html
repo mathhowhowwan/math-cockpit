@@ -27,6 +27,8 @@ header{
 }
 header h1{font-size:1.3rem;color:#fff3e0;text-shadow:1px 1px 3px rgba(0,0,0,.6)}
 header .subtitle{font-size:.9rem;color:#d7ccc8;margin-top:2px}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
 
 /* ===== MODE BAR ===== */
 .mode-bar{background:rgba(0,0,0,.3);padding:6px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
@@ -196,7 +198,10 @@ canvas{width:100%;height:100%;display:block}
     <h1>📐 4-1 一元一次不等式及其解</h1>
     <div class="subtitle">七年級數學 第四章 · 教學駕駛艙</div>
   </div>
-  <span class="teacher-badge" id="teacherBadge">🔑 教師模式</span>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <span class="teacher-badge" id="teacherBadge">🔑 教師模式</span>
+  </div>
 </header>
 
 <!-- MODE BAR -->
