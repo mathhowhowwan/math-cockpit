@@ -19,9 +19,12 @@ header{
   padding:12px 20px;position:sticky;top:0;z-index:100;
   box-shadow:0 3px 10px rgba(0,0,0,0.5);
   border-bottom:4px solid #5d4037;
+  display:flex;align-items:center;justify-content:space-between;
 }
 header h1{font-size:1.4rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
 header p{font-size:0.8rem;color:#d7ccc8;margin-top:2px;}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
 
 /* Mode Bar */
 #mode-bar{
@@ -206,8 +209,11 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
 <body>
 
 <header>
-  <h1>📐 3-1 比例式 教學駕駛艙</h1>
-  <p>七年級下學期 ｜ 第三章 比例</p>
+  <div>
+    <h1>📐 3-1 比例式 教學駕駛艙</h1>
+    <p>七年級下學期 ｜ 第三章 比例</p>
+  </div>
+  <a class="btn-home-nav" href="../index.html">🏠 首頁</a>
 </header>
 
 <div id="mode-bar">

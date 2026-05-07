@@ -15,9 +15,12 @@ body{background:var(--bg);color:var(--chalk);font-family:'Segoe UI',sans-serif;m
 /* Header */
 header{background:linear-gradient(135deg,var(--wood),var(--wood2));padding:16px 24px;
   border-bottom:4px solid #5d4037;position:sticky;top:0;z-index:100;
-  box-shadow:0 2px 12px rgba(0,0,0,0.5);}
+  box-shadow:0 2px 12px rgba(0,0,0,0.5);
+  display:flex;align-items:center;justify-content:space-between;}
 header h1{font-size:1.5rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.7);}
 header p{color:#d7ccc8;font-size:0.85rem;margin-top:4px;}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
 /* Mode Bar */
 #modebar{background:#162816;border-bottom:2px solid var(--border);padding:8px 24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
 .mode-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--border);cursor:pointer;font-size:0.82rem;transition:all 0.2s;background:transparent;color:var(--chalk);}
@@ -128,8 +131,11 @@ input[type=range]{accent-color:var(--yellow);width:140px;}
 <body>
 
 <header>
-  <h1>📐 3-2 正比與反比｜七年級數學教學駕駛艙</h1>
-  <p>互動黑板粉筆風格教學平台 ｜ 七年級下學期 第三章 比例</p>
+  <div>
+    <h1>📐 3-2 正比與反比｜七年級數學教學駕駛艙</h1>
+    <p>互動黑板粉筆風格教學平台 ｜ 七年級下學期 第三章 比例</p>
+  </div>
+  <a class="btn-home-nav" href="../index.html">🏠 首頁</a>
 </header>
 
 <!-- Mode Bar -->
