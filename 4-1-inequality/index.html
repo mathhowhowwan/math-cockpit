@@ -747,9 +747,9 @@ function drawCvs1(){
       ctx.lineWidth = 1;
       roundRect(ctx, x+8, y+8, cw-16, ch-16, 8);
       ctx.fill(); ctx.stroke();
-      const symSize = ch * 0.38;
-      const nameSize = ch * 0.1;
-      const kwSize = ch * 0.075;
+      const symSize = Math.min(ch * 0.3, 72);
+      const nameSize = Math.min(ch * 0.08, 24);
+      const kwSize = Math.min(ch * 0.065, 18);
       ctx.fillStyle = d.color;
       ctx.font = `bold ${symSize}px serif`;
       ctx.textAlign = 'center';
