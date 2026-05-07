@@ -747,19 +747,34 @@ function drawCvs1(){
       ctx.lineWidth = 1;
       roundRect(ctx, x+8, y+8, cw-16, ch-16, 8);
       ctx.fill(); ctx.stroke();
-      const symSize = Math.min(ch * 0.3, 72);
-      const nameSize = Math.min(ch * 0.08, 24);
-      const kwSize = Math.min(ch * 0.065, 18);
+      const pad = 14, availW = cw - pad*2, availH = ch - pad*2;
+      // 符號：撐到 availH 50%，再縮到寬度 80% 以內
+      let symSize = Math.min(availH * 0.5, availW * 0.8);
+      ctx.font = `bold ${symSize}px serif`;
+      while(ctx.measureText(d.sym).width > availW * 0.8 && symSize > 10){ symSize--; ctx.font=`bold ${symSize}px serif`; }
+      // 名稱：撐到 availH 22%，再縮到 availW 以內
+      let nameSize = availH * 0.22;
+      ctx.font = `bold ${nameSize}px sans-serif`;
+      while(ctx.measureText(d.name).width > availW && nameSize > 8){ nameSize -= 0.5; ctx.font=`bold ${nameSize}px sans-serif`; }
+      // 關鍵字：撐到 availH 18%，再縮到 availW 以內
+      let kwSize = availH * 0.18;
+      ctx.font = `${kwSize}px sans-serif`;
+      while(ctx.measureText(d.keywords).width > availW && kwSize > 6){ kwSize -= 0.5; ctx.font=`${kwSize}px sans-serif`; }
+      // 垂直等距排列
+      const totalH = symSize + nameSize + kwSize;
+      const gap = Math.max(4, (availH - totalH) / 4);
+      const symCY  = y + pad + gap + symSize / 2;
+      const nameCY = symCY + symSize / 2 + gap + nameSize / 2;
+      const kwCY   = nameCY + nameSize / 2 + gap + kwSize / 2;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
       ctx.fillStyle = d.color;
       ctx.font = `bold ${symSize}px serif`;
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText(d.sym, x+cw/2, y+ch*.38);
+      ctx.fillText(d.sym, x+cw/2, symCY);
       ctx.font = `bold ${nameSize}px sans-serif`;
-      ctx.fillText(d.name, x+cw/2, y+ch*.68);
+      ctx.fillText(d.name, x+cw/2, nameCY);
       ctx.fillStyle = '#e8e4d8cc';
       ctx.font = `${kwSize}px sans-serif`;
-      ctx.fillText(d.keywords, x+cw/2, y+ch*.86);
+      ctx.fillText(d.keywords, x+cw/2, kwCY);
       ctx.textBaseline = 'alphabetic';
     });
   } else if(cvs1Mode==='compare'){
@@ -827,19 +842,37 @@ function drawCvs2(){
       {n:'4',t:'列不等式',d:'寫出完整的不等式',c:'#ff8a80'},
     ];
     const sw = W/steps.length;
+    const pad2 = 12, availW2 = sw - pad2*2;
+    // 圓圈大小：撐到 sw 20%，不超過 H 18%
+    const r = Math.min(sw * 0.2, H * 0.18);
+    // 數字字體隨圓圈
+    const numSize = Math.max(10, r * 0.7);
     steps.forEach((s,i)=>{
       const cx=sw*i+sw/2;
+      const circleY = H * 0.22;
+      // 圓圈
       ctx.fillStyle=s.c;
-      ctx.beginPath(); ctx.arc(cx, H*.28, Math.min(sw*.12,22), 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle='#1a1a1a'; ctx.font=`bold ${Math.min(sw*.1,18)}px sans-serif`; ctx.textAlign='center';
-      ctx.fillText(s.n, cx, H*.28+6);
-      ctx.fillStyle=s.c; ctx.font=`bold ${Math.min(sw*.09,15)}px sans-serif`;
-      ctx.fillText(s.t, cx, H*.52);
-      ctx.fillStyle='#e8e4d8bb'; ctx.font=`${Math.min(sw*.07,12)}px sans-serif`;
-      wrapText(ctx, s.d, cx, H*.64, sw-16, 18);
+      ctx.beginPath(); ctx.arc(cx, circleY, r, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle='#1a1a1a'; ctx.font=`bold ${numSize}px sans-serif`; ctx.textAlign='center';
+      ctx.textBaseline='middle'; ctx.fillText(s.n, cx, circleY); ctx.textBaseline='alphabetic';
+      // 標題：動態撐滿
+      let tSize = H * 0.1;
+      ctx.font=`bold ${tSize}px sans-serif`;
+      while(ctx.measureText(s.t).width > availW2 && tSize > 8){ tSize -= 0.5; ctx.font=`bold ${tSize}px sans-serif`; }
+      // 說明：動態撐滿
+      let dSize = H * 0.075;
+      ctx.font=`${dSize}px sans-serif`;
+      while(ctx.measureText(s.d).width > availW2 && dSize > 6){ dSize -= 0.5; ctx.font=`${dSize}px sans-serif`; }
+      // 垂直排列：圓圈下方等距
+      const titleY = circleY + r + (H - circleY - r) * 0.28;
+      const descY  = titleY + tSize + (H - circleY - r) * 0.12;
+      ctx.fillStyle=s.c; ctx.font=`bold ${tSize}px sans-serif`; ctx.textAlign='center';
+      ctx.fillText(s.t, cx, titleY + tSize);
+      ctx.fillStyle='#e8e4d8bb'; ctx.font=`${dSize}px sans-serif`;
+      wrapText(ctx, s.d, cx, descY + tSize + dSize, availW2, dSize * 1.4);
       if(i<steps.length-1){
         ctx.strokeStyle='#2d4a2d'; ctx.lineWidth=2; ctx.setLineDash([4,4]);
-        ctx.beginPath(); ctx.moveTo(sw*(i+1)-8,H*.28); ctx.lineTo(sw*(i+1)+8,H*.28); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(sw*(i+1)-8,circleY); ctx.lineTo(sw*(i+1)+8,circleY); ctx.stroke();
         ctx.setLineDash([]);
       }
     });
