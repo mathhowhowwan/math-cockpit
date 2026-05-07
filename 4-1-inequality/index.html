@@ -747,15 +747,20 @@ function drawCvs1(){
       ctx.lineWidth = 1;
       roundRect(ctx, x+8, y+8, cw-16, ch-16, 8);
       ctx.fill(); ctx.stroke();
+      const symSize = ch * 0.38;
+      const nameSize = ch * 0.1;
+      const kwSize = ch * 0.075;
       ctx.fillStyle = d.color;
-      ctx.font = `bold ${Math.min(cw*.3,60)}px serif`;
+      ctx.font = `bold ${symSize}px serif`;
       ctx.textAlign = 'center';
-      ctx.fillText(d.sym, x+cw/2, y+ch*.42);
-      ctx.font = `bold ${Math.min(cw*.09,18)}px sans-serif`;
-      ctx.fillText(d.name, x+cw/2, y+ch*.62);
-      ctx.fillStyle = '#e8e4d8aa';
-      ctx.font = `${Math.min(cw*.07,13)}px sans-serif`;
-      ctx.fillText(d.keywords, x+cw/2, y+ch*.78);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(d.sym, x+cw/2, y+ch*.38);
+      ctx.font = `bold ${nameSize}px sans-serif`;
+      ctx.fillText(d.name, x+cw/2, y+ch*.68);
+      ctx.fillStyle = '#e8e4d8cc';
+      ctx.font = `${kwSize}px sans-serif`;
+      ctx.fillText(d.keywords, x+cw/2, y+ch*.86);
+      ctx.textBaseline = 'alphabetic';
     });
   } else if(cvs1Mode==='compare'){
     const pairs = [
