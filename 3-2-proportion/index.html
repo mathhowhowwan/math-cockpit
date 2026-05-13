@@ -47,9 +47,9 @@ header p{color:#d7ccc8;font-size:0.85rem;margin-top:4px;}
 /* Carousel */
 .carousel{position:relative;background:#111;border-radius:8px;overflow:hidden;}
 .carousel-inner{display:flex;}
-.carousel-inner img{min-width:100%;display:none;border-radius:8px;}
+.carousel-inner img{min-width:100%;display:none;border-radius:8px;max-height:calc(100vh - 130px);object-fit:contain;}
 .carousel-inner img.active{display:block;}
-.carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:8px;background:#111;border-radius:0 0 8px 8px;}
+.carousel-controls{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:12px;padding:8px 10px;background:rgba(0,0,0,.65);border-radius:0 0 8px 8px;z-index:10;}
 .carousel-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);
   color:var(--chalk);padding:4px 14px;border-radius:6px;cursor:pointer;font-size:1rem;}
 .carousel-btn:hover{background:var(--wood);}
