@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>不等式大冒險 ⚔️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js';
+    import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp }
+      from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
+    const app = initializeApp({
+      apiKey: "AIzaSyCHYtmrbMTxQhsSm9qjspiz-OVs2Jwv9jA",
+      authDomain: "my-teaching-tools-ae1ac.firebaseapp.com",
+      projectId: "my-teaching-tools-ae1ac",
+      storageBucket: "my-teaching-tools-ae1ac.firebasestorage.app",
+      messagingSenderId: "817693080761",
+      appId: "1:817693080761:web:27f1226f1f024713fc6f68"
+    });
+    const db = getFirestore(app);
+    const COL = 'inequality_scores';
+    window._fbSave = async (name, score) => {
+      await addDoc(collection(db, COL), { name, score, timestamp: serverTimestamp(), date: new Date().toLocaleDateString('zh-TW') });
+    };
+    window._fbLoad = async () => {
+      const snap = await getDocs(query(collection(db, COL), orderBy('score','desc'), limit(10)));
+      return snap.docs.map(d => d.data());
+    };
+  </script>
+
+  <style>
+    :root {
+      --primary: #d97706;
+      --primary-light: #fbbf24;
+      --secondary: #10b981;
+      --accent: #f472b6;
+      --correct: #10b981;
+      --wrong: #ef4444;
+      --gold: #f59e0b;
+      --silver: #94a3b8;
+      --bronze: #b45309;
+      --bg: #0f1a0f;
+      --card: #1a2e1a;
+      --card2: #243824;
+      --text: #f0f4f0;
+      --muted: #7da87d;
+      --border: #2e4a2e;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg); color: var(--text);
+      min-height: 100vh; display: flex;
+      align-items: center; justify-content: center; overflow-x: hidden;
+    }
+
+    /* 背景裝飾 */
+    #bg-syms { position: fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:hidden; }
+    .bsym { position:absolute; color:var(--primary-light); opacity:0; font-size:2rem; font-weight:900;
+      animation: floatUp linear infinite; }
+    @keyframes floatUp {
+      0%{transform:translateY(110vh) rotate(0deg);opacity:0}
+      8%{opacity:.06} 92%{opacity:.06}
+      100%{transform:translateY(-15vh) rotate(20deg);opacity:0}
+    }
+
+    #app { position:relative; z-index:1; width:100%; max-width:580px; padding:1rem; }
+    .screen { display:none; }
+    .screen.active { display:block; animation: fadeIn .4s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    .main-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:24px; padding:2.2rem 1.8rem; text-align:center;
+      box-shadow: 0 0 50px rgba(217,119,6,.3);
+    }
+    .mascot { font-size:4.5rem; display:block; animation:bounce 2.2s ease-in-out infinite; margin-bottom:.4rem; }
+    @keyframes bounce { 0%,100%{transform:translateY(0) rotate(-3deg)} 50%{transform:translateY(-14px) rotate(3deg)} }
+    .game-title {
+      font-size:2.1rem; font-weight:900;
+      background:linear-gradient(135deg,var(--primary-light),var(--secondary));
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+      margin-bottom:.3rem;
+    }
+    .game-sub { color:var(--muted); font-size:.88rem; margin-bottom:1.5rem; }
+
+    .btn-main {
+      background:linear-gradient(135deg,var(--primary),#92400e);
+      color:white; border:none; border-radius:50px;
+      padding:.95rem 2.5rem; font-size:1.1rem; font-weight:700;
+      font-family:inherit; cursor:pointer; width:100%;
+      box-shadow:0 4px 22px rgba(217,119,6,.5);
+      transition:transform .18s, box-shadow .18s;
+    }
+    .btn-main:hover { transform:translateY(-3px); box-shadow:0 8px 28px rgba(217,119,6,.7); }
+    .btn-main:active { transform:translateY(0); }
+
+    .btn-secondary {
+      background:var(--card2); color:var(--text);
+      border:1px solid var(--border); border-radius:50px;
+      padding:.85rem 2rem; font-size:1rem; font-weight:700;
+      font-family:inherit; cursor:pointer; width:100%;
+      transition:all .18s; margin-top:.7rem;
+    }
+    .btn-secondary:hover { border-color:var(--primary-light); }
+
+    .btn-home {
+      background:transparent; color:var(--muted);
+      border:1px solid var(--border); border-radius:50px;
+      padding:.7rem 1.6rem; font-size:.9rem; font-weight:700;
+      font-family:inherit; cursor:pointer;
+      transition:all .18s; margin-top:.6rem; width:100%;
+    }
+    .btn-home:hover { border-color:var(--muted); color:var(--text); }
+
+    /* 開始畫面 */
+    .rules-box {
+      background:var(--card2); border-radius:16px;
+      padding:1.1rem 1.3rem; margin-bottom:1.3rem; text-align:left;
+    }
+    .rules-box h3 { font-size:.78rem; color:var(--secondary); letter-spacing:.06em; margin-bottom:.6rem; }
+    .rule { display:flex; align-items:center; gap:.6rem; font-size:.86rem; color:var(--muted); margin-bottom:.35rem; }
+
+    .name-row { display:flex; gap:.6rem; align-items:center; margin-bottom:1rem; }
+    .name-input {
+      flex:1; background:var(--card2); border:1px solid var(--border);
+      border-radius:12px; padding:.7rem 1rem;
+      font-size:1rem; font-family:inherit; color:var(--text);
+      outline:none; transition:border-color .18s;
+    }
+    .name-input:focus { border-color:var(--primary-light); }
+    .name-input::placeholder { color:var(--muted); }
+    .cls-select { flex:0 0 80px; cursor:pointer; appearance:none; }
+    .seat-input { flex:0 0 68px; }
+    .best-note { margin-top:.75rem; font-size:.78rem; color:var(--muted); }
+
+    /* 排行榜 */
+    .lb-box { background:var(--card2); border-radius:16px; padding:1rem 1.2rem; margin-bottom:1.2rem; }
+    .lb-title { font-size:.78rem; color:var(--primary-light); letter-spacing:.06em; margin-bottom:.6rem; font-weight:700; }
+    .lb-row { display:flex; align-items:center; gap:.7rem; font-size:.84rem; padding:.28rem 0; border-bottom:1px solid rgba(255,255,255,.05); }
+    .lb-row:last-child { border:none; }
+    .lb-rank { width:1.4rem; font-weight:900; color:var(--muted); text-align:center; }
+    .lb-rank.g1 { color:var(--gold); }
+    .lb-rank.g2 { color:var(--silver); }
+    .lb-rank.g3 { color:var(--bronze); }
+    .lb-name { flex:1; }
+    .lb-score { font-weight:700; color:var(--primary-light); }
+    .lb-empty { color:var(--muted); font-size:.84rem; text-align:center; padding:.5rem 0; }
+
+    /* 遊戲畫面 */
+    .game-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.1rem; gap:.8rem; }
+    .btn-back-sm {
+      background:var(--card2); border:1px solid var(--border);
+      border-radius:10px; padding:.45rem .8rem;
+      font-size:.8rem; font-family:inherit; color:var(--muted);
+      cursor:pointer; white-space:nowrap; transition:all .18s; flex-shrink:0;
+    }
+    .btn-back-sm:hover { border-color:var(--muted); color:var(--text); }
+
+    .prog-area { flex:1; }
+    .prog-label { font-size:.76rem; color:var(--muted); margin-bottom:.3rem; }
+    .prog-bg { height:8px; background:var(--card2); border-radius:4px; overflow:hidden; }
+    .prog-fill { height:100%; background:linear-gradient(90deg,var(--primary),var(--secondary)); border-radius:4px; transition:width .5s ease; }
+
+    .score-chip { background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:.4rem .9rem; text-align:center; min-width:58px; }
+    .score-num { font-size:1.35rem; font-weight:900; color:var(--primary-light); line-height:1; }
+    .score-lbl { font-size:.6rem; color:var(--muted); }
+
+    .q-card {
+      background:var(--card); border:1px solid var(--border);
+      border-radius:20px; padding:1.5rem;
+      margin-bottom:.9rem; box-shadow:0 4px 18px rgba(0,0,0,.3);
+    }
+    .type-tag { display:inline-block; padding:.2rem .65rem; border-radius:20px; font-size:.72rem; font-weight:700; letter-spacing:.04em; margin-bottom:.7rem; }
+    .tag-sym { background:rgba(251,191,36,.18); color:var(--primary-light); border:1px solid rgba(251,191,36,.35); }
+    .tag-write { background:rgba(16,185,129,.18); color:var(--secondary); border:1px solid rgba(16,185,129,.35); }
+    .tag-verify { background:rgba(244,114,182,.18); color:var(--accent); border:1px solid rgba(244,114,182,.35); }
+    .tag-numline { background:rgba(129,212,250,.18); color:#81d4fa; border:1px solid rgba(129,212,250,.35); }
+
+    .q-text { font-size:1.05rem; line-height:1.8; }
+    .q-ineq { color:var(--primary-light); font-weight:900; font-size:1.2rem; }
+
+    .opts { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-bottom:.9rem; }
+    .opt-btn {
+      background:var(--card); border:2px solid var(--border);
+      border-radius:14px; padding:.95rem .6rem;
+      font-size:1.15rem; font-weight:700; font-family:inherit; color:var(--text);
+      cursor:pointer; transition:all .18s; position:relative; overflow:hidden;
+    }
+    .opt-btn:hover:not(:disabled) { border-color:var(--primary-light); background:var(--card2); transform:translateY(-2px); }
+    .opt-btn.correct { background:rgba(16,185,129,.2); border-color:var(--correct); color:var(--correct); }
+    .opt-btn.wrong   { background:rgba(239,68,68,.15);  border-color:var(--wrong);   color:var(--wrong);   }
+    .opt-btn.dimmed  { opacity:.35; }
+    .opt-btn:disabled { cursor:default; }
+    .ripple { position:absolute; border-radius:50%; background:rgba(255,255,255,.25); width:60px; height:60px; margin:-30px 0 0 -30px; animation:rippleAnim .5s ease-out forwards; pointer-events:none; }
+    @keyframes rippleAnim { from{transform:scale(0);opacity:1} to{transform:scale(4);opacity:0} }
+
+    .fb-box { border-radius:16px; padding:1rem; margin-bottom:.8rem; display:none; animation:slideIn .3s ease; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fb-box.correct { background:rgba(16,185,129,.13); border:1px solid rgba(16,185,129,.35); }
+    .fb-box.wrong   { background:rgba(239,68,68,.1);   border:1px solid rgba(239,68,68,.3);   }
+    .fb-top { display:flex; align-items:center; gap:.5rem; }
+    .fb-emoji { font-size:1.3rem; }
+    .fb-title { font-weight:700; font-size:.93rem; }
+    .fb-explain { font-size:.85rem; color:var(--muted); margin-top:.45rem; line-height:1.65; }
+
+    .btn-next {
+      background:linear-gradient(135deg,var(--secondary),#059669);
+      color:white; border:none; border-radius:50px;
+      padding:.85rem 2.5rem; font-size:1rem; font-weight:700;
+      font-family:inherit; cursor:pointer; width:100%; display:none;
+      transition:all .18s; box-shadow:0 4px 16px rgba(16,185,129,.45);
+    }
+    .btn-next:hover { transform:translateY(-2px); box-shadow:0 7px 22px rgba(16,185,129,.65); }
+
+    /* 數線題型樣式 */
+    .numline-svg { display:block; margin:.7rem auto; max-width:340px; }
+
+    /* 分數彈出 */
+    .score-pop { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:2.8rem; font-weight:900; z-index:200; pointer-events:none; animation:popAnim .9s ease forwards; }
+    @keyframes popAnim { 0%{transform:translate(-50%,-50%) scale(0);opacity:1} 55%{transform:translate(-50%,-90%) scale(1.2);opacity:1} 100%{transform:translate(-50%,-140%) scale(1);opacity:0} }
+
+    /* 結果畫面 */
+    .res-emoji { font-size:4.5rem; display:block; animation:bounce 1.8s ease-in-out infinite; margin-bottom:.4rem; }
+    .res-title { font-size:1.7rem; font-weight:900; margin-bottom:.2rem; }
+    .res-sub { color:var(--muted); font-size:.88rem; margin-bottom:1.2rem; }
+    .breakdown { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.1rem; }
+    .bd-item { background:var(--card2); border-radius:14px; padding:.85rem .5rem; }
+    .bd-num { font-size:1.5rem; font-weight:900; }
+    .bd-lbl { font-size:.72rem; color:var(--muted); }
+
+    .lb-final { background:var(--card2); border-radius:16px; padding:1rem 1.2rem; margin-bottom:1.1rem; }
+    .saving-note { font-size:.8rem; color:var(--muted); margin:.4rem 0 .8rem; }
+  </style>
+</head>
+<body>
+
+<div id="bg-syms"></div>
+
+<div id="app">
+
+  <!-- ══ 開始畫面 ══ -->
+  <div class="screen active" id="s-start">
+    <div class="main-card">
+      <span class="mascot">⚔️</span>
+      <div class="game-title">不等式大冒險</div>
+      <div class="game-sub">4-1 一元一次不等式及其解</div>
+
+      <div class="rules-box">
+        <h3>遊戲規則</h3>
+        <div class="rule">📋 共 10 題，涵蓋四大主題</div>
+        <div class="rule">✅ 答對 +10 分，答錯不扣分</div>
+        <div class="rule">⚡ 每題作答後立即解說</div>
+        <div class="rule">🏆 完成後上傳全班排行榜</div>
+      </div>
+
+      <div class="name-row">
+        <select class="name-input cls-select" id="clsSel">
+          <option value="">班級</option>
+          <option>701</option><option>702</option><option>703</option>
+          <option>704</option><option>705</option><option>706</option>
+          <option>707</option><option>708</option>
+        </select>
+        <input class="name-input seat-input" id="seatInp" type="number" min="1" max="50" placeholder="座號">
+        <input class="name-input" id="nameInp" type="text" placeholder="姓名" maxlength="10">
+      </div>
+
+      <!-- 排行榜預覽 -->
+      <div class="lb-box" id="lbPreview">
+        <div class="lb-title">🏆 全班排行榜</div>
+        <div id="lbRows"><div class="lb-empty">載入中…</div></div>
+      </div>
+
+      <div class="best-note" id="bestNote"></div>
+      <button class="btn-main" onclick="startGame()">⚔️ 開始挑戰！</button>
+      <a href="../index.html" class="btn-home" style="display:block;text-align:center;text-decoration:none;margin-top:.6rem">🏠 回首頁</a>
+    </div>
+  </div>
+
+  <!-- ══ 遊戲畫面 ══ -->
+  <div class="screen" id="s-game">
+    <div class="game-hdr">
+      <button class="btn-back-sm" onclick="backToStart()">← 返回</button>
+      <div class="prog-area">
+        <div class="prog-label" id="progLbl">第 1 題 / 共 10 題</div>
+        <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+      </div>
+      <div class="score-chip">
+        <div class="score-num" id="scoreDisp">0</div>
+        <div class="score-lbl">分</div>
+      </div>
+    </div>
+
+    <div class="q-card">
+      <span class="type-tag" id="qTag"></span>
+      <div class="q-text" id="qText"></div>
+      <div id="qSvg"></div>
+    </div>
+
+    <div class="opts" id="optsGrid"></div>
+    <div class="fb-box" id="fbBox">
+      <div class="fb-top"><span class="fb-emoji" id="fbEmoji"></span><span class="fb-title" id="fbTitle"></span></div>
+      <div class="fb-explain" id="fbExplain"></div>
+    </div>
+    <button class="btn-next" id="btnNext" onclick="nextQ()">下一題 →</button>
+  </div>
+
+  <!-- ══ 結果畫面 ══ -->
+  <div class="screen" id="s-result">
+    <div class="main-card">
+      <span class="res-emoji" id="resEmoji"></span>
+      <div class="res-title" id="resTitle"></div>
+      <div class="res-sub" id="resSub"></div>
+      <div class="breakdown">
+        <div class="bd-item"><div class="bd-num" id="bdScore" style="color:var(--primary-light)"></div><div class="bd-lbl">總分</div></div>
+        <div class="bd-item"><div class="bd-num" id="bdCorrect" style="color:var(--correct)"></div><div class="bd-lbl">答對題數</div></div>
+        <div class="bd-item"><div class="bd-num" id="bdPct" style="color:var(--secondary)"></div><div class="bd-lbl">正確率</div></div>
+      </div>
+      <div class="saving-note" id="savingNote">上傳成績中…</div>
+      <div class="lb-final">
+        <div class="lb-title">🏆 全班排行榜</div>
+        <div id="lbFinalRows"><div class="lb-empty">載入中…</div></div>
+      </div>
+      <button class="btn-main" onclick="restartGame()">🔄 再挑戰一次</button>
+      <button class="btn-secondary" onclick="backToStart()">← 更換姓名</button>
+      <a href="../index.html" class="btn-home" style="display:block;text-align:center;text-decoration:none;margin-top:.6rem">🏠 回首頁</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══ 背景符號 ══
+const SYMS = ['>', '<', '≥', '≤', '≠'];
+const bgEl = document.getElementById('bg-syms');
+for (let i = 0; i < 18; i++) {
+  const s = document.createElement('div');
+  s.className = 'bsym';
+  s.textContent = SYMS[i % SYMS.length];
+  s.style.cssText = `left:${Math.random()*100}%;top:${Math.random()*100}%;
+    animation-duration:${10+Math.random()*15}s;animation-delay:${-Math.random()*15}s;
+    font-size:${1.5+Math.random()*2.5}rem;`;
+  bgEl.appendChild(s);
+}
+
+// ══ 題目庫 ══
+const QUESTIONS = [
+  // 不等符號
+  {
+    tag: 'tag-sym', tagName: '不等符號',
+    text: '「身高 <span class="q-ineq">x</span> 公分，<strong>不足</strong> 130 公分才能搭乘」，用不等式表示為：',
+    opts: ['x > 130', 'x < 130', 'x ≥ 130', 'x ≤ 130'],
+    ans: 1,
+    explain: '「不足」= 未達到，不含 130，所以用 <（嚴格小於）。若是「未滿」「不到」也一樣用 <。'
+  },
+  {
+    tag: 'tag-sym', tagName: '不等符號',
+    text: '「參加活動<strong>至少</strong>要 18 歲（年齡為 x 歲）」，正確的不等式為：',
+    opts: ['x < 18', 'x ≤ 18', 'x ≥ 18', 'x > 18'],
+    ans: 2,
+    explain: '「至少」= 最少也要，包含 18 本身，所以用 ≥。「以上」「不小於」也對應 ≥。'
+  },
+  {
+    tag: 'tag-sym', tagName: '不等符號',
+    text: '下列哪個說法對應 <span class="q-ineq">x ≤ 60</span>？',
+    opts: ['x 超過 60', 'x 至多 60', 'x 大於 60', 'x 不小於 60'],
+    ans: 1,
+    explain: '≤ 表示「小於或等於」，中文說法是「至多」「不超過」「不大於」。「超過」對應 >，「不小於」對應 ≥。'
+  },
+  // 列不等式
+  {
+    tag: 'tag-write', tagName: '列不等式',
+    text: '小明有 200 元，買了 <span class="q-ineq">n</span> 枝鉛筆，每枝 8 元，找回的零錢<strong>不足 50 元</strong>，則不等式為：',
+    opts: ['200 + 8n < 50', '200 − 8n < 50', '8n − 200 > 50', '200 − 8n > 50'],
+    ans: 1,
+    explain: '找回的錢 = 200 − 8n，題目說「不足 50 元」即 < 50，所以 200 − 8n < 50。'
+  },
+  {
+    tag: 'tag-write', tagName: '列不等式',
+    text: '電梯<strong>限重 1000 公斤</strong>，已有貨物 600 公斤，再放 <span class="q-ineq">x</span> 件每件 45 公斤的箱子，不能超重，正確的不等式為：',
+    opts: ['600 + 45x > 1000', '45x < 1000', '600 + 45x ≤ 1000', '600 + 45x ≥ 1000'],
+    ans: 2,
+    explain: '總重 = 600 + 45x，「不超重」= 不超過限重，即 ≤ 1000。故 600 + 45x ≤ 1000。'
+  },
+  {
+    tag: 'tag-write', tagName: '列不等式',
+    text: '奇異果每顆 12 元，買了 <span class="q-ineq">a</span> 顆，加上運費 30 元，<strong>總花費超過 150 元</strong>，不等式為：',
+    opts: ['12a + 30 > 150', '12a + 30 ≥ 150', '12a − 30 > 150', '12a > 150'],
+    ans: 0,
+    explain: '總花費 = 12a + 30，「超過 150」= 嚴格大於，不含 150，所以用 >。若說「至少 150 元」才用 ≥。'
+  },
+  // 代入驗算
+  {
+    tag: 'tag-verify', tagName: '代入驗算',
+    text: '不等式 <span class="q-ineq">2x − 3 > 5</span>，下列哪個 x 值是解？',
+    opts: ['x = 3', 'x = 4', 'x = 5', 'x = 2'],
+    ans: 2,
+    explain: '代入 x = 5：2(5) − 3 = 7 > 5 ✓。\n代入 x = 4：2(4) − 3 = 5，5 > 5 為假 ✗。\n代入 x = 3：2(3) − 3 = 3，3 > 5 為假 ✗。'
+  },
+  {
+    tag: 'tag-verify', tagName: '代入驗算',
+    text: '不等式 <span class="q-ineq">3x + 1 ≤ 10</span>，下列哪個 x 值<strong>不是</strong>解？',
+    opts: ['x = 1', 'x = 2', 'x = 3', 'x = 4'],
+    ans: 3,
+    explain: '代入 x = 4：3(4) + 1 = 13，13 ≤ 10 為假 ✗，所以 x = 4 不是解。\n其他：x=1→4≤10✓；x=2→7≤10✓；x=3→10≤10✓。'
+  },
+  // 數線
+  {
+    tag: 'tag-numline', tagName: '數線圖示',
+    text: '不等式 <span class="q-ineq">x > 2</span> 在數線上的圖示，哪張圖正確？',
+    opts: ['A', 'B', 'C', 'D'],
+    optSvgs: [
+      // A: x > 2 正確（空心圓，向右實線箭頭）
+      `<svg class="numline-svg" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="25" x2="210" y2="25" stroke="#7da87d" stroke-width="2"/>
+        <polygon points="210,20 220,25 210,30" fill="#7da87d"/>
+        <line x1="80" y1="20" x2="80" y2="30" stroke="#7da87d" stroke-width="1.5"/>
+        <text x="77" y="44" fill="#7da87d" font-size="11">2</text>
+        <circle cx="80" cy="25" r="5" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+        <line x1="80" y1="25" x2="205" y2="25" stroke="#fbbf24" stroke-width="3"/>
+      </svg>`,
+      // B: x ≥ 2（實心圓，向右）
+      `<svg class="numline-svg" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="25" x2="210" y2="25" stroke="#7da87d" stroke-width="2"/>
+        <polygon points="210,20 220,25 210,30" fill="#7da87d"/>
+        <line x1="80" y1="20" x2="80" y2="30" stroke="#7da87d" stroke-width="1.5"/>
+        <text x="77" y="44" fill="#7da87d" font-size="11">2</text>
+        <circle cx="80" cy="25" r="5" fill="#fbbf24" stroke="#fbbf24" stroke-width="2"/>
+        <line x1="80" y1="25" x2="205" y2="25" stroke="#fbbf24" stroke-width="3"/>
+      </svg>`,
+      // C: x < 2（空心圓，向左）
+      `<svg class="numline-svg" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="25" x2="210" y2="25" stroke="#7da87d" stroke-width="2"/>
+        <polygon points="210,20 220,25 210,30" fill="#7da87d"/>
+        <line x1="80" y1="20" x2="80" y2="30" stroke="#7da87d" stroke-width="1.5"/>
+        <text x="77" y="44" fill="#7da87d" font-size="11">2</text>
+        <circle cx="80" cy="25" r="5" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+        <line x1="15" y1="25" x2="80" y2="25" stroke="#fbbf24" stroke-width="3"/>
+      </svg>`,
+      // D: x > 2 向左（錯誤方向）
+      `<svg class="numline-svg" viewBox="0 0 220 50" xmlns="http://www.w3.org/2000/svg">
+        <line x1="10" y1="25" x2="210" y2="25" stroke="#7da87d" stroke-width="2"/>
+        <polygon points="210,20 220,25 210,30" fill="#7da87d"/>
+        <line x1="140" y1="20" x2="140" y2="30" stroke="#7da87d" stroke-width="1.5"/>
+        <text x="137" y="44" fill="#7da87d" font-size="11">2</text>
+        <circle cx="140" cy="25" r="5" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+        <line x1="15" y1="25" x2="140" y2="25" stroke="#fbbf24" stroke-width="3"/>
+      </svg>`
+    ],
+    ans: 0,
+    explain: 'x > 2：在 2 的位置畫<strong>空心圓</strong>（不含 2），向右畫實線（x 大於 2 的方向）。B 是 x≥2，C 是 x<2。'
+  },
+  {
+    tag: 'tag-numline', tagName: '數線圖示',
+    text: '數線上在 −1 畫<strong>實心圓</strong>、向<strong>左</strong>畫實線，對應的不等式是：',
+    opts: ['x > −1', 'x ≥ −1', 'x < −1', 'x ≤ −1'],
+    ans: 3,
+    explain: '實心圓表示包含端點（≤ 或 ≥），向左表示「小於」方向，合起來是 x ≤ −1。'
+  }
+];
+
+// ══ 狀態 ══
+let playerName = '', curQ = 0, score = 0, correct = 0;
+const ORDER = [];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+}
+
+// ══ 排行榜 ══
+async function loadLB(targetId) {
+  try {
+    const rows = await window._fbLoad();
+    const el = document.getElementById(targetId);
+    if (!rows.length) { el.innerHTML = '<div class="lb-empty">尚無紀錄，快來創下第一筆！</div>'; return; }
+    el.innerHTML = rows.map((r, i) => {
+      const cls = i === 0 ? 'g1' : i === 1 ? 'g2' : i === 2 ? 'g3' : '';
+      const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1;
+      return `<div class="lb-row"><span class="lb-rank ${cls}">${medal}</span><span class="lb-name">${r.name}</span><span class="lb-score">${r.score}</span></div>`;
+    }).join('');
+  } catch(e) { document.getElementById(targetId).innerHTML = '<div class="lb-empty">排行榜暫時無法載入</div>'; }
+}
+
+// ══ 開始 ══
+function startGame() {
+  const cls = document.getElementById('clsSel').value;
+  const seat = document.getElementById('seatInp').value;
+  const name = document.getElementById('nameInp').value.trim();
+  if (!name) { alert('請輸入姓名！'); return; }
+  playerName = cls && seat ? `${cls}-${seat} ${name}` : name;
+
+  curQ = 0; score = 0; correct = 0;
+  ORDER.length = 0;
+  for (let i = 0; i < QUESTIONS.length; i++) ORDER.push(i);
+  shuffle(ORDER);
+
+  showScreen('s-game');
+  renderQ();
+}
+
+function renderQ() {
+  const q = QUESTIONS[ORDER[curQ]];
+  const total = QUESTIONS.length;
+
+  document.getElementById('progLbl').textContent = `第 ${curQ+1} 題 / 共 ${total} 題`;
+  document.getElementById('progFill').style.width = `${(curQ / total) * 100}%`;
+  document.getElementById('scoreDisp').textContent = score;
+
+  const tag = document.getElementById('qTag');
+  tag.className = `type-tag ${q.tag}`;
+  tag.textContent = q.tagName;
+
+  document.getElementById('qText').innerHTML = q.text;
+
+  // 數線 SVG
+  const svgArea = document.getElementById('qSvg');
+  svgArea.innerHTML = '';
+  if (q.optSvgs) {
+    // 數線題：在 opts 裡顯示 SVG
+  }
+
+  // 選項
+  const grid = document.getElementById('optsGrid');
+  grid.innerHTML = '';
+  if (q.optSvgs) {
+    // 數線題：2x2 SVG 選項
+    q.optSvgs.forEach((svg, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.innerHTML = `<div style="font-size:.8rem;margin-bottom:.3rem">${q.opts[i]}</div>${svg}`;
+      btn.onclick = (e) => checkAns(i, e);
+      grid.appendChild(btn);
+    });
+  } else {
+    q.opts.forEach((o, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'opt-btn';
+      btn.textContent = o;
+      btn.onclick = (e) => checkAns(i, e);
+      grid.appendChild(btn);
+    });
+  }
+
+  document.getElementById('fbBox').style.display = 'none';
+  document.getElementById('btnNext').style.display = 'none';
+}
+
+function checkAns(chosen, e) {
+  const q = QUESTIONS[ORDER[curQ]];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+
+  // 漣漪效果
+  const btn = btns[chosen];
+  const r = document.createElement('div');
+  r.className = 'ripple';
+  const rect = btn.getBoundingClientRect();
+  r.style.left = (e.clientX - rect.left) + 'px';
+  r.style.top  = (e.clientY - rect.top) + 'px';
+  btn.appendChild(r);
+  setTimeout(() => r.remove(), 500);
+
+  const isCorrect = chosen === q.ans;
+  btn.classList.add(isCorrect ? 'correct' : 'wrong');
+  btns.forEach((b, i) => { if (i !== chosen) b.classList.add('dimmed'); });
+  if (!isCorrect) btns[q.ans].classList.remove('dimmed'), btns[q.ans].classList.add('correct');
+
+  if (isCorrect) {
+    score += 10; correct++;
+    document.getElementById('scoreDisp').textContent = score;
+    const pop = document.createElement('div');
+    pop.className = 'score-pop';
+    pop.textContent = '+10';
+    pop.style.color = 'var(--correct)';
+    document.body.appendChild(pop);
+    setTimeout(() => pop.remove(), 900);
+  }
+
+  const fb = document.getElementById('fbBox');
+  fb.className = `fb-box ${isCorrect ? 'correct' : 'wrong'}`;
+  document.getElementById('fbEmoji').textContent = isCorrect ? '✅' : '❌';
+  document.getElementById('fbTitle').textContent = isCorrect ? '答對了！' : `正確答案是：${q.opts[q.ans]}`;
+  document.getElementById('fbExplain').innerHTML = q.explain.replace(/\n/g,'<br>');
+  fb.style.display = 'block';
+
+  const btnNext = document.getElementById('btnNext');
+  btnNext.style.display = 'block';
+  btnNext.textContent = curQ + 1 < QUESTIONS.length ? '下一題 →' : '查看結果 🏆';
+}
+
+function nextQ() {
+  curQ++;
+  if (curQ >= QUESTIONS.length) {
+    showResult();
+  } else {
+    renderQ();
+  }
+}
+
+async function showResult() {
+  showScreen('s-result');
+  const pct = Math.round((correct / QUESTIONS.length) * 100);
+  document.getElementById('bdScore').textContent = score;
+  document.getElementById('bdCorrect').textContent = `${correct}/${QUESTIONS.length}`;
+  document.getElementById('bdPct').textContent = `${pct}%`;
+
+  let emoji, title, sub;
+  if (pct === 100) { emoji='🏆'; title='完美制霸！'; sub='滿分！不等式大師就是你！'; }
+  else if (pct >= 80) { emoji='⭐'; title='超厲害！'; sub='幾乎全對，繼續保持！'; }
+  else if (pct >= 60) { emoji='💪'; title='不錯喔！'; sub='掌握了大部分，再複習一下吧！'; }
+  else { emoji='📚'; title='繼續加油！'; sub='回去看駕駛艙複習一下再來挑戰！'; }
+  document.getElementById('resEmoji').textContent = emoji;
+  document.getElementById('resTitle').textContent = title;
+  document.getElementById('resSub').textContent = sub;
+
+  const note = document.getElementById('savingNote');
+  try {
+    await window._fbSave(playerName, score);
+    note.textContent = '✅ 成績已上傳！';
+  } catch(e) { note.textContent = '⚠️ 上傳失敗，成績僅供本機參考'; }
+  await loadLB('lbFinalRows');
+}
+
+function restartGame() { startGame(); }
+function backToStart() { showScreen('s-start'); loadLB('lbRows'); }
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// 初始載入排行榜
+window.addEventListener('DOMContentLoaded', () => loadLB('lbRows'));
+</script>
+</body>
+</html>
