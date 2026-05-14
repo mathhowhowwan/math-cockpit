@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_screenshot",
+      "mcp__Claude_Preview__preview_snapshot",
+      "mcp__obsidian__list_directory",
+      "mcp__Claude_Preview__preview_list",
+      "mcp__notebooklm-mcp__studio_status",
+      "mcp__Claude_in_Chrome__tabs_context_mcp",
+      "mcp__Claude_Preview__preview_console_logs",
+      "mcp__firebase__firebase_deploy_status",
+      "mcp__obsidian__read_note",
+      "mcp__notebooklm-mcp__notebook_list"
+    ]
+  }
+}
