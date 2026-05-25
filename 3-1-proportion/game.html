@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>比例式大挑戰 ⚖️</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d1f0d;
+      --board: #163016;
+      --board2: #1c3c1c;
+      --chalk: #f0ece0;
+      --chalk-dim: #a8a498;
+      --chalk-yellow: #f5d76e;
+      --chalk-blue: #90c4f0;
+      --chalk-pink: #f0a0b4;
+      --correct: #7cd97c;
+      --wrong: #e06060;
+      --gold: #f5d76e;
+      --silver: #c8c4b8;
+      --bronze: #c88050;
+      --border: #2a4a2a;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(ellipse at 20% 50%, rgba(30,80,30,.25) 0%, transparent 55%),
+                        radial-gradient(ellipse at 80% 20%, rgba(20,60,20,.25) 0%, transparent 55%);
+      color: var(--chalk);
+      min-height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      overflow-x: hidden;
+    }
+    #floats { position:fixed; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; overflow:hidden; }
+    .fsym { position:absolute; color:rgba(240,236,224,.06); animation:floatUp linear infinite; font-family:'Caveat',cursive; }
+    @keyframes floatUp {
+      0%{transform:translateY(110vh) rotate(0deg);opacity:0}
+      8%{opacity:.1} 92%{opacity:.1}
+      100%{transform:translateY(-15vh) rotate(15deg);opacity:0}
+    }
+    #app { position:relative; z-index:1; width:100%; max-width:580px; padding:1rem; }
+    .screen { display:none; }
+    .screen.active { display:block; animation:fadeIn .4s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+    .main-card {
+      background: var(--board);
+      border: 3px solid #3a5a3a;
+      border-radius: 12px;
+      padding: 2.2rem 1.8rem;
+      text-align: center;
+      box-shadow: 0 0 0 5px #0d1f0d, 0 0 0 7px #2a3a2a, 0 8px 40px rgba(0,0,0,.7);
+    }
+    .mascot { font-size:4rem; display:block; animation:sway 3s ease-in-out infinite; margin-bottom:.4rem; }
+    @keyframes sway { 0%,100%{transform:rotate(-5deg)} 50%{transform:rotate(5deg)} }
+    .game-title { font-size:2.2rem; font-weight:900; color:var(--chalk-yellow); text-shadow:2px 2px 4px rgba(0,0,0,.5),0 0 20px rgba(245,215,110,.3); margin-bottom:.3rem; }
+    .game-sub { color:var(--chalk-dim); font-size:.88rem; margin-bottom:1.5rem; }
+
+    .btn-main {
+      background:linear-gradient(135deg,#2a6a2a,#1a4a1a);
+      color:var(--chalk); border:2px solid rgba(240,236,224,.35);
+      border-radius:8px; padding:.95rem 2.5rem;
+      font-size:1.1rem; font-weight:700; font-family:inherit;
+      cursor:pointer; width:100%;
+      box-shadow:0 3px 12px rgba(0,0,0,.5);
+      transition:transform .18s,box-shadow .18s;
+    }
+    .btn-main:hover { transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.6); }
+    .btn-secondary {
+      background:transparent; color:var(--chalk-dim);
+      border:1.5px solid rgba(240,236,224,.22);
+      border-radius:8px; padding:.85rem 2rem;
+      font-size:1rem; font-weight:700; font-family:inherit;
+      cursor:pointer; width:100%; transition:all .18s; margin-top:.7rem;
+    }
+    .btn-secondary:hover { border-color:rgba(240,236,224,.5); color:var(--chalk); }
+    .btn-home {
+      background:transparent; color:var(--chalk-dim);
+      border:1px solid rgba(240,236,224,.18);
+      border-radius:8px; padding:.7rem 1.6rem;
+      font-size:.9rem; font-weight:700; font-family:inherit;
+      cursor:pointer; transition:all .18s; margin-top:.6rem; width:100%;
+    }
+    .btn-home:hover { border-color:rgba(240,236,224,.4); color:var(--chalk); }
+
+    .rules-box { background:rgba(0,0,0,.25); border:1px solid rgba(240,236,224,.12); border-radius:10px; padding:1.1rem 1.3rem; margin-bottom:1.3rem; text-align:left; }
+    .rules-box h3 { font-size:.78rem; color:var(--chalk-blue); letter-spacing:.08em; margin-bottom:.6rem; }
+    .rule { display:flex; align-items:center; gap:.6rem; font-size:.86rem; color:var(--chalk-dim); margin-bottom:.35rem; }
+    .name-row { display:flex; gap:.6rem; align-items:center; margin-bottom:1rem; }
+    .name-input { flex:1; background:rgba(0,0,0,.3); border:1.5px solid rgba(240,236,224,.22); border-radius:8px; padding:.7rem 1rem; font-size:1rem; font-family:inherit; color:var(--chalk); outline:none; transition:border-color .18s; }
+    .name-input:focus { border-color:rgba(240,236,224,.5); }
+    .name-input::placeholder { color:var(--chalk-dim); opacity:.7; }
+    .cls-select { flex:0 0 80px; cursor:pointer; appearance:none; }
+    .seat-input { flex:0 0 68px; }
+    .best-note { margin-top:.75rem; font-size:.78rem; color:var(--chalk-dim); }
+
+    .game-hdr { display:flex; align-items:center; justify-content:space-between; margin-bottom:1.1rem; gap:.8rem; }
+    .btn-back-sm { background:rgba(0,0,0,.3); border:1px solid rgba(240,236,224,.18); border-radius:8px; padding:.45rem .8rem; font-size:.8rem; font-family:inherit; color:var(--chalk-dim); cursor:pointer; white-space:nowrap; transition:all .18s; flex-shrink:0; }
+    .btn-back-sm:hover { border-color:rgba(240,236,224,.4); color:var(--chalk); }
+    .prog-area { flex:1; }
+    .prog-label { font-size:.76rem; color:var(--chalk-dim); margin-bottom:.3rem; }
+    .prog-bg { height:8px; background:rgba(0,0,0,.4); border-radius:4px; overflow:hidden; border:1px solid rgba(240,236,224,.08); }
+    .prog-fill { height:100%; background:linear-gradient(90deg,#4a8a4a,var(--chalk-yellow)); border-radius:4px; transition:width .5s ease; }
+    .score-chip { background:rgba(0,0,0,.3); border:1.5px solid rgba(240,236,224,.18); border-radius:10px; padding:.4rem .9rem; text-align:center; min-width:58px; }
+    .score-num { font-size:1.35rem; font-weight:900; color:var(--chalk-yellow); line-height:1; }
+    .score-lbl { font-size:.6rem; color:var(--chalk-dim); }
+
+    .q-card { background:rgba(0,0,0,.2); border:1.5px solid rgba(240,236,224,.13); border-radius:10px; padding:1.5rem; margin-bottom:.9rem; }
+    .type-tag { display:inline-block; padding:.2rem .65rem; border-radius:4px; font-size:.72rem; font-weight:700; letter-spacing:.04em; margin-bottom:.7rem; }
+    .tag-basic { background:rgba(90,180,90,.18); color:#90d090; border:1px solid rgba(90,180,90,.35); }
+    .tag-word  { background:rgba(144,196,240,.18); color:var(--chalk-blue); border:1px solid rgba(144,196,240,.35); }
+    .tag-chain { background:rgba(240,160,180,.18); color:var(--chalk-pink); border:1px solid rgba(240,160,180,.35); }
+    .formula-box { background:transparent; border:1.5px dashed rgba(240,236,224,.22); border-radius:8px; padding:.5rem 1rem; font-size:1.05rem; color:var(--chalk-yellow); font-weight:700; text-align:center; margin-bottom:.9rem; font-family:'Caveat',cursive; letter-spacing:.05em; }
+    .q-text { font-size:1rem; line-height:1.8; }
+    .q-blank { color:var(--chalk-yellow); font-weight:900; font-size:1.3rem; font-family:'Caveat',cursive; }
+
+    .prop-line { font-size:1.7rem; font-family:'Caveat',cursive; font-weight:700; text-align:center; margin:.5rem 0; letter-spacing:.12em; }
+
+    .opts { display:grid; grid-template-columns:1fr 1fr; gap:.7rem; margin-bottom:.9rem; }
+    .opt-btn { background:rgba(0,0,0,.25); border:2px solid rgba(240,236,224,.18); border-radius:8px; padding:.95rem .6rem; font-size:1.3rem; font-weight:700; font-family:'Caveat',cursive; color:var(--chalk); cursor:pointer; transition:all .18s; position:relative; overflow:hidden; }
+    .opt-btn:hover:not(:disabled) { border-color:rgba(240,236,224,.5); background:rgba(240,236,224,.07); transform:translateY(-2px); }
+    .opt-btn.correct { background:rgba(90,180,90,.2); border-color:var(--correct); color:var(--correct); }
+    .opt-btn.wrong   { background:rgba(200,60,60,.15); border-color:var(--wrong); color:var(--wrong); }
+    .opt-btn.dimmed  { opacity:.35; }
+    .opt-btn:disabled { cursor:default; }
+    .ripple { position:absolute; border-radius:50%; background:rgba(255,255,255,.2); width:60px; height:60px; margin:-30px 0 0 -30px; animation:rippleAnim .5s ease-out forwards; pointer-events:none; }
+    @keyframes rippleAnim { from{transform:scale(0);opacity:1} to{transform:scale(4);opacity:0} }
+
+    .fb-box { border-radius:10px; padding:1rem; margin-bottom:.8rem; display:none; animation:slideIn .3s ease; }
+    @keyframes slideIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+    .fb-box.correct { background:rgba(90,180,90,.13); border:1px solid rgba(90,180,90,.38); }
+    .fb-box.wrong   { background:rgba(200,60,60,.1); border:1px solid rgba(200,60,60,.32); }
+    .fb-top { display:flex; align-items:center; gap:.5rem; }
+    .fb-emoji { font-size:1.3rem; }
+    .fb-title { font-weight:700; font-size:.93rem; }
+    .fb-explain { font-size:.85rem; color:var(--chalk-dim); margin-top:.45rem; line-height:1.65; }
+
+    .btn-next { background:linear-gradient(135deg,#2a6a2a,#1a4a1a); color:var(--chalk); border:1.5px solid rgba(240,236,224,.3); border-radius:8px; padding:.85rem 2.5rem; font-size:1rem; font-weight:700; font-family:inherit; cursor:pointer; width:100%; display:none; transition:all .18s; box-shadow:0 3px 10px rgba(0,0,0,.4); }
+    .btn-next:hover { transform:translateY(-2px); }
+
+    .score-pop { position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0); font-size:2.5rem; font-weight:900; z-index:200; pointer-events:none; animation:popAnim .9s ease forwards; font-family:'Caveat',cursive; }
+    @keyframes popAnim { 0%{transform:translate(-50%,-50%) scale(0);opacity:1} 55%{transform:translate(-50%,-90%) scale(1.2);opacity:1} 100%{transform:translate(-50%,-140%) scale(1);opacity:0} }
+
+    .res-emoji { font-size:4.5rem; display:block; animation:sway 2s ease-in-out infinite; margin-bottom:.4rem; }
+    .res-title { font-size:1.7rem; font-weight:900; margin-bottom:.2rem; }
+    .res-sub   { color:var(--chalk-dim); font-size:.88rem; margin-bottom:1.2rem; }
+    .breakdown { display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; margin-bottom:1.1rem; }
+    .bd-item { background:rgba(0,0,0,.25); border:1px solid rgba(240,236,224,.12); border-radius:10px; padding:.85rem .5rem; }
+    .bd-num { font-size:1.7rem; font-weight:900; line-height:1; font-family:'Caveat',cursive; }
+    .bd-lbl { font-size:.7rem; color:var(--chalk-dim); margin-top:.2rem; }
+    .final-score { font-size:3.5rem; font-weight:900; color:var(--chalk-yellow); text-shadow:0 0 30px rgba(245,215,110,.4); margin:.6rem 0; font-family:'Caveat',cursive; }
+    .comment-box { background:rgba(0,0,0,.2); border:1px dashed rgba(240,236,224,.18); border-radius:10px; padding:.9rem 1.1rem; margin-bottom:1.1rem; font-size:.9rem; line-height:1.65; color:var(--chalk-dim); }
+    .end-btns { display:flex; flex-direction:column; gap:.5rem; }
+    .best-note-end { margin-top:.6rem; font-size:.78rem; color:var(--chalk-dim); }
+
+    .board-header { display:flex; align-items:center; gap:.8rem; margin-bottom:.8rem; }
+    .board-title { font-size:1.5rem; font-weight:900; flex:1; text-align:center; }
+    .btn-clear { background:transparent; border:1px solid rgba(200,60,60,.38); color:rgba(200,100,100,.8); border-radius:6px; padding:.35rem .7rem; font-size:.75rem; font-family:inherit; cursor:pointer; transition:all .18s; white-space:nowrap; }
+    .btn-clear:hover { border-color:var(--wrong); color:var(--wrong); }
+    .filter-tabs { display:flex; gap:.4rem; margin-bottom:.8rem; flex-wrap:wrap; }
+    .filter-tab { background:rgba(0,0,0,.25); border:1px solid rgba(240,236,224,.13); border-radius:20px; padding:.3rem .85rem; font-size:.78rem; font-family:inherit; color:var(--chalk-dim); cursor:pointer; transition:all .18s; }
+    .filter-tab.active { background:rgba(90,180,90,.15); border-color:#90d090; color:#90d090; font-weight:700; }
+    .board-empty { color:var(--chalk-dim); font-size:.95rem; padding:2rem 0; text-align:center; }
+    .board-list { display:flex; flex-direction:column; gap:.5rem; max-height:55vh; overflow-y:auto; padding-right:.2rem; margin-bottom:1rem; }
+    .board-list::-webkit-scrollbar { width:4px; }
+    .board-list::-webkit-scrollbar-thumb { background:rgba(240,236,224,.18); border-radius:2px; }
+    .board-item { display:flex; align-items:center; gap:.7rem; background:rgba(0,0,0,.25); border:1px solid rgba(240,236,224,.1); border-radius:10px; padding:.75rem 1rem; transition:border-color .18s; }
+    .board-item.highlight { border-color:var(--chalk-yellow); background:rgba(245,215,110,.08); }
+    .board-item.rank-1 { border-color:var(--gold); }
+    .board-item.rank-2 { border-color:var(--silver); }
+    .board-item.rank-3 { border-color:var(--bronze); }
+    .rank-badge { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:.85rem; flex-shrink:0; }
+    .rank-1 .rank-badge { background:rgba(245,215,110,.2); color:var(--gold); }
+    .rank-2 .rank-badge { background:rgba(200,196,184,.2); color:var(--silver); }
+    .rank-3 .rank-badge { background:rgba(200,128,80,.2); color:var(--bronze); }
+    .board-item:not(.rank-1):not(.rank-2):not(.rank-3) .rank-badge { background:rgba(0,0,0,.3); color:var(--chalk-dim); font-size:.8rem; }
+    .board-name { flex:1; font-weight:700; font-size:.95rem; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .board-meta { font-size:.72rem; color:var(--chalk-dim); }
+    .board-score { font-size:1.3rem; font-weight:900; color:var(--chalk-yellow); font-family:'Caveat',cursive; }
+    .board-correct { font-size:.72rem; color:var(--correct); }
+
+    .uploading { display:inline-block; animation:pulse 1s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+    .conf { position:fixed; width:8px; height:8px; top:-12px; z-index:999; pointer-events:none; animation:confFall linear forwards; }
+    @keyframes confFall { 0%{transform:translateY(0) rotate(0deg);opacity:1} 100%{transform:translateY(110vh) rotate(720deg);opacity:0} }
+
+    #modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:300; align-items:center; justify-content:center; }
+    .modal-box { background:var(--board); border:2px solid rgba(240,236,224,.22); border-radius:14px; padding:2rem 1.6rem; max-width:320px; width:90%; text-align:center; box-shadow:0 0 40px rgba(0,0,0,.6); }
+
+    @media(max-width:400px){ .game-title{font-size:1.8rem} .opts{grid-template-columns:1fr} }
+  </style>
+</head>
+<body>
+<div id="floats"></div>
+<div id="app">
+
+  <!-- 開始畫面 -->
+  <div class="screen active" id="scr-start">
+    <div class="main-card">
+      <span class="mascot">⚖️</span>
+      <h1 class="game-title">比例式大挑戰</h1>
+      <p class="game-sub">掌握比例的秘密，成為數學高手！共 10 題</p>
+      <div class="name-row">
+        <select class="name-input cls-select" id="class-input">
+          <option value="">班級</option>
+          <option>七誠</option><option>七勤</option><option>七美</option><option>七聖</option>
+        </select>
+        <input class="name-input seat-input" id="seat-input" type="number" min="1" max="40" placeholder="座號">
+        <input class="name-input" id="name-input" type="text" maxlength="10" placeholder="✏️ 姓名（選填）">
+      </div>
+      <div class="rules-box">
+        <h3>📋 遊戲規則</h3>
+        <div class="rule"><span>✅</span>答對得 <strong>10 分</strong></div>
+        <div class="rule"><span>❌</span>答錯扣 <strong>5 分</strong>，並顯示詳細解說</div>
+        <div class="rule"><span>📐</span>共 10 題，涵蓋比例式與應用題</div>
+        <div class="rule"><span>🏆</span>滿分 100 分，挑戰全班第一！</div>
+      </div>
+      <button class="btn-main" onclick="startGame()">🚀 開始挑戰！</button>
+      <button class="btn-secondary" onclick="openBoard()">🏆 查看全班排行榜</button>
+      <div class="best-note" id="best-start">載入中...</div>
+    </div>
+  </div>
+
+  <!-- 遊戲畫面 -->
+  <div class="screen" id="scr-game">
+    <div class="main-card">
+      <div class="game-hdr">
+        <button class="btn-back-sm" onclick="confirmHome()">🏠 回主頁面</button>
+        <div class="prog-area">
+          <div class="prog-label" id="prog-lbl">第 1 / 10 題</div>
+          <div class="prog-bg"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+        </div>
+        <div class="score-chip">
+          <div class="score-num" id="score-disp">0</div>
+          <div class="score-lbl">分數</div>
+        </div>
+      </div>
+      <div class="q-card">
+        <span class="type-tag tag-basic" id="q-tag">📐 比例式</span>
+        <div class="formula-box" id="q-formula">a ： b ＝ c ： d</div>
+        <div class="q-text" id="q-text"></div>
+      </div>
+      <div class="opts" id="opts">
+        <button class="opt-btn" id="opt0" onclick="pick(0,event)"></button>
+        <button class="opt-btn" id="opt1" onclick="pick(1,event)"></button>
+        <button class="opt-btn" id="opt2" onclick="pick(2,event)"></button>
+        <button class="opt-btn" id="opt3" onclick="pick(3,event)"></button>
+      </div>
+      <div class="fb-box" id="fb">
+        <div class="fb-top">
+          <span class="fb-emoji" id="fb-emo">🎉</span>
+          <span class="fb-title" id="fb-ttl">答對了！</span>
+        </div>
+        <div class="fb-explain" id="fb-exp"></div>
+      </div>
+      <button class="btn-next" id="btn-next" onclick="next()">繼續 →</button>
+    </div>
+  </div>
+
+  <!-- 結果畫面 -->
+  <div class="screen" id="scr-end">
+    <div class="main-card">
+      <span class="res-emoji" id="res-emo">🏆</span>
+      <h2 class="res-title" id="res-ttl">太厲害了！</h2>
+      <p class="res-sub" id="res-sub">挑戰完成</p>
+      <div class="breakdown">
+        <div class="bd-item"><div class="bd-num" id="bd-ok" style="color:var(--correct)">0</div><div class="bd-lbl">答對題數</div></div>
+        <div class="bd-item"><div class="bd-num" id="bd-no" style="color:var(--wrong)">0</div><div class="bd-lbl">答錯題數</div></div>
+        <div class="bd-item"><div class="bd-num" id="bd-sc" style="color:var(--chalk-yellow)">0</div><div class="bd-lbl">最終分數</div></div>
+      </div>
+      <div class="final-score" id="final-sc">0 分</div>
+      <div class="comment-box" id="comment"></div>
+      <div class="end-btns">
+        <button class="btn-main" onclick="openBoard()">🏆 查看全班排行榜</button>
+        <button class="btn-secondary" onclick="startGame()">🔄 再玩一次！</button>
+        <button class="btn-home" onclick="showScr('start')">🏠 回遊戲主頁面</button>
+      </div>
+      <div class="best-note-end" id="best-end"></div>
+    </div>
+  </div>
+
+  <!-- 排行榜畫面 -->
+  <div class="screen" id="scr-board">
+    <div class="main-card" style="text-align:left;padding:1.5rem 1.5rem 1.8rem">
+      <div class="board-header">
+        <div class="board-title">🏆 全班排行榜</div>
+        <button class="btn-clear" onclick="clearBoard()">🔑 清除</button>
+      </div>
+      <div class="filter-tabs">
+        <button class="filter-tab active" data-f="全部" onclick="setFilter('全部')">全部</button>
+        <button class="filter-tab" data-f="七誠" onclick="setFilter('七誠')">七誠</button>
+        <button class="filter-tab" data-f="七勤" onclick="setFilter('七勤')">七勤</button>
+        <button class="filter-tab" data-f="七美" onclick="setFilter('七美')">七美</button>
+        <button class="filter-tab" data-f="七聖" onclick="setFilter('七聖')">七聖</button>
+      </div>
+      <div class="board-list" id="board-list"></div>
+      <button class="btn-home" onclick="showScr('start')" style="width:100%">🏠 回遊戲主頁面</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- 確認離開 Modal -->
+<div id="modal-overlay">
+  <div class="modal-box">
+    <div style="font-size:2.5rem;margin-bottom:.5rem">⚠️</div>
+    <div style="font-weight:700;font-size:1.1rem;margin-bottom:.4rem">確定要離開？</div>
+    <div style="font-size:.88rem;color:var(--chalk-dim);margin-bottom:1.4rem">目前的作答進度將會消失</div>
+    <div style="display:flex;gap:.7rem">
+      <button onclick="closeModal()" style="flex:1;background:rgba(0,0,0,.3);border:1px solid rgba(240,236,224,.2);border-radius:8px;padding:.75rem;font-size:.95rem;font-weight:700;font-family:inherit;color:var(--chalk);cursor:pointer">繼續作答</button>
+      <button onclick="goHome()" style="flex:1;background:rgba(200,60,60,.28);border:1px solid rgba(200,60,60,.5);border-radius:8px;padding:.75rem;font-size:.95rem;font-weight:700;font-family:inherit;color:#e08080;cursor:pointer">離開</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// ── Firebase ──
+firebase.initializeApp({
+  apiKey: "AIzaSyCHYtmrbMTxQhsSm9qjspiz-OVs2Jwv9jA",
+  authDomain: "my-teaching-tools-ae1ac.firebaseapp.com",
+  projectId: "my-teaching-tools-ae1ac",
+  storageBucket: "my-teaching-tools-ae1ac.firebasestorage.app",
+  messagingSenderId: "817693080761",
+  appId: "1:817693080761:web:27f1226f1f024713fc6f68"
+});
+const db = firebase.firestore();
+const SCORES_COL = 'game_scores_ratio';
+
+// ── Utils ──
+const ri = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const rf = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=ri(0,i);[b[i],b[j]]=[b[j],b[i]];} return b; };
+const gcd = (a,b) => b===0?a:gcd(b,a%b);
+
+function genWrongs(ans, n=3) {
+  const s = new Set();
+  [-5,-4,-3,-2,-1,1,2,3,4,5,6,7,8,-6].forEach(d => { const w=ans+d; if(w>0&&w!==ans) s.add(w); });
+  [0.5,2,3].forEach(m => { const w=Math.round(ans*m); if(w>0&&w!==ans) s.add(w); });
+  return shuffle([...s]).slice(0,n);
+}
+
+// ── 題目生成 ──
+
+// 類型1：基本比例式，求缺項
+function makeBasicQ() {
+  const pairs = [[1,2],[1,3],[2,3],[3,4],[2,5],[3,5],[4,5],[1,4],[3,7],[4,7],[5,6],[5,8]];
+  const [p,q] = rf(pairs);
+  const m = ri(2,6);
+  const vals = [p, q, p*m, q*m]; // a:b = c:d
+  const hide = ri(0,3);
+  const ans = vals[hide];
+  const shown = vals.map((v,i) => i===hide ? null : v);
+  const D = v => v===null ? `<span class="q-blank">□</span>` : `<strong>${v}</strong>`;
+
+  const txt = `求下列比例式中，□ 代表的數：
+    <div class="prop-line">${D(shown[0])} ： ${D(shown[1])} ＝ ${D(shown[2])} ： ${D(shown[3])}</div>`;
+
+  let exp;
+  const [a,b,c,d] = vals;
+  if(hide===0) exp=`交叉相乘：□ × ${d} ＝ ${b} × ${c} ＝ ${b*c}<br>□ ＝ ${b*c} ÷ ${d} ＝ <strong style="color:#7cd97c">${ans}</strong>`;
+  else if(hide===1) exp=`交叉相乘：${a} × ${d} ＝ □ × ${c}，${a*d} ÷ ${c} ＝ <strong style="color:#7cd97c">${ans}</strong>`;
+  else if(hide===2) exp=`交叉相乘：${a} × ${d} ＝ ${b} × □，${a*d} ÷ ${b} ＝ <strong style="color:#7cd97c">${ans}</strong>`;
+  else              exp=`交叉相乘：${a} × □ ＝ ${b} × ${c} ＝ ${b*c}<br>□ ＝ ${b*c} ÷ ${a} ＝ <strong style="color:#7cd97c">${ans}</strong>`;
+
+  const opts = shuffle([ans,...genWrongs(ans)]);
+  return { tag:'basic', formula:'a ： b ＝ c ： d  →  ad ＝ bc', txt, exp, opts, ci:opts.indexOf(ans), ans };
+}
+
+// 類型2：文字應用題
+function makeWordQ() {
+  const pairs = [[2,3],[3,4],[3,5],[4,5],[1,3],[2,5],[5,8],[3,7],[5,9],[4,9]];
+  const [p,q] = rf(pairs);
+  const big=Math.max(p,q), sml=Math.min(p,q);
+  const m = ri(3,8);
+  const bigV=big*m, smlV=sml*m;
+
+  const templates = [
+    { txt:`班上男生與女生的人數比為 <strong>${big}：${sml}</strong>，<br>女生有 <strong>${smlV}</strong> 人，男生有多少人？`, ans:bigV,
+      exp:`設男生 x 人：x ÷ ${bigV} ≠ ，用比例式：x：${smlV} ＝ ${big}：${sml}<br>x ＝ ${smlV} × ${big} ÷ ${sml} ＝ <strong style="color:#7cd97c">${bigV}</strong> 人` },
+    { txt:`甲袋有 <strong>${bigV}</strong> 顆糖，甲：乙 ＝ <strong>${big}：${sml}</strong>，<br>乙袋有多少顆？`, ans:smlV,
+      exp:`${bigV}：x ＝ ${big}：${sml}<br>x ＝ ${bigV} × ${sml} ÷ ${big} ＝ <strong style="color:#7cd97c">${smlV}</strong> 顆` },
+    { txt:`長方形長：寬 ＝ <strong>${big}：${sml}</strong>，<br>長為 <strong>${bigV}</strong> 公分，寬為多少公分？`, ans:smlV,
+      exp:`${bigV}：x ＝ ${big}：${sml}<br>x ＝ ${bigV} × ${sml} ÷ ${big} ＝ <strong style="color:#7cd97c">${smlV}</strong> 公分` },
+    { txt:`果汁：糖水 ＝ <strong>${big}：${sml}</strong>，<br>糖水有 <strong>${smlV}</strong> 毫升，果汁有多少毫升？`, ans:bigV,
+      exp:`x：${smlV} ＝ ${big}：${sml}<br>x ＝ ${smlV} × ${big} ÷ ${sml} ＝ <strong style="color:#7cd97c">${bigV}</strong> 毫升` },
+    { txt:`甲繩與乙繩長度比為 <strong>${big}：${sml}</strong>，<br>乙繩長 <strong>${smlV}</strong> 公尺，甲繩長多少公尺？`, ans:bigV,
+      exp:`x：${smlV} ＝ ${big}：${sml}<br>x ＝ ${smlV} × ${big} ÷ ${sml} ＝ <strong style="color:#7cd97c">${bigV}</strong> 公尺` },
+    { txt:`紅球與藍球比為 <strong>${big}：${sml}</strong>，<br>紅球有 <strong>${bigV}</strong> 個，藍球有多少個？`, ans:smlV,
+      exp:`${bigV}：x ＝ ${big}：${sml}<br>x ＝ ${bigV} × ${sml} ÷ ${big} ＝ <strong style="color:#7cd97c">${smlV}</strong> 個` }
+  ];
+
+  const t = rf(templates);
+  const opts = shuffle([t.ans,...genWrongs(t.ans)]);
+  return { tag:'word', formula:'a ： b ＝ c ： d', txt:t.txt, exp:t.exp, opts, ci:opts.indexOf(t.ans), ans:t.ans };
+}
+
+// 類型3：連比例，求甲：丙
+function makeChainQ() {
+  const chains = [[2,3,5],[1,2,5],[3,4,6],[2,3,4],[3,5,6],[1,3,4],[2,5,7],[4,5,6],[1,4,5],[3,4,5]];
+  const [p,q,r] = rf(chains);
+  const m = ri(2,4);
+  const a=p*m, b=q*m, c=r*m; // 顯示 a:b 和 b:c，共享 b
+
+  const g = gcd(p,r);
+  const acA=p/g, acC=r/g;
+  if(acA===acC) return makeChainQ();
+
+  const askC = Math.random()<0.5;
+  const ans = askC ? acC : acA;
+  const given = askC ? acA : acC;
+
+  const txt = askC
+    ? `已知 <strong>甲：乙 ＝ ${a}：${b}</strong>，<strong>乙：丙 ＝ ${b}：${c}</strong>，<br>求 <strong>甲：丙 ＝ ${acA}：<span class="q-blank">□</span></strong>，□ ＝ ？`
+    : `已知 <strong>甲：乙 ＝ ${a}：${b}</strong>，<strong>乙：丙 ＝ ${b}：${c}</strong>，<br>求 <strong>甲：丙 ＝ <span class="q-blank">□</span>：${acC}</strong>，□ ＝ ？`;
+
+  const exp = `化簡：甲：乙 ＝ ${p}：${q}，乙：丙 ＝ ${q}：${r}<br>所以 甲：乙：丙 ＝ ${p}：${q}：${r}<br>甲：丙 ＝ ${acA}：${acC}，□ ＝ <strong style="color:#7cd97c">${ans}</strong>`;
+
+  const opts = shuffle([ans,...genWrongs(ans)]);
+  return { tag:'chain', formula:'甲:乙 ＝ p:q，乙:丙 ＝ q:r → 甲:丙 ＝ p:r', txt, exp, opts, ci:opts.indexOf(ans), ans };
+}
+
+function genAllQ() {
+  qs = [];
+  const types = shuffle(['basic','basic','basic','basic','basic','word','word','word','chain','chain']);
+  for(let i=0;i<10;i++){
+    let q, t=0;
+    do { q = types[i]==='basic'?makeBasicQ():types[i]==='word'?makeWordQ():makeChainQ(); t++; }
+    while((!q||q.opts.length<4)&&t<20);
+    qs.push(q);
+  }
+}
+
+// ── 狀態 ──
+let curQ=0, score=0, okCnt=0, noCnt=0, qs=[], done=false;
+let playerName='', playerClass='', playerSeat='';
+let boardFilter='全部', boardListener=null;
+
+// ── Firebase 排行榜 ──
+function openBoard(){
+  boardFilter='全部';
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.toggle('active',b.dataset.f==='全部'));
+  showScr('board'); renderBoard();
+}
+function setFilter(f){
+  boardFilter=f;
+  document.querySelectorAll('.filter-tab').forEach(b=>b.classList.toggle('active',b.dataset.f===f));
+  if(boardListener){boardListener();boardListener=null;}
+  renderBoard();
+}
+function renderBoard(){
+  const el=document.getElementById('board-list');
+  el.innerHTML='<div class="board-empty">載入中...</div>';
+  if(boardListener){boardListener();boardListener=null;}
+  boardListener=db.collection(SCORES_COL).orderBy('score','desc').limit(60).onSnapshot(snap=>{
+    let arr=[]; snap.forEach(d=>arr.push(d.data()));
+    if(boardFilter!=='全部') arr=arr.filter(e=>e.班級===boardFilter);
+    arr=arr.slice(0,30);
+    if(!arr.length){ el.innerHTML='<div class="board-empty">尚無記錄<br><small>完成遊戲後會自動上傳成績</small></div>'; return; }
+    const medals=['🥇','🥈','🥉'];
+    const sp=s=>String(parseInt(s||0)).padStart(2,'0');
+    el.innerHTML=arr.map((e,i)=>{
+      const isMe=playerClass&&playerClass===e.班級&&sp(playerSeat)===e.座號;
+      return `<div class="board-item ${i<3?'rank-'+(i+1):''} ${isMe?'highlight':''}">
+        <div class="rank-badge">${i<3?medals[i]:i+1}</div>
+        <div style="flex:1;min-width:0">
+          <div class="board-name">${e.班級||''} ${e.座號||''}號 ${e.姓名||''} ${isMe?'<span style="color:var(--chalk-yellow);font-size:.8rem">◀ 你</span>':''}</div>
+          <div class="board-meta">${e.date||''} &nbsp;·&nbsp; <span class="board-correct">✅ ${e.correct}/10</span></div>
+        </div>
+        <div class="board-score">${e.score}</div>
+      </div>`;
+    }).join('');
+  },()=>{ el.innerHTML='<div class="board-empty">載入失敗</div>'; });
+}
+async function addToBoard(cls,seat,name,sc,correct,wrong){
+  const sp=String(parseInt(seat||0)).padStart(2,'0');
+  const displayName=name||(cls&&seat?`${cls}${sp}號`:'匿名玩家');
+  await db.collection(SCORES_COL).add({班級:cls||'未填',座號:sp,姓名:displayName,score:sc,correct,wrong,date:new Date().toLocaleDateString('zh-TW'),timestamp:firebase.firestore.FieldValue.serverTimestamp()});
+}
+async function clearBoard(){
+  const pw=prompt('請輸入教師密碼：');
+  if(pw!=='math2026'){alert('密碼錯誤');return;}
+  if(!confirm('確定要清除所有排行榜記錄？')) return;
+  const snap=await db.collection(SCORES_COL).get();
+  const batch=db.batch(); snap.forEach(d=>batch.delete(d.ref));
+  await batch.commit();
+  if(boardListener){boardListener();boardListener=null;} renderBoard();
+}
+async function updateBestNote(){
+  try{
+    const snap=await db.collection(SCORES_COL).orderBy('score','desc').limit(1).get();
+    const cnt=(await db.collection(SCORES_COL).get()).size;
+    const el=document.getElementById('best-start');
+    if(snap.empty){ el.textContent='尚無記錄，來創造第一個吧！'; return; }
+    const top=snap.docs[0].data();
+    el.textContent=`🏆 最高分：${top.score} 分（${top.班級} ${top.座號}號 ${top.姓名}）· 已有 ${cnt} 筆記錄`;
+  }catch(e){ document.getElementById('best-start').textContent=''; }
+}
+
+// ── Modal ──
+function confirmHome(){ document.getElementById('modal-overlay').style.display='flex'; }
+function closeModal(){ document.getElementById('modal-overlay').style.display='none'; }
+function goHome(){ closeModal(); showScr('start'); }
+
+// ── 音效 ──
+let actx;
+function sfx(type){
+  try{
+    if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)();
+    const o=actx.createOscillator(),g=actx.createGain();
+    o.connect(g); g.connect(actx.destination);
+    const t=actx.currentTime;
+    if(type==='ok'){ o.type='sine'; o.frequency.setValueAtTime(523,t); o.frequency.setValueAtTime(659,t+.1); o.frequency.setValueAtTime(784,t+.2); g.gain.setValueAtTime(.3,t); g.gain.exponentialRampToValueAtTime(.001,t+.55); o.start(t); o.stop(t+.55); }
+    else if(type==='no'){ o.type='sawtooth'; o.frequency.setValueAtTime(220,t); o.frequency.setValueAtTime(160,t+.15); g.gain.setValueAtTime(.2,t); g.gain.exponentialRampToValueAtTime(.001,t+.4); o.start(t); o.stop(t+.4); }
+    else if(type==='go'){ o.type='sine'; [261,329,392,523].forEach((f,i)=>o.frequency.setValueAtTime(f,t+i*.1)); g.gain.setValueAtTime(.3,t); g.gain.exponentialRampToValueAtTime(.001,t+.6); o.start(t); o.stop(t+.6); }
+    else if(type==='end'){ o.type='sine'; [392,523,659,784,1047].forEach((f,i)=>o.frequency.setValueAtTime(f,t+i*.13)); g.gain.setValueAtTime(.3,t); g.gain.exponentialRampToValueAtTime(.001,t+.9); o.start(t); o.stop(t+.9); }
+  }catch(e){}
+}
+
+// ── 視覺效果 ──
+function popScore(ok){
+  const el=document.createElement('div'); el.className='score-pop';
+  el.textContent=ok?'+10 ✨':'-5 💔'; el.style.color=ok?'#7cd97c':'#e06060';
+  document.body.appendChild(el); setTimeout(()=>el.remove(),1000);
+}
+function confetti(){
+  const cols=['#f5d76e','#90c4f0','#f0a0b4','#7cd97c','#ffffff'];
+  for(let i=0;i<60;i++) setTimeout(()=>{
+    const el=document.createElement('div'); el.className='conf';
+    el.style.left=Math.random()*100+'vw'; el.style.background=rf(cols);
+    el.style.borderRadius=Math.random()>.5?'50%':'3px';
+    const dur=1.5+Math.random()*2; el.style.animationDuration=dur+'s'; el.style.animationDelay=Math.random()*.4+'s';
+    document.body.appendChild(el); setTimeout(()=>el.remove(),(dur+.5)*1000);
+  },i*35);
+}
+function addRipple(btn,e){
+  const r=document.createElement('div'); r.className='ripple';
+  const rect=btn.getBoundingClientRect();
+  r.style.left=(e.clientX-rect.left)+'px'; r.style.top=(e.clientY-rect.top)+'px';
+  btn.appendChild(r); setTimeout(()=>r.remove(),600);
+}
+
+// ── 畫面切換 ──
+function showScr(id){
+  if(id!=='board'&&boardListener){boardListener();boardListener=null;}
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('scr-'+id).classList.add('active');
+}
+
+// ── 遊戲流程 ──
+function startGame(){
+  playerClass=document.getElementById('class-input').value;
+  playerSeat=document.getElementById('seat-input').value;
+  playerName=document.getElementById('name-input').value.trim();
+  curQ=0; score=0; okCnt=0; noCnt=0; done=false;
+  genAllQ(); showScr('game'); sfx('go'); renderQ();
+}
+function renderQ(){
+  const q=qs[curQ]; done=false;
+  document.getElementById('prog-lbl').textContent=`第 ${curQ+1} / 10 題`;
+  document.getElementById('prog-fill').style.width=`${(curQ/10)*100}%`;
+  document.getElementById('score-disp').textContent=score;
+  const tag=document.getElementById('q-tag');
+  if(q.tag==='basic'){tag.textContent='📐 基本比例式';tag.className='type-tag tag-basic';}
+  else if(q.tag==='word'){tag.textContent='📝 應用題';tag.className='type-tag tag-word';}
+  else{tag.textContent='🔗 連比例';tag.className='type-tag tag-chain';}
+  document.getElementById('q-formula').textContent=q.formula;
+  document.getElementById('q-text').innerHTML=q.txt;
+  for(let i=0;i<4;i++){const b=document.getElementById('opt'+i);b.textContent=q.opts[i];b.className='opt-btn';b.disabled=false;}
+  document.getElementById('fb').style.display='none';
+  document.getElementById('btn-next').style.display='none';
+}
+function pick(idx,e){
+  if(done) return; done=true;
+  addRipple(document.getElementById('opt'+idx),e);
+  const q=qs[curQ]; const ok=idx===q.ci;
+  for(let i=0;i<4;i++){
+    const b=document.getElementById('opt'+i); b.disabled=true;
+    if(i===q.ci) b.classList.add('correct');
+    else if(i===idx&&!ok) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  }
+  if(ok){score+=10;okCnt++;}else{score=Math.max(0,score-5);noCnt++;}
+  document.getElementById('score-disp').textContent=score;
+  const fb=document.getElementById('fb');
+  fb.className='fb-box '+(ok?'correct':'wrong');
+  fb.style.display='block';
+  document.getElementById('fb-emo').textContent=ok?'🎉':'😅';
+  document.getElementById('fb-ttl').textContent=ok?'答對了！太棒了！':'答錯了，不要灰心！';
+  document.getElementById('fb-exp').innerHTML=q.exp;
+  popScore(ok); sfx(ok?'ok':'no');
+  const nb=document.getElementById('btn-next');
+  nb.style.display='block';
+  nb.textContent=curQ<9?'繼續下一題 →':'查看結果 🏁';
+}
+function next(){ curQ++; if(curQ>=10) showEnd(); else renderQ(); }
+
+function getResult(s){
+  if(s>=90) return{emo:'🏆',ttl:'比例式達人！',sub:'完美表現，令人讚嘆！',cmt:'你對比例式的掌握已達大師等級！交叉相乘、連比例全難不倒你，繼續保持！'};
+  if(s>=70) return{emo:'⭐',ttl:'非常優秀！',sub:'差一點就滿分，繼續衝！',cmt:'比例式基礎非常紮實！多練習連比例與應用題，100 分指日可待！'};
+  if(s>=50) return{emo:'📐',ttl:'還不錯喔！',sub:'多練習就更棒了！',cmt:'基礎已建立！核心公式：ad ＝ bc（交叉相乘）。多做幾遍就能掌握！'};
+  if(s>=20) return{emo:'💪',ttl:'加油！繼續練習！',sub:'只要努力，一定沒問題！',cmt:'比例式核心：a:b ＝ c:d → a×d ＝ b×c。把這個公式背熟，再試試！'};
+  return{emo:'🌱',ttl:'需要多加練習！',sub:'從基礎開始，一起加油！',cmt:'比例式的秘訣：交叉相乘！a:b ＝ c:d 代表 a×d ＝ b×c。先弄熟公式再來挑戰！'};
+}
+async function showEnd(){
+  const r=getResult(score);
+  document.getElementById('res-emo').textContent=r.emo;
+  document.getElementById('res-ttl').textContent=r.ttl;
+  document.getElementById('res-sub').textContent=r.sub;
+  document.getElementById('bd-ok').textContent=okCnt;
+  document.getElementById('bd-no').textContent=noCnt;
+  document.getElementById('bd-sc').textContent=score;
+  document.getElementById('final-sc').textContent=score+' 分';
+  document.getElementById('comment').textContent=r.cmt;
+  const endNote=document.getElementById('best-end');
+  endNote.innerHTML='<span class="uploading">⏳ 上傳成績中...</span>';
+  showScr('end'); sfx('end');
+  if(score>=50) confetti();
+  try{
+    await addToBoard(playerClass,playerSeat,playerName,score,okCnt,noCnt);
+    const sp=String(parseInt(playerSeat||0)).padStart(2,'0');
+    const who=playerClass&&playerSeat?`${playerClass} ${sp}號 ${playerName}`:'';
+    endNote.textContent=`✅ 成績已記錄至全班排行榜！${who}`;
+    updateBestNote();
+  }catch(e){ endNote.textContent='⚠️ 上傳失敗，請確認網路連線後再試'; }
+}
+
+// ── 背景浮動符號 ──
+function buildBg(){
+  const fe=document.getElementById('floats');
+  const syms=['a:b=c:d','ad=bc','比例式','÷','×','=','：','a/b','c/d','□','⚖️','交叉相乘'];
+  for(let i=0;i<14;i++){
+    const el=document.createElement('div'); el.className='fsym';
+    el.textContent=rf(syms);
+    el.style.cssText=`left:${Math.random()*100}%;font-size:${1+Math.random()*1}rem;animation-duration:${10+Math.random()*15}s;animation-delay:${Math.random()*12}s;`;
+    fe.appendChild(el);
+  }
+}
+
+buildBg();
+updateBestNote();
+</script>
+</body>
+</html>

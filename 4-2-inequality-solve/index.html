@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>4-2 解一元一次不等式及其應用 教學駕駛艙</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#1a2a1a;--panel:#1e301e;--border:#2d4a2d;
+  --chalk:#e8e4d8;--yellow:#ffd54f;--pink:#ff8a80;--blue:#81d4fa;--green:#a5d6a7;
+  --wood:#8d6e4a;--wood2:#a0825a;
+  --font-chalk:'Segoe UI',sans-serif;
+}
+html{font-size:18px}
+body{background:var(--bg);color:var(--chalk);font-family:var(--font-chalk);min-height:100vh;overflow-x:hidden}
+
+header{
+  background:linear-gradient(135deg,var(--wood),var(--wood2));
+  border-bottom:6px solid #5d4037;
+  padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 4px 16px rgba(0,0,0,.5);
+}
+header h1{font-size:1.3rem;color:#fff3e0;text-shadow:1px 1px 3px rgba(0,0,0,.6)}
+header .subtitle{font-size:.9rem;color:#d7ccc8;margin-top:2px}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
+
+.mode-bar{background:rgba(0,0,0,.3);padding:6px 24px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border)}
+.mode-btn{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--chalk);padding:5px 16px;border-radius:20px;cursor:pointer;font-size:.9rem;transition:.2s}
+.mode-btn.active{background:var(--yellow);color:#1a1a1a;font-weight:600;border-color:var(--yellow)}
+.mode-btn:hover{background:rgba(255,255,255,.15)}
+.teacher-badge{background:var(--pink);color:#1a1a1a;padding:3px 10px;border-radius:12px;font-size:.85rem;font-weight:600;display:none}
+
+.container{max-width:1400px;margin:0 auto;padding:20px 16px}
+
+.section-title{font-size:1.1rem;color:var(--yellow);border-bottom:2px solid var(--yellow);padding-bottom:6px;margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+.section-title::before{content:'✦';font-size:.9rem}
+
+.objectives{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.obj-chip{background:rgba(129,212,250,.15);border:1px solid var(--blue);color:var(--blue);padding:6px 14px;border-radius:20px;font-size:.9rem;}
+
+.topic-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
+.topic-pill{background:rgba(255,213,79,.1);border:1px solid rgba(255,213,79,.4);color:var(--yellow);padding:7px 18px;border-radius:20px;cursor:pointer;font-size:.85rem;text-decoration:none;transition:.2s;}
+.topic-pill:hover{background:rgba(255,213,79,.25)}
+
+.carousel-wrap{margin-bottom:28px;position:relative}
+.carousel{position:relative;background:#111;border-radius:8px;overflow:hidden;border:2px solid var(--border)}
+.carousel-inner img{width:100%;display:none;aspect-ratio:16/9;object-fit:contain;background:#111;max-height:calc(100vh - 130px)}
+.carousel-inner img.active{display:block}
+.carousel-nav{position:absolute;bottom:0;left:0;right:0;display:flex;align-items:center;justify-content:center;gap:16px;padding:8px 10px;background:rgba(0,0,0,.65);border-radius:0 0 6px 6px;z-index:10}
+.carousel-nav button{background:rgba(255,255,255,.1);border:1px solid var(--border);color:var(--chalk);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;transition:.2s;}
+.carousel-nav button:hover{background:rgba(255,255,255,.25)}
+.slide-counter{color:var(--chalk);font-size:.85rem;min-width:60px;text-align:center}
+
+.sec-card{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:28px}
+.sec-card h2{font-size:1rem;color:var(--yellow);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.sec-number{background:var(--yellow);color:#1a1a1a;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;flex-shrink:0}
+
+.canvas-wrap{position:relative;width:100%;aspect-ratio:16/9;background:#1a2d1a;border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:16px}
+canvas{width:100%;height:100%;display:block}
+.canvas-controls{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.ctrl-btn{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--chalk);padding:6px 14px;border-radius:16px;cursor:pointer;font-size:.9rem;transition:.2s;}
+.ctrl-btn:hover,.ctrl-btn.active{background:var(--blue);color:#1a1a1a;border-color:var(--blue)}
+.ctrl-btn.yellow.active,.ctrl-btn.yellow:hover{background:var(--yellow);color:#1a1a1a;border-color:var(--yellow)}
+
+.quiz-block{margin-top:16px}
+.quiz-q{font-size:.9rem;margin-bottom:10px;color:var(--chalk);line-height:1.5}
+.quiz-q strong{color:var(--yellow)}
+.quiz-opts{display:flex;flex-direction:column;gap:6px;margin-bottom:8px}
+.quiz-opt{background:rgba(255,255,255,.06);border:1px solid var(--border);color:var(--chalk);padding:8px 14px;border-radius:8px;cursor:pointer;font-size:.85rem;text-align:left;transition:.2s;}
+.quiz-opt:hover{background:rgba(255,255,255,.12)}
+.quiz-opt.correct{background:rgba(165,214,167,.2);border-color:var(--green);color:var(--green)}
+.quiz-opt.wrong{background:rgba(255,138,128,.15);border-color:var(--pink);color:var(--pink)}
+.quiz-feedback{font-size:.9rem;padding:8px 12px;border-radius:6px;margin-top:4px;display:none}
+.quiz-feedback.show{display:block}
+.quiz-feedback.ok{background:rgba(165,214,167,.1);color:var(--green);border:1px solid var(--green)}
+.quiz-feedback.bad{background:rgba(255,138,128,.1);color:var(--pink);border:1px solid var(--pink)}
+
+.info-thumb{cursor:pointer;border-radius:8px;overflow:hidden;border:2px solid var(--border);transition:.2s;margin-top:16px}
+.info-thumb:hover{border-color:var(--yellow)}
+.info-thumb img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover}
+
+.teacher-block{background:rgba(255,138,128,.07);border:1px dashed var(--pink);border-radius:8px;padding:14px;margin-top:14px;display:none}
+.teacher-block h3{color:var(--pink);font-size:.85rem;margin-bottom:8px}
+.teacher-block p{font-size:.9rem;line-height:1.6;color:#ffccbc}
+.teacher-block ul{padding-left:18px;font-size:.9rem;line-height:1.8;color:#ffccbc}
+
+.cheatsheet-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-top:12px}
+.cheat-card{background:rgba(255,213,79,.05);border:1px solid rgba(255,213,79,.2);border-radius:8px;padding:14px}
+.cheat-card h4{color:var(--yellow);font-size:.85rem;margin-bottom:8px}
+.cheat-card table{width:100%;font-size:.85rem;border-collapse:collapse}
+.cheat-card td{padding:3px 6px;border-bottom:1px solid rgba(255,255,255,.06)}
+.cheat-card td:first-child{color:var(--blue);font-weight:600}
+
+.video-wrap{margin-bottom:28px}
+.video-wrap video{width:100%;border-radius:8px;border:2px solid var(--border);background:#000}
+
+.float-tools{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:200}
+.tool-btn{width:48px;height:48px;background:var(--panel);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.2rem;color:var(--chalk);transition:.2s;box-shadow:0 2px 8px rgba(0,0,0,.4);}
+.tool-btn:hover{background:var(--yellow);color:#1a1a1a;border-color:var(--yellow)}
+
+.draw-bar{position:fixed;left:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:6px;z-index:200;background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:8px;}
+.draw-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:150;pointer-events:none;display:none}
+
+.panel-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:300;display:none;align-items:center;justify-content:center;}
+.panel-overlay.show{display:flex}
+.panel-box{background:var(--panel);border:2px solid var(--border);border-radius:16px;padding:28px;min-width:280px;max-width:360px;width:90%;text-align:center;position:relative;}
+.panel-close{position:absolute;top:10px;right:14px;cursor:pointer;color:var(--chalk);font-size:1.2rem;background:none;border:none}
+.panel-box h3{color:var(--yellow);margin-bottom:16px;font-size:1.1rem}
+.lottery-num{font-size:4rem;color:var(--yellow);font-weight:700;margin:16px 0;min-height:80px;line-height:1}
+.lottery-range{display:flex;gap:8px;align-items:center;justify-content:center;margin-bottom:12px;font-size:.85rem}
+.lottery-range input{width:60px;background:rgba(255,255,255,.1);border:1px solid var(--border);color:var(--chalk);padding:4px 8px;border-radius:6px;text-align:center}
+.timer-display{font-size:3rem;color:var(--blue);font-weight:700;margin:12px 0}
+.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:8px}
+.timer-btns button{background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--chalk);padding:7px 18px;border-radius:8px;cursor:pointer;font-size:.85rem;transition:.2s}
+.timer-btns button:hover{background:rgba(255,255,255,.2)}
+
+.fullscreen-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:400;display:none;align-items:center;justify-content:center;cursor:zoom-out}
+.fullscreen-overlay.show{display:flex}
+.fullscreen-overlay img{max-width:95vw;max-height:95vh;object-fit:contain;border-radius:8px}
+
+@media(max-width:1024px){header h1{font-size:1.1rem}.container{padding:14px 12px}}
+@media(max-width:768px){
+  .float-tools{right:8px;top:auto;bottom:80px;transform:none;flex-direction:row;align-items:center}
+  .draw-bar{left:8px;top:auto;bottom:8px;transform:none;flex-direction:row;border-radius:24px}
+  header{padding:10px 14px}
+  .cheatsheet-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>⚖️ 4-2 解一元一次不等式及其應用</h1>
+    <div class="subtitle">七年級數學 第四章 · 教學駕駛艙</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <span class="teacher-badge" id="teacherBadge">🔑 教師模式</span>
+  </div>
+</header>
+
+<div class="mode-bar">
+  <button class="mode-btn active" id="btnStudent" onclick="setMode('student')">👤 學生模式</button>
+  <button class="mode-btn" id="btnTeacher" onclick="askTeacher()">🔑 教師模式</button>
+  <span style="margin-left:auto;font-size:.85rem;color:#888">NotebookLM × Claude</span>
+</div>
+
+<div class="container">
+
+  <div class="section-title">學習目標</div>
+  <div class="objectives">
+    <span class="obj-chip">了解不等式兩邊同加減一數，方向不變</span>
+    <span class="obj-chip">了解乘除正數，不等號方向不變</span>
+    <span class="obj-chip">了解乘除負數，不等號方向改變（核心！）</span>
+    <span class="obj-chip">能用移項法則解一元一次不等式</span>
+    <span class="obj-chip">能處理含分數或小數係數的不等式</span>
+    <span class="obj-chip">能用不等式解生活應用問題</span>
+  </div>
+
+  <div class="section-title">主題導覽</div>
+  <div class="topic-nav">
+    <a class="topic-pill" href="#sec-intro">📖 開場簡報</a>
+    <a class="topic-pill" href="#sec1">① 加減運算性質</a>
+    <a class="topic-pill" href="#sec2">② 乘除運算性質</a>
+    <a class="topic-pill" href="#sec3">③ 移項解不等式</a>
+    <a class="topic-pill" href="#sec4">④ 分數小數係數</a>
+    <a class="topic-pill" href="#sec5">⑤ 應用問題</a>
+    <a class="topic-pill" href="#sec-cheat">📋 總複習</a>
+    <a class="topic-pill" href="#sec-video">🎬 自學影片</a>
+    <a class="topic-pill" href="game.html" style="background:rgba(129,212,250,.15);border-color:var(--blue);color:var(--blue)">⚔️ 翻轉大作戰</a>
+  </div>
+
+  <div id="sec-intro" class="section-title">📊 授課簡報</div>
+  <div class="carousel-wrap">
+    <div class="carousel">
+      <div class="carousel-inner" id="mainSlides"></div>
+    </div>
+    <div class="carousel-nav">
+      <button onclick="carMove(-1)">‹</button>
+      <span class="slide-counter" id="mainCounter">1 / 15</span>
+      <button onclick="carMove(1)">›</button>
+    </div>
+  </div>
+
+  <!-- SEC 1 -->
+  <div id="sec1" class="sec-card">
+    <h2><span class="sec-number">1</span>不等式的運算性質（加減法）</h2>
+    <div class="canvas-wrap"><canvas id="cvs1"></canvas></div>
+    <div class="canvas-controls">
+      <button class="ctrl-btn yellow active" id="btn1a" onclick="cvs1Show('add')">加法</button>
+      <button class="ctrl-btn" id="btn1b" onclick="cvs1Show('sub')">減法</button>
+      <button class="ctrl-btn" id="btn1c" onclick="cvs1Show('rule')">性質整理</button>
+    </div>
+    <div class="quiz-block">
+      <div class="quiz-q"><strong>【Q1】</strong>已知 a &gt; b，則下列何者正確？</div>
+      <div class="quiz-opts" id="q1opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q1','A')">A. a − b &gt; 0</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q1','B')">B. a − 3 &lt; b − 3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q1','C')">C. a/2 &lt; b/2</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q1','D')">D. −a &gt; −b</button>
+      </div>
+      <div class="quiz-feedback" id="q1fb"></div>
+    </div>
+    <div class="quiz-block" style="margin-top:14px">
+      <div class="quiz-q"><strong>【Q2】</strong>已知 a &lt; b，兩邊同加 5 後，正確結果為：</div>
+      <div class="quiz-opts" id="q2opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q2','A')">A. a + 5 &gt; b + 5</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q2','B')">B. a + 5 = b + 5</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q2','C')">C. a + 5 &lt; b + 5</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q2','D')">D. 無法判斷</button>
+      </div>
+      <div class="quiz-feedback" id="q2fb"></div>
+    </div>
+    <div class="info-thumb" onclick="openFull('assets/01_addition_prop.jpg')">
+      <img src="assets/01_addition_prop.jpg" loading="lazy" alt="加減運算性質資訊圖表">
+    </div>
+    <div class="teacher-block" id="t1">
+      <h3>📌 教學提示</h3>
+      <ul>
+        <li>用天平類比：兩托盤同時加減相同重量，天平傾斜方向不變</li>
+        <li>移項原理的來源：a+c &gt; b+c，兩邊再同減 c，得 a &gt; b，即「移項到另一邊改號」</li>
+        <li>強調：c 可為任意實數（正、負、零），加減後方向皆不變</li>
+        <li>建議先讓學生親自舉例驗證（如 3 &gt; -5，同加或同減任一數），再歸納性質</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEC 2 -->
+  <div id="sec2" class="sec-card">
+    <h2><span class="sec-number">2</span>不等式的運算性質（乘除法）</h2>
+    <div class="canvas-wrap"><canvas id="cvs2"></canvas></div>
+    <div class="canvas-controls">
+      <button class="ctrl-btn yellow active" id="btn2a" onclick="cvs2Show('pos')">乘除正數</button>
+      <button class="ctrl-btn" id="btn2b" onclick="cvs2Show('neg')">乘除負數（方向改變！）</button>
+      <button class="ctrl-btn" id="btn2c" onclick="cvs2Show('compare')">正負對比</button>
+    </div>
+    <div class="quiz-block">
+      <div class="quiz-q"><strong>【Q3】</strong>已知 a &gt; b，兩邊同乘以 −3，正確結果為：</div>
+      <div class="quiz-opts" id="q3opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q3','A')">A. −3a &gt; −3b</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q3','B')">B. −3a &lt; −3b</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q3','C')">C. −3a = −3b</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q3','D')">D. 無法判斷</button>
+      </div>
+      <div class="quiz-feedback" id="q3fb"></div>
+    </div>
+    <div class="quiz-block" style="margin-top:14px">
+      <div class="quiz-q"><strong>【Q4】</strong>解不等式 −4x ≥ 8，其解為：</div>
+      <div class="quiz-opts" id="q4opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q4','A')">A. x ≥ −2</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q4','B')">B. x ≤ −2</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q4','C')">C. x ≥ 2</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q4','D')">D. x ≤ 2</button>
+      </div>
+      <div class="quiz-feedback" id="q4fb"></div>
+    </div>
+    <div class="info-thumb" onclick="openFull('assets/02_multiplication_prop.jpg')">
+      <img src="assets/02_multiplication_prop.jpg" loading="lazy" alt="乘除運算性質資訊圖表">
+    </div>
+    <div class="teacher-block" id="t2">
+      <h3>📌 教學提示</h3>
+      <ul>
+        <li>本節最重要概念：乘除負數時，不等號方向必須改變</li>
+        <li>用數線說明：3 &gt; −5，乘以 −1 後，−3 &lt; 5（數線上位置左右互換）</li>
+        <li>口訣：「乘負翻、除負翻」（負數乘除，方向顛倒）</li>
+        <li>最常見錯誤：−2x &gt; 4 兩邊除以 −2，忘記翻轉，誤寫 x &gt; −2（正確應為 x &lt; −2）</li>
+        <li>建議讓學生代入答案驗算：x = −3 代入 −4x ≥ 8 → 12 ≥ 8 ✓ 確認 x ≤ −2 正確</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEC 3 -->
+  <div id="sec3" class="sec-card">
+    <h2><span class="sec-number">3</span>解一元一次不等式（移項法）</h2>
+    <div class="canvas-wrap"><canvas id="cvs3"></canvas></div>
+    <div class="canvas-controls">
+      <button class="ctrl-btn yellow active" id="btn3a" onclick="cvs3Show('steps')">解題步驟</button>
+      <button class="ctrl-btn" id="btn3b" onclick="cvs3Show('ex1')">例① 簡單移項</button>
+      <button class="ctrl-btn" id="btn3c" onclick="cvs3Show('ex2')">例② 展開括號</button>
+    </div>
+    <div class="quiz-block">
+      <div class="quiz-q"><strong>【Q5】</strong>解不等式 x − 5 &gt; 3，其解為：</div>
+      <div class="quiz-opts" id="q5opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q5','A')">A. x &gt; −2</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q5','B')">B. x &gt; 8</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q5','C')">C. x &lt; 8</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q5','D')">D. x &lt; −2</button>
+      </div>
+      <div class="quiz-feedback" id="q5fb"></div>
+    </div>
+    <div class="quiz-block" style="margin-top:14px">
+      <div class="quiz-q"><strong>【Q6】</strong>解不等式 −3x + 1 &lt; 10，其解為：</div>
+      <div class="quiz-opts" id="q6opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q6','A')">A. x &lt; −3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q6','B')">B. x &gt; −3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q6','C')">C. x &lt; 3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q6','D')">D. x &gt; 3</button>
+      </div>
+      <div class="quiz-feedback" id="q6fb"></div>
+    </div>
+    <div class="info-thumb" onclick="openFull('assets/03_solving_steps.jpg')">
+      <img src="assets/03_solving_steps.jpg" loading="lazy" alt="解不等式步驟資訊圖表">
+    </div>
+    <div class="teacher-block" id="t3">
+      <h3>📌 教學提示</h3>
+      <ul>
+        <li>解題口訣：去括號 → 移項（含x移左、常數移右）→ 合併同類項 → 係數化1（負數翻轉！）</li>
+        <li>強調與解方程式的比較：解法相同，唯一差異是係數為負時不等號翻轉</li>
+        <li>練習順序：先係數為正 → 再引入負係數，讓學生感受差異</li>
+        <li>圖示習慣：解完後畫數線，加深「解是一個範圍」的概念</li>
+        <li>常見錯誤：移項後忘記變號，如 3x + 5 &gt; 11 誤寫為 3x &gt; 11 + 5</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEC 4 -->
+  <div id="sec4" class="sec-card">
+    <h2><span class="sec-number">4</span>含分數或小數係數的不等式</h2>
+    <div class="canvas-wrap"><canvas id="cvs4"></canvas></div>
+    <div class="canvas-controls">
+      <button class="ctrl-btn yellow active" id="btn4a" onclick="cvs4Show('frac')">分數係數</button>
+      <button class="ctrl-btn" id="btn4b" onclick="cvs4Show('dec')">小數係數</button>
+      <button class="ctrl-btn" id="btn4c" onclick="cvs4Show('mixed')">混合分數</button>
+    </div>
+    <div class="quiz-block">
+      <div class="quiz-q"><strong>【Q7】</strong>解不等式 x/3 ≤ 2，其解為：</div>
+      <div class="quiz-opts" id="q7opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q7','A')">A. x ≤ 2/3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q7','B')">B. x ≥ 6</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q7','C')">C. x ≤ 6</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q7','D')">D. x ≥ 2/3</button>
+      </div>
+      <div class="quiz-feedback" id="q7fb"></div>
+    </div>
+    <div class="quiz-block" style="margin-top:14px">
+      <div class="quiz-q"><strong>【Q8】</strong>解不等式 0.4x + 1.2 ≥ x + 3（兩邊先乘以 10），其解為：</div>
+      <div class="quiz-opts" id="q8opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q8','A')">A. x ≥ −3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q8','B')">B. x ≤ −3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q8','C')">C. x ≥ 3</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q8','D')">D. x ≤ 3</button>
+      </div>
+      <div class="quiz-feedback" id="q8fb"></div>
+    </div>
+    <div class="info-thumb" onclick="openFull('assets/04_fraction_decimal.jpg')">
+      <img src="assets/04_fraction_decimal.jpg" loading="lazy" alt="分數小數係數資訊圖表">
+    </div>
+    <div class="teacher-block" id="t4">
+      <h3>📌 教學提示</h3>
+      <ul>
+        <li>分數：找各分母最小公倍數，兩邊同乘（乘正數，不翻轉）</li>
+        <li>小數：乘以適當的 10 的次方（0.1位 → ×10；0.01位 → ×100）</li>
+        <li>注意：LCM 與 10 的次方皆為正數，所以清分母後不需翻轉</li>
+        <li>常見錯誤：清分母時只乘了等號某側的部分項，未全部乘到</li>
+        <li>例：(3x+2)/2 &gt; (4x-1)/3 + 2，乘以 6 時，右側的 +2 也要乘以 6 → +12</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- SEC 5 -->
+  <div id="sec5" class="sec-card">
+    <h2><span class="sec-number">5</span>應用問題</h2>
+    <div class="canvas-wrap"><canvas id="cvs5"></canvas></div>
+    <div class="canvas-controls">
+      <button class="ctrl-btn yellow active" id="btn5a" onclick="cvs5Show('steps')">解題步驟</button>
+      <button class="ctrl-btn" id="btn5b" onclick="cvs5Show('discount')">折扣問題</button>
+      <button class="ctrl-btn" id="btn5c" onclick="cvs5Show('alloc')">數量分配</button>
+      <button class="ctrl-btn" id="btn5d" onclick="cvs5Show('compare')">費用比較</button>
+    </div>
+    <div class="quiz-block">
+      <div class="quiz-q"><strong>【Q9】</strong>外送平台購買生鮮雜貨享 8 折優惠，折抵金額 = 原價 × 0.2。媽媽想折抵到 300 元，至少要購買多少元？</div>
+      <div class="quiz-opts" id="q9opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q9','A')">A. 至少 1000 元</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q9','B')">B. 至少 1200 元</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q9','C')">C. 至少 1500 元</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q9','D')">D. 至少 2000 元</button>
+      </div>
+      <div class="quiz-feedback" id="q9fb"></div>
+    </div>
+    <div class="quiz-block" style="margin-top:14px">
+      <div class="quiz-q"><strong>【Q10】</strong>用蘋果（25元/顆）與水梨（40元/顆）共 10 顆裝禮盒，總價不超過 300 元。設蘋果 x 顆，不等式 25x + 40(10−x) ≤ 300，蘋果至少幾顆？</div>
+      <div class="quiz-opts" id="q10opts">
+        <button class="quiz-opt" onclick="checkQ(this,'q10','A')">A. 至少 5 顆</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q10','B')">B. 至少 6 顆</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q10','C')">C. 至少 7 顆</button>
+        <button class="quiz-opt" onclick="checkQ(this,'q10','D')">D. 至少 8 顆</button>
+      </div>
+      <div class="quiz-feedback" id="q10fb"></div>
+    </div>
+    <div class="info-thumb" onclick="openFull('assets/05_application.jpg')">
+      <img src="assets/05_application.jpg" loading="lazy" alt="應用問題資訊圖表">
+    </div>
+    <div class="teacher-block" id="t5">
+      <h3>📌 教學提示</h3>
+      <ul>
+        <li>應用題四步驟：設未知數 → 列不等式 → 求解 → 確認符合題意（特別是整數條件）</li>
+        <li>「核實」最重要：解出 x ≥ 6.67 時，需說明「因 x 為正整數，故至少 7 顆」</li>
+        <li>折扣公式：n折 = n/10 倍；折扣金額 = 原價 × (1 − n/10)；8折折抵 = 原價 × 0.2</li>
+        <li>費用比較題：設兩方案費用，列不等式找出哪方案便宜的臨界值</li>
+        <li>常見錯誤：列式後忘記檢查 x 的合理範圍（如「共10顆」限制了 x ≤ 10）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 總複習 -->
+  <div id="sec-cheat" class="section-title">📋 總複習 Cheat Sheet</div>
+  <div class="cheatsheet-grid">
+    <div class="cheat-card">
+      <h4>加減法性質</h4>
+      <table>
+        <tr><td>同加 c</td><td>不等號方向不變</td></tr>
+        <tr><td>同減 c</td><td>不等號方向不變</td></tr>
+        <tr><td>c 範圍</td><td>任意實數（正負零皆可）</td></tr>
+        <tr><td>移項原理</td><td>由同加同減推導而來</td></tr>
+      </table>
+    </div>
+    <div class="cheat-card">
+      <h4>乘除法性質 ⚠️</h4>
+      <table>
+        <tr><td>乘除正數</td><td>不等號方向不變</td></tr>
+        <tr><td>乘除負數</td><td>不等號方向改變！</td></tr>
+        <tr><td>口訣</td><td>乘負翻、除負翻</td></tr>
+        <tr><td>典型錯誤</td><td>−2x &gt; 4 誤寫 x &gt; −2</td></tr>
+      </table>
+    </div>
+    <div class="cheat-card">
+      <h4>解一元一次不等式</h4>
+      <table>
+        <tr><td>步驟①</td><td>去括號（展開）</td></tr>
+        <tr><td>步驟②</td><td>移項、合併同類項</td></tr>
+        <tr><td>步驟③</td><td>係數化1（負數⚠️翻轉！）</td></tr>
+        <tr><td>步驟④</td><td>數線圖示解</td></tr>
+      </table>
+    </div>
+    <div class="cheat-card">
+      <h4>應用問題策略</h4>
+      <table>
+        <tr><td>設未知數</td><td>找出合理範圍</td></tr>
+        <tr><td>列不等式</td><td>找不等量關係</td></tr>
+        <tr><td>求解</td><td>注意負係數翻轉</td></tr>
+        <tr><td>核實</td><td>是否為整數？符合題意？</td></tr>
+      </table>
+    </div>
+  </div>
+  <div class="info-thumb" onclick="openFull('assets/06_cheatsheet.jpg')" style="margin-top:16px;margin-bottom:28px">
+    <img src="assets/06_cheatsheet.jpg" loading="lazy" alt="總複習資訊圖表">
+  </div>
+
+  <div id="sec-video" class="section-title">🎬 學生自學影片</div>
+  <div class="video-wrap">
+    <video controls preload="none" poster="assets/slide_01.jpg">
+      <source src="video_student.mp4" type="video/mp4">
+    </video>
+    <p style="font-size:.9rem;color:#888;margin-top:6px">「天平偵探：解開一元一次不等式的秘密」（NotebookLM 生成）</p>
+  </div>
+
+  <div class="teacher-block" id="t-errors" style="margin-bottom:28px">
+    <h3>📌 常見錯誤診療站（教師模式）</h3>
+    <p>本節學生最常見的三類錯誤：</p>
+    <ul>
+      <li><strong>乘除負數忘記翻轉：</strong>解 −2x &gt; 4，誤寫 x &gt; −2。建議每次碰到負係數，先標記「⚠️翻轉」再計算</li>
+      <li><strong>移項忘記變號：</strong>3x + 5 &gt; 11 移項後誤寫 3x &gt; 11 + 5 = 16。建議強調移項是「同加同減」的縮寫，加深概念</li>
+      <li><strong>應用題不核實整數：</strong>解出 x ≥ 6.67 後未取 x = 7。建議養成「題目問整數嗎？」的核實習慣</li>
+    </ul>
+  </div>
+
+</div>
+
+<div class="float-tools">
+  <div class="tool-btn" title="抽籤" onclick="openPanel('lottery')">🎲</div>
+  <div class="tool-btn" title="計時器" onclick="openPanel('timer')">⏱</div>
+</div>
+
+<div class="draw-bar">
+  <div class="tool-btn" id="drawToggle" title="畫筆" onclick="toggleDraw()" style="width:40px;height:40px;font-size:1rem">✏️</div>
+  <div class="tool-btn" title="清除" onclick="clearDraw()" style="width:40px;height:40px;font-size:1rem">🗑</div>
+</div>
+
+<canvas id="drawCanvas" class="draw-canvas"></canvas>
+
+<div class="panel-overlay" id="lotteryPanel">
+  <div class="panel-box">
+    <button class="panel-close" onclick="closePanel('lottery')">✕</button>
+    <h3>🎲 隨機抽籤</h3>
+    <div class="lottery-range">
+      <span>座號</span>
+      <input type="number" id="lMin" value="1" min="1">
+      <span>~</span>
+      <input type="number" id="lMax" value="35" min="1">
+    </div>
+    <div class="lottery-num" id="lotteryNum">?</div>
+    <button onclick="doLottery()" style="background:var(--yellow);color:#1a1a1a;border:none;padding:10px 32px;border-radius:20px;font-size:1rem;cursor:pointer;font-weight:600">抽！</button>
+  </div>
+</div>
+
+<div class="panel-overlay" id="timerPanel">
+  <div class="panel-box">
+    <button class="panel-close" onclick="closePanel('timer')">✕</button>
+    <h3>⏱ 倒數計時</h3>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:12px">
+      <button onclick="setTimer(60)" class="ctrl-btn">1 分</button>
+      <button onclick="setTimer(120)" class="ctrl-btn">2 分</button>
+      <button onclick="setTimer(300)" class="ctrl-btn">5 分</button>
+    </div>
+    <div class="timer-display" id="timerDisplay">2:00</div>
+    <div class="timer-btns">
+      <button onclick="startTimer()">▶ 開始</button>
+      <button onclick="pauseTimer()">⏸ 暫停</button>
+      <button onclick="resetTimer()">↺ 重設</button>
+    </div>
+  </div>
+</div>
+
+<div class="fullscreen-overlay" id="fullscreen" onclick="closeFull()">
+  <img id="fullImg" src="" alt="">
+</div>
+
+<script>
+// ===== 模式 =====
+let teacherMode=false;
+function setMode(m){
+  teacherMode=(m==='teacher');
+  document.getElementById('btnStudent').classList.toggle('active',!teacherMode);
+  document.getElementById('btnTeacher').classList.toggle('active',teacherMode);
+  document.getElementById('teacherBadge').style.display=teacherMode?'':'none';
+  document.querySelectorAll('.teacher-block').forEach(el=>{el.style.display=teacherMode?'block':'none';});
+}
+function askTeacher(){
+  const pw=prompt('請輸入教師密碼：');
+  if(pw==='math2026') setMode('teacher');
+  else if(pw!==null) alert('密碼錯誤');
+}
+
+// ===== 投影片 =====
+let carCur=0,carTotal=15;
+function initCarousel(){
+  const wrap=document.getElementById('mainSlides');
+  for(let i=1;i<=carTotal;i++){
+    const img=document.createElement('img');
+    img.src=`assets/slide_${String(i).padStart(2,'0')}.jpg`;
+    img.loading='lazy';img.alt=`投影片 ${i}`;
+    if(i===1) img.classList.add('active');
+    wrap.appendChild(img);
+  }
+}
+function carMove(dir){
+  const imgs=document.querySelectorAll('#mainSlides img');
+  imgs[carCur].classList.remove('active');
+  carCur=(carCur+dir+carTotal)%carTotal;
+  imgs[carCur].classList.add('active');
+  document.getElementById('mainCounter').textContent=`${carCur+1} / ${carTotal}`;
+}
+initCarousel();
+
+// ===== 形成性評量 =====
+const answers={q1:'A',q2:'C',q3:'B',q4:'B',q5:'B',q6:'B',q7:'C',q8:'B',q9:'C',q10:'C'};
+const feedbacks={
+  q1:{
+    A:'正確！a > b，兩邊同減 b → a−b > b−b = 0，故 a−b > 0',
+    B:'錯誤。a > b，同減 3（不等號方向不變）→ a−3 > b−3',
+    C:'錯誤。a > b，同除 2（正數，方向不變）→ a/2 > b/2',
+    D:'錯誤。a > b，乘以 −1（負數，方向改變）→ −a < −b'
+  },
+  q2:{
+    A:'錯誤。a < b，同加正數，不等號方向不變，仍為 <',
+    B:'錯誤。兩邊同加同一數不可能使不等式變等式',
+    C:'正確！a < b，兩邊同加 5（不等號方向不變）→ a+5 < b+5',
+    D:'錯誤。同加同一數，結果確定可判斷'
+  },
+  q3:{
+    A:'錯誤。乘以 −3（負數），不等號方向要改變',
+    B:'正確！a > b，乘以 −3（負數），不等號翻轉 → −3a < −3b',
+    C:'錯誤。乘以非零數不可能使兩邊相等',
+    D:'錯誤。根據乘除法性質，結果確定可判斷'
+  },
+  q4:{
+    A:'錯誤。除以 −4（負數），不等號方向要翻轉！',
+    B:'正確！−4x ≥ 8，兩邊除以 −4（負數，翻轉）→ x ≤ 8÷(−4) = −2',
+    C:'錯誤。除以負數需翻轉，且 8÷(−4)=−2 不是 2',
+    D:'錯誤。8÷(−4)=−2，不是 2'
+  },
+  q5:{
+    A:'錯誤。應將 −5 移到右邊變 +5，x > 3+5=8',
+    B:'正確！x−5 > 3，將 −5 移項 → x > 3+5 = 8',
+    C:'錯誤。不等號方向應為 >，不是 <',
+    D:'錯誤。移項符號和方向都有誤'
+  },
+  q6:{
+    A:'錯誤。−3x < 9，除以 −3（負數），不等號翻轉 → x > −3',
+    B:'正確！−3x+1 < 10 → −3x < 9 → 除以 −3（翻轉）→ x > −3',
+    C:'錯誤。正確答案是 x > −3，不是 x < 3',
+    D:'錯誤。應為 x > −3，不是 x > 3'
+  },
+  q7:{
+    A:'錯誤。兩邊乘以 3（正數），x ≤ 2×3 = 6',
+    B:'錯誤。乘以 3（正數），不等號方向不變，仍是 ≤',
+    C:'正確！x/3 ≤ 2，兩邊乘以 3（正數，方向不變）→ x ≤ 6',
+    D:'錯誤。乘正數不等號方向不變'
+  },
+  q8:{
+    A:'錯誤。不等號方向應為 ≤',
+    B:'正確！×10 → 4x+12 ≥ 10x+30 → −6x ≥ 18 → 除以 −6（翻轉）→ x ≤ −3',
+    C:'錯誤。計算有誤',
+    D:'錯誤。數值和方向都有問題'
+  },
+  q9:{
+    A:'錯誤。折抵金額 = 0.2x，需 0.2x ≥ 300 → x ≥ 1500',
+    B:'錯誤。0.2×1200=240，不到 300 元',
+    C:'正確！設買 x 元，折抵 0.2x ≥ 300 → x ≥ 1500 元',
+    D:'錯誤。0.2x ≥ 300 → x ≥ 1500，不需 2000 元'
+  },
+  q10:{
+    A:'錯誤。25x+400−40x ≤ 300 → −15x ≤ −100 → x ≥ 20/3 ≈ 6.67',
+    B:'錯誤。x 需不小於 6.67，最小正整數為 7，不是 6',
+    C:'正確！x ≥ 20/3 ≈ 6.67，x 為正整數，至少需 7 顆蘋果',
+    D:'錯誤。計算結果為 x ≥ 6.67，最小整數為 7，不是 8'
+  },
+};
+const doneQ={};
+function checkQ(btn,qid,choice){
+  if(doneQ[qid]) return;
+  doneQ[qid]=true;
+  const correct=answers[qid];
+  document.querySelectorAll(`#${qid}opts .quiz-opt`).forEach(o=>{
+    o.disabled=true;
+    const c=o.textContent.trim()[0];
+    if(c===correct) o.classList.add('correct');
+    else if(c===choice&&choice!==correct) o.classList.add('wrong');
+  });
+  const fb=document.getElementById(qid+'fb');
+  const isOk=choice===correct;
+  fb.textContent=(isOk?'✓ ':'✗ ')+(feedbacks[qid][choice]||(isOk?'正確！':'錯誤。'));
+  fb.className=`quiz-feedback show ${isOk?'ok':'bad'}`;
+}
+
+// ===== Canvas 共用 =====
+function initC(id){
+  const c=document.getElementById(id);if(!c)return null;
+  const w=c.parentElement;
+  const resize=()=>{c.width=w.clientWidth;c.height=w.clientHeight;};
+  resize();window.addEventListener('resize',resize);
+  return c;
+}
+function bg(ctx,W,H){ctx.clearRect(0,0,W,H);ctx.fillStyle='#1a2d1a';ctx.fillRect(0,0,W,H);}
+function rr(ctx,x,y,w,h,r){
+  ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+function autoFont(ctx,text,maxW,startSz){
+  let sz=startSz;ctx.font=`${sz}px sans-serif`;
+  while(ctx.measureText(text).width>maxW&&sz>6){sz-=0.5;ctx.font=`${sz}px sans-serif`;}
+  return sz;
+}
+function autoBold(ctx,text,maxW,startSz){
+  let sz=startSz;ctx.font=`bold ${sz}px sans-serif`;
+  while(ctx.measureText(text).width>maxW&&sz>6){sz-=0.5;ctx.font=`bold ${sz}px sans-serif`;}
+  return sz;
+}
+
+// ===== CVS1: 加減性質 =====
+const c1=initC('cvs1');
+let m1='add';
+function cvs1Show(m){
+  m1=m;
+  ['add','sub','rule'].forEach((v,i)=>document.getElementById('btn1'+'abc'[i]).classList.toggle('active',v===m));
+  drawC1();
+}
+function drawC1(){
+  if(!c1)return;
+  const ctx=c1.getContext('2d'),W=c1.width,H=c1.height;
+  bg(ctx,W,H);
+  if(m1==='add'){
+    drawTwoCases(ctx,W,H,[
+      {label:'兩邊同加 2（正數）',base:'3 > −5',result:'5 > −3',detail:'3+2=5，(−5)+2=−3',color:'#a5d6a7'},
+      {label:'兩邊同加 (−2)（負數）',base:'3 > −5',result:'1 > −7',detail:'3+(−2)=1，(−5)+(−2)=−7',color:'#81d4fa'},
+    ],'不等號方向不變 ✓','#a5d6a7');
+  } else if(m1==='sub'){
+    drawTwoCases(ctx,W,H,[
+      {label:'兩邊同減 2（正數）',base:'3 > −5',result:'1 > −7',detail:'3−2=1，(−5)−2=−7',color:'#a5d6a7'},
+      {label:'兩邊同減 (−2)（負數）',base:'3 > −5',result:'5 > −3',detail:'3−(−2)=5，(−5)−(−2)=−3',color:'#81d4fa'},
+    ],'不等號方向不變 ✓','#a5d6a7');
+  } else {
+    const rules=[
+      {t:'加法性質',d:'若 a > b，則 a+c > b+c',c:'#a5d6a7'},
+      {t:'減法性質',d:'若 a > b，則 a−c > b−c',c:'#81d4fa'},
+      {t:'移項原理',d:'加減後再反向操作，等同移項變號',c:'#ffd54f'},
+      {t:'記憶關鍵',d:'c 為任意數（正負零），方向通通不變',c:'#ff8a80'},
+    ];
+    const cols=W>600?2:1,bw=W/cols,bh=H/Math.ceil(rules.length/cols);
+    rules.forEach((r,i)=>{
+      const col=i%cols,row=Math.floor(i/cols);
+      const x=col*bw,y=row*bh;
+      ctx.fillStyle=r.c+'22';rr(ctx,x+8,y+8,bw-16,bh-16,8);ctx.fill();
+      ctx.strokeStyle=r.c+'55';ctx.lineWidth=1;ctx.stroke();
+      const tsz=autoBold(ctx,r.t,bw*0.8,bh*0.2);
+      ctx.fillStyle=r.c;ctx.textAlign='center';ctx.fillText(r.t,x+bw/2,y+bh*0.38);
+      const dsz=autoFont(ctx,r.d,bw*0.85,bh*0.16);
+      ctx.fillStyle='#e8e4d8cc';ctx.fillText(r.d,x+bw/2,y+bh*0.65);
+    });
+  }
+}
+function drawTwoCases(ctx,W,H,cases,note,noteColor){
+  const cw=W/cases.length;
+  cases.forEach((c,i)=>{
+    const cx=cw*i+cw/2;
+    const lsz=autoBold(ctx,c.label,cw*0.85,H*0.075);
+    ctx.fillStyle=c.color;ctx.textAlign='center';ctx.fillText(c.label,cx,H*0.1+lsz);
+    const bsz=autoBold(ctx,c.base,cw*0.8,H*0.1);
+    ctx.font=`bold ${bsz}px serif`;ctx.fillStyle='#ffd54f';ctx.fillText(c.base,cx,H*0.3);
+    ctx.fillStyle='rgba(255,255,255,.35)';ctx.font=`${H*0.1}px sans-serif`;ctx.fillText('↓',cx,H*0.44);
+    const rsz=autoBold(ctx,c.result,cw*0.8,H*0.1);
+    ctx.font=`bold ${rsz}px serif`;ctx.fillStyle=c.color;ctx.fillText(c.result,cx,H*0.62);
+    const dsz=autoFont(ctx,c.detail,cw*0.85,H*0.065);
+    ctx.fillStyle='#e8e4d8aa';ctx.fillText(c.detail,cx,H*0.76);
+    if(i<cases.length-1){ctx.strokeStyle='#2d4a2d';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(cw,H*0.08);ctx.lineTo(cw,H*0.92);ctx.stroke();}
+  });
+  const nsz=autoBold(ctx,note,W*0.85,H*0.07);
+  ctx.fillStyle=noteColor;ctx.textAlign='center';ctx.fillText(note,W/2,H*0.93);
+}
+
+// ===== CVS2: 乘除性質 =====
+const c2=initC('cvs2');
+let m2='pos';
+function cvs2Show(m){
+  m2=m;
+  ['pos','neg','compare'].forEach((v,i)=>document.getElementById('btn2'+'abc'[i]).classList.toggle('active',v===m));
+  drawC2();
+}
+function drawC2(){
+  if(!c2)return;
+  const ctx=c2.getContext('2d'),W=c2.width,H=c2.height;
+  bg(ctx,W,H);
+  if(m2==='pos'){
+    drawTwoCases(ctx,W,H,[
+      {label:'兩邊同乘以 2（正數）',base:'3 > −5',result:'6 > −10',detail:'3×2=6，(−5)×2=−10',color:'#a5d6a7'},
+      {label:'兩邊同除以 2（正數）',base:'3 > −5',result:'3/2 > −5/2',detail:'3÷2=1.5，(−5)÷2=−2.5',color:'#81d4fa'},
+    ],'不等號方向不變 ✓','#a5d6a7');
+  } else if(m2==='neg'){
+    drawTwoCases(ctx,W,H,[
+      {label:'兩邊同乘以 (−2)（負數）',base:'3 > −5',result:'−6 < 10',detail:'3×(−2)=−6，(−5)×(−2)=10',color:'#ff8a80'},
+      {label:'兩邊同除以 (−2)（負數）',base:'3 > −5',result:'−3/2 < 5/2',detail:'3÷(−2)=−1.5，(−5)÷(−2)=2.5',color:'#ff8a80'},
+    ],'⚠️ 不等號方向改變！','#ff8a80');
+  } else {
+    // 正負對比
+    const half=W/2;
+    ctx.strokeStyle='#2d4a2d';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(half,H*0.05);ctx.lineTo(half,H*0.95);ctx.stroke();
+    const leftItems=[
+      {text:'乘除正數',sz:H*0.09,bold:true,color:'#a5d6a7',y:H*0.14},
+      {text:'方向不變 ✓',sz:H*0.13,bold:true,color:'#a5d6a7',y:H*0.38},
+      {text:'3 > −5',sz:H*0.08,bold:false,color:'#ffd54f',y:H*0.57},
+      {text:'×2 → 6 > −10',sz:H*0.075,bold:false,color:'#e8e4d8aa',y:H*0.71},
+    ];
+    const rightItems=[
+      {text:'乘除負數',sz:H*0.09,bold:true,color:'#ff8a80',y:H*0.14},
+      {text:'方向改變！⚠️',sz:H*0.11,bold:true,color:'#ff8a80',y:H*0.38},
+      {text:'3 > −5',sz:H*0.08,bold:false,color:'#ffd54f',y:H*0.57},
+      {text:'×(−2) → −6 < 10',sz:H*0.07,bold:false,color:'#e8e4d8aa',y:H*0.71},
+    ];
+    [leftItems,rightItems].forEach((items,side)=>{
+      const cx=side===0?half/2:half+half/2;
+      items.forEach(item=>{
+        let sz=item.sz;
+        ctx.font=item.bold?`bold ${sz}px sans-serif`:`${sz}px sans-serif`;
+        while(ctx.measureText(item.text).width>half*0.85&&sz>7){sz-=0.5;ctx.font=item.bold?`bold ${sz}px sans-serif`:`${sz}px sans-serif`;}
+        ctx.fillStyle=item.color;ctx.textAlign='center';ctx.fillText(item.text,cx,item.y);
+      });
+    });
+  }
+}
+
+// ===== CVS3: 移項解不等式 =====
+const c3=initC('cvs3');
+let m3='steps';
+function cvs3Show(m){
+  m3=m;
+  ['steps','ex1','ex2'].forEach((v,i)=>document.getElementById('btn3'+'abc'[i]).classList.toggle('active',v===m));
+  drawC3();
+}
+function drawC3(){
+  if(!c3)return;
+  const ctx=c3.getContext('2d'),W=c3.width,H=c3.height;
+  bg(ctx,W,H);
+  if(m3==='steps'){
+    const steps=[
+      {n:'1',t:'去括號',d:'展開括號，如 4(−x+2) = −4x+8',c:'#ffd54f'},
+      {n:'2',t:'移項',d:'含x移左邊，常數移右邊（移項要變號）',c:'#81d4fa'},
+      {n:'3',t:'合併',d:'合併同類項，化簡係數',c:'#a5d6a7'},
+      {n:'4',t:'係數化1',d:'除以係數，負數時不等號翻轉！',c:'#ff8a80'},
+    ];
+    drawStepCircles(ctx,W,H,steps);
+  } else if(m3==='ex1'){
+    drawSolveProcess(ctx,W,H,'例① −x + 7 > 2x − 8',[
+      {eq:'−x + 7 > 2x − 8',note:'',color:'#ffd54f'},
+      {eq:'−x − 2x > −8 − 7',note:'含x移左邊，常數移右邊',color:'#81d4fa'},
+      {eq:'−3x > −15',note:'合併同類項',color:'#ff8a80'},
+      {eq:'x < 5',note:'除以 −3（負數，翻轉！）',color:'#a5d6a7'},
+    ]);
+  } else {
+    drawSolveProcess(ctx,W,H,'例② 4(−x + 2) ≤ 7 − 9x',[
+      {eq:'4(−x + 2) ≤ 7 − 9x',note:'',color:'#ffd54f'},
+      {eq:'−4x + 8 ≤ 7 − 9x',note:'展開括號',color:'#81d4fa'},
+      {eq:'−4x + 9x ≤ 7 − 8',note:'移項',color:'#ff8a80'},
+      {eq:'5x ≤ −1',note:'合併',color:'#ffd54f'},
+      {eq:'x ≤ −1/5',note:'除以 5（正數，不翻轉）',color:'#a5d6a7'},
+    ]);
+  }
+}
+
+// ===== CVS4: 分數小數 =====
+const c4=initC('cvs4');
+let m4='frac';
+function cvs4Show(m){
+  m4=m;
+  ['frac','dec','mixed'].forEach((v,i)=>document.getElementById('btn4'+'abc'[i]).classList.toggle('active',v===m));
+  drawC4();
+}
+function drawC4(){
+  if(!c4)return;
+  const ctx=c4.getContext('2d'),W=c4.width,H=c4.height;
+  bg(ctx,W,H);
+  if(m4==='frac'){
+    drawSolveProcess(ctx,W,H,'分數係數：x/3 ≤ 2',[
+      {eq:'x/3 ≤ 2',note:'分母為 3',color:'#ffd54f'},
+      {eq:'(x/3) × 3 ≤ 2 × 3',note:'兩邊乘以 3（正數，方向不變）',color:'#81d4fa'},
+      {eq:'x ≤ 6',note:'解為 x ≤ 6（實心圓，向左延伸）',color:'#a5d6a7'},
+    ]);
+  } else if(m4==='dec'){
+    drawSolveProcess(ctx,W,H,'小數係數：0.4x + 1.2 ≥ x + 3',[
+      {eq:'0.4x + 1.2 ≥ x + 3',note:'小數係數，× 10 消小數點',color:'#ffd54f'},
+      {eq:'4x + 12 ≥ 10x + 30',note:'× 10（正數，方向不變）',color:'#81d4fa'},
+      {eq:'4x − 10x ≥ 30 − 12',note:'移項',color:'#ff8a80'},
+      {eq:'x ≤ −3',note:'−6x ≥ 18，除以 −6（翻轉！）',color:'#a5d6a7'},
+    ]);
+  } else {
+    drawSolveProcess(ctx,W,H,'混合分數：(3x+2)/2 > (4x−1)/3 + 2',[
+      {eq:'(3x+2)/2 > (4x−1)/3 + 2',note:'分母 2 和 3，LCM = 6',color:'#ffd54f'},
+      {eq:'3(3x+2) > 2(4x−1) + 12',note:'× 6（正數，方向不變）',color:'#81d4fa'},
+      {eq:'9x + 6 > 8x − 2 + 12',note:'展開括號',color:'#ff8a80'},
+      {eq:'x > 4',note:'9x−8x > 10−6，移項合併',color:'#a5d6a7'},
+    ]);
+  }
+}
+
+// ===== CVS5: 應用問題 =====
+const c5=initC('cvs5');
+let m5='steps';
+function cvs5Show(m){
+  m5=m;
+  ['steps','discount','alloc','compare'].forEach((v,i)=>document.getElementById('btn5'+'abcd'[i]).classList.toggle('active',v===m));
+  drawC5();
+}
+function drawC5(){
+  if(!c5)return;
+  const ctx=c5.getContext('2d'),W=c5.width,H=c5.height;
+  bg(ctx,W,H);
+  if(m5==='steps'){
+    const steps=[
+      {n:'1',t:'設未知數',d:'確認要求的量，設合理範圍',c:'#ffd54f'},
+      {n:'2',t:'列不等式',d:'找題目中的不等量關係',c:'#81d4fa'},
+      {n:'3',t:'求解',d:'解不等式（注意負係數翻轉）',c:'#a5d6a7'},
+      {n:'4',t:'核實答案',d:'是否為整數？是否符合條件？',c:'#ff8a80'},
+    ];
+    drawStepCircles(ctx,W,H,steps);
+  } else if(m5==='discount'){
+    drawSolveProcess(ctx,W,H,'折扣：8折優惠折抵 300 元至少買多少？',[
+      {eq:'設購買 x 元',note:'8折 → 付 0.8x，折抵 x − 0.8x = 0.2x',color:'#ffd54f'},
+      {eq:'0.2x ≥ 300',note:'折抵金額不低於 300 元',color:'#81d4fa'},
+      {eq:'x ≥ 1500',note:'兩邊除以 0.2（正數，方向不變）',color:'#a5d6a7'},
+      {eq:'答：至少買 1500 元',note:'',color:'#ff8a80'},
+    ]);
+  } else if(m5==='alloc'){
+    drawSolveProcess(ctx,W,H,'數量分配：蘋果水梨禮盒（共10顆，≤300元）',[
+      {eq:'設蘋果 x 顆，水梨 (10−x) 顆',note:'',color:'#ffd54f'},
+      {eq:'25x + 40(10−x) ≤ 300',note:'總價不超過 300 元',color:'#81d4fa'},
+      {eq:'−15x ≤ −100，x ≥ 20/3',note:'展開移項後，除以 −15（翻轉！）',color:'#ff8a80'},
+      {eq:'x 至少 7 顆（正整數取 7）',note:'20/3 ≈ 6.67，正整數最小為 7',color:'#a5d6a7'},
+    ]);
+  } else {
+    drawSolveProcess(ctx,W,H,'費用比較：攀岩場包場 vs 人數計費',[
+      {eq:'包場：2000×3 + 30x = 6000 + 30x',note:'x 人，含清潔費',color:'#ffd54f'},
+      {eq:'人數計：(150+100+100)x = 350x',note:'3 小時總費用',color:'#81d4fa'},
+      {eq:'6000 + 30x < 350x',note:'包場比人數計便宜',color:'#ff8a80'},
+      {eq:'x > 18.75，至少 19 人',note:'6000 < 320x，x > 18.75，正整數取 19',color:'#a5d6a7'},
+    ]);
+  }
+}
+
+// ===== 共用繪圖函式 =====
+function drawStepCircles(ctx,W,H,steps){
+  const sw=W/steps.length,pad=12;
+  const r=Math.min(sw*0.2,H*0.18),numSz=Math.max(10,r*0.7);
+  steps.forEach((s,i)=>{
+    const cx=sw*i+sw/2,cy=H*0.22,avW=sw-pad*2;
+    ctx.fillStyle=s.c;ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#1a1a1a';ctx.font=`bold ${numSz}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(s.n,cx,cy);ctx.textBaseline='alphabetic';
+    const tSz=autoBold(ctx,s.t,avW,H*0.1);
+    ctx.fillStyle=s.c;ctx.font=`bold ${tSz}px sans-serif`;ctx.fillText(s.t,cx,cy+r+(H-cy-r)*0.3+tSz);
+    const dSz=autoFont(ctx,s.d,avW,H*0.075);
+    ctx.fillStyle='#e8e4d8bb';ctx.font=`${dSz}px sans-serif`;
+    const dY=cy+r+(H-cy-r)*0.5+dSz;
+    // wrap text
+    const words=s.d.split('');let line='',ly=dY;
+    for(let j=0;j<words.length;j++){
+      const test=line+words[j];
+      if(ctx.measureText(test).width>avW&&line!==''){ctx.fillText(line,cx,ly);line=words[j];ly+=dSz*1.4;}
+      else line=test;
+    }
+    ctx.fillText(line,cx,ly);
+    if(i<steps.length-1){ctx.strokeStyle='#2d4a2d';ctx.lineWidth=2;ctx.setLineDash([4,4]);ctx.beginPath();ctx.moveTo(sw*(i+1)-6,cy);ctx.lineTo(sw*(i+1)+6,cy);ctx.stroke();ctx.setLineDash([]);}
+  });
+}
+function drawSolveProcess(ctx,W,H,title,rows){
+  const tSz=autoBold(ctx,title,W*0.9,H*0.075);
+  ctx.fillStyle='#ffd54f';ctx.textAlign='center';ctx.fillText(title,W/2,H*0.06+tSz);
+  const startY=H*0.16,gap=(H*0.74)/rows.length;
+  rows.forEach((r,i)=>{
+    const y=startY+i*gap+gap*0.45;
+    const eSz=autoBold(ctx,r.eq,W*0.45,H*0.09);
+    ctx.font=`bold ${eSz}px serif`;ctx.fillStyle=r.color;ctx.textAlign='left';ctx.fillText(r.eq,W*0.06,y);
+    if(r.note){
+      const nSz=autoFont(ctx,r.note,W*0.42,H*0.068);
+      ctx.font=`${nSz}px sans-serif`;ctx.fillStyle='#e8e4d8aa';ctx.fillText('← '+r.note,W*0.55,y);
+    }
+    if(i<rows.length-1){ctx.fillStyle='rgba(255,255,255,.25)';ctx.font=`${H*0.055}px sans-serif`;ctx.textAlign='left';ctx.fillText('↓',W*0.06,y+gap*0.3);}
+  });
+}
+
+// ===== 初始化 =====
+window.addEventListener('resize',()=>{drawC1();drawC2();drawC3();drawC4();drawC5();});
+drawC1();drawC2();drawC3();drawC4();drawC5();
+
+// ===== 抽籤 / 計時器 =====
+function openPanel(t){document.getElementById(t+'Panel').classList.add('show')}
+function closePanel(t){document.getElementById(t+'Panel').classList.remove('show')}
+function doLottery(){
+  const min=parseInt(document.getElementById('lMin').value)||1,max=parseInt(document.getElementById('lMax').value)||35;
+  document.getElementById('lotteryNum').textContent=Math.floor(Math.random()*(max-min+1))+min;
+}
+let timerSec=120,timerRunning=false,timerInt=null;
+function setTimer(s){timerSec=s;clearInterval(timerInt);timerRunning=false;updateTimerDisplay();}
+function updateTimerDisplay(){
+  document.getElementById('timerDisplay').textContent=`${Math.floor(timerSec/60)}:${String(timerSec%60).padStart(2,'0')}`;
+}
+function startTimer(){
+  if(timerRunning)return;timerRunning=true;
+  timerInt=setInterval(()=>{if(timerSec<=0){clearInterval(timerInt);timerRunning=false;return;}timerSec--;updateTimerDisplay();},1000);
+}
+function pauseTimer(){clearInterval(timerInt);timerRunning=false;}
+function resetTimer(){clearInterval(timerInt);timerRunning=false;timerSec=120;updateTimerDisplay();}
+
+// ===== 全螢幕 =====
+function openFull(src){document.getElementById('fullImg').src=src;document.getElementById('fullscreen').classList.add('show');}
+function closeFull(){document.getElementById('fullscreen').classList.remove('show');}
+
+// ===== 畫筆 =====
+let drawing=false,drawActive=false;
+const dc=document.getElementById('drawCanvas');
+function toggleDraw(){
+  drawActive=!drawActive;
+  dc.style.display=drawActive?'block':'none';dc.style.pointerEvents=drawActive?'auto':'none';
+  const dt=document.getElementById('drawToggle');dt.style.background=drawActive?'var(--yellow)':'';dt.style.color=drawActive?'#1a1a1a':'';
+  if(drawActive){dc.width=window.innerWidth;dc.height=window.innerHeight;}
+}
+function clearDraw(){dc.getContext('2d').clearRect(0,0,dc.width,dc.height);}
+dc.addEventListener('mousedown',e=>{drawing=true;const ctx=dc.getContext('2d');ctx.beginPath();ctx.moveTo(e.clientX,e.clientY);});
+dc.addEventListener('mousemove',e=>{if(!drawing)return;const ctx=dc.getContext('2d');ctx.lineWidth=3;ctx.strokeStyle='#ffd54f';ctx.lineTo(e.clientX,e.clientY);ctx.stroke();});
+dc.addEventListener('mouseup',()=>{drawing=false;});
+dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const t=e.touches[0],ctx=dc.getContext('2d');ctx.beginPath();ctx.moveTo(t.clientX,t.clientY);},{passive:false});
+dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0],ctx=dc.getContext('2d');ctx.lineWidth=3;ctx.strokeStyle='#ffd54f';ctx.lineTo(t.clientX,t.clientY);ctx.stroke();},{passive:false});
+dc.addEventListener('touchend',()=>{drawing=false;});
+</script>
+</body>
+</html>

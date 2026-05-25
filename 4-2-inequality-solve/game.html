@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>不等號翻轉大作戰 ⚖️</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-app.js';
+  import { getFirestore, collection, addDoc, query, orderBy, limit, getDocs, serverTimestamp }
+    from 'https://www.gstatic.com/firebasejs/11.7.1/firebase-firestore.js';
+  const app = initializeApp({
+    apiKey: "AIzaSyCHYtmrbMTxQhsSm9qjspiz-OVs2Jwv9jA",
+    authDomain: "my-teaching-tools-ae1ac.firebaseapp.com",
+    projectId: "my-teaching-tools-ae1ac",
+    storageBucket: "my-teaching-tools-ae1ac.firebasestorage.app",
+    messagingSenderId: "817693080761",
+    appId: "1:817693080761:web:27f1226f1f024713fc6f68"
+  });
+  const db = getFirestore(app);
+  const COL = 'game_scores_solve';
+  window._fbSave = async (name, score) => {
+    await addDoc(collection(db, COL), { name, score, timestamp: serverTimestamp(), date: new Date().toLocaleDateString('zh-TW') });
+  };
+  window._fbLoad = async () => {
+    const snap = await getDocs(query(collection(db, COL), orderBy('score','desc'), limit(10)));
+    return snap.docs.map(d => d.data());
+  };
+</script>
+
+<style>
+:root {
+  --primary:#0ea5e9; --primary-light:#38bdf8;
+  --secondary:#8b5cf6; --accent:#f472b6;
+  --flip:#ef4444; --flip-bg:rgba(239,68,68,.15);
+  --correct:#10b981; --wrong:#ef4444;
+  --gold:#f59e0b; --silver:#94a3b8; --bronze:#b45309;
+  --bg:#0a1628; --card:#0f2040; --card2:#162a4a;
+  --text:#e2e8f0; --muted:#6b8ab0; --border:#1e3a5a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;align-items:center;justify-content:center;overflow-x:hidden}
+
+/* 浮動符號背景 */
+#bg-syms{position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;overflow:hidden}
+.bsym{position:absolute;color:var(--primary-light);opacity:0;font-size:1.8rem;font-weight:900;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);opacity:0}8%{opacity:.07}92%{opacity:.07}100%{transform:translateY(-15vh) rotate(25deg);opacity:0}}
+
+#app{position:relative;z-index:1;width:100%;max-width:590px;padding:1rem}
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.main-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:2.2rem 1.8rem;text-align:center;box-shadow:0 0 50px rgba(14,165,233,.25)}
+.mascot{font-size:4.5rem;display:block;animation:bounce 2.2s ease-in-out infinite;margin-bottom:.4rem}
+@keyframes bounce{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-14px) rotate(3deg)}}
+.game-title{font-size:2rem;font-weight:900;background:linear-gradient(135deg,var(--primary-light),var(--secondary));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.3rem}
+.game-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.5rem}
+
+.btn-main{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;border-radius:50px;padding:.95rem 2.5rem;font-size:1.1rem;font-weight:700;font-family:inherit;cursor:pointer;width:100%;box-shadow:0 4px 22px rgba(14,165,233,.45);transition:transform .18s,box-shadow .18s}
+.btn-main:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(14,165,233,.65)}
+.btn-main:active{transform:translateY(0)}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border);border-radius:50px;padding:.85rem 2rem;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;width:100%;transition:all .18s;margin-top:.7rem}
+.btn-secondary:hover{border-color:var(--primary-light)}
+.btn-home{background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:50px;padding:.7rem 1.6rem;font-size:.9rem;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s;margin-top:.6rem;width:100%;display:block;text-align:center;text-decoration:none}
+.btn-home:hover{border-color:var(--muted);color:var(--text)}
+
+.rules-box{background:var(--card2);border-radius:16px;padding:1.1rem 1.3rem;margin-bottom:1.3rem;text-align:left}
+.rules-box h3{font-size:.78rem;color:var(--primary-light);letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+.rule{display:flex;align-items:center;gap:.6rem;font-size:.86rem;color:var(--muted);margin-bottom:.35rem}
+
+.name-row{display:flex;gap:.6rem;align-items:center;margin-bottom:1rem}
+.name-input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:.7rem 1rem;font-size:1rem;font-family:inherit;color:var(--text);outline:none;transition:border-color .18s}
+.name-input:focus{border-color:var(--primary-light)}
+.name-input::placeholder{color:var(--muted)}
+.cls-select{flex:0 0 80px;cursor:pointer;appearance:none}
+.seat-input{flex:0 0 68px}
+
+.lb-box{background:var(--card2);border-radius:16px;padding:1rem 1.2rem;margin-bottom:1.2rem}
+.lb-title{font-size:.78rem;color:var(--primary-light);letter-spacing:.06em;margin-bottom:.6rem;font-weight:700}
+.lb-row{display:flex;align-items:center;gap:.7rem;font-size:.84rem;padding:.28rem 0;border-bottom:1px solid rgba(255,255,255,.05)}
+.lb-row:last-child{border:none}
+.lb-rank{width:1.4rem;font-weight:900;color:var(--muted);text-align:center}
+.lb-rank.g1{color:var(--gold)}.lb-rank.g2{color:var(--silver)}.lb-rank.g3{color:var(--bronze)}
+.lb-name{flex:1}.lb-score{font-weight:700;color:var(--primary-light)}
+.lb-empty{color:var(--muted);font-size:.84rem;text-align:center;padding:.5rem 0}
+
+/* 遊戲畫面 */
+.game-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.1rem;gap:.8rem}
+.btn-back-sm{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:.45rem .8rem;font-size:.8rem;font-family:inherit;color:var(--muted);cursor:pointer;white-space:nowrap;transition:all .18s;flex-shrink:0}
+.btn-back-sm:hover{border-color:var(--muted);color:var(--text)}
+.prog-area{flex:1}
+.prog-label{font-size:.76rem;color:var(--muted);margin-bottom:.3rem}
+.prog-bg{height:8px;background:var(--card2);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--secondary));border-radius:4px;transition:width .5s ease}
+.score-chip{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:.4rem .9rem;text-align:center;min-width:58px}
+.score-num{font-size:1.35rem;font-weight:900;color:var(--primary-light);line-height:1}
+.score-lbl{font-size:.6rem;color:var(--muted)}
+
+.q-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:1.5rem;margin-bottom:.9rem;box-shadow:0 4px 18px rgba(0,0,0,.4)}
+.type-tag{display:inline-block;padding:.2rem .65rem;border-radius:20px;font-size:.72rem;font-weight:700;letter-spacing:.04em;margin-bottom:.7rem}
+.tag-prop{background:rgba(56,189,248,.18);color:var(--primary-light);border:1px solid rgba(56,189,248,.35)}
+.tag-flip{background:rgba(239,68,68,.18);color:#fca5a5;border:1px solid rgba(239,68,68,.4)}
+.tag-solve{background:rgba(139,92,246,.18);color:#c4b5fd;border:1px solid rgba(139,92,246,.35)}
+.tag-frac{background:rgba(16,185,129,.18);color:#6ee7b7;border:1px solid rgba(16,185,129,.35)}
+.tag-app{background:rgba(244,114,182,.18);color:#f9a8d4;border:1px solid rgba(244,114,182,.35)}
+
+.q-text{font-size:1.05rem;line-height:1.8}
+.q-ineq{color:var(--primary-light);font-weight:900;font-size:1.2rem}
+
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-bottom:.9rem}
+.opt-btn{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:.95rem .6rem;font-size:1.1rem;font-weight:700;font-family:inherit;color:var(--text);cursor:pointer;transition:all .18s;position:relative;overflow:hidden}
+.opt-btn:hover:not(:disabled){border-color:var(--primary-light);background:var(--card2);transform:translateY(-2px)}
+.opt-btn.correct{background:rgba(16,185,129,.2);border-color:var(--correct);color:var(--correct)}
+.opt-btn.wrong{background:rgba(239,68,68,.15);border-color:var(--wrong);color:var(--wrong)}
+.opt-btn.dimmed{opacity:.35}
+.opt-btn:disabled{cursor:default}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.25);width:60px;height:60px;margin:-30px 0 0 -30px;animation:rippleAnim .5s ease-out forwards;pointer-events:none}
+@keyframes rippleAnim{from{transform:scale(0);opacity:1}to{transform:scale(4);opacity:0}}
+
+.fb-box{border-radius:16px;padding:1rem;margin-bottom:.8rem;display:none;animation:slideIn .3s ease}
+@keyframes slideIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.fb-box.correct{background:rgba(16,185,129,.13);border:1px solid rgba(16,185,129,.35)}
+.fb-box.wrong{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3)}
+.fb-top{display:flex;align-items:center;gap:.5rem}
+.fb-emoji{font-size:1.3rem}
+.fb-title{font-weight:700;font-size:.93rem}
+.fb-explain{font-size:.85rem;color:var(--muted);margin-top:.45rem;line-height:1.65}
+
+/* 翻轉提示動畫 */
+.flip-alert{background:rgba(239,68,68,.15);border:1px solid rgba(239,68,68,.5);border-radius:10px;padding:.5rem .9rem;font-size:.82rem;color:#fca5a5;margin-bottom:.7rem;display:none;text-align:center;animation:pulse 1s ease infinite alternate}
+@keyframes pulse{from{border-color:rgba(239,68,68,.5)}to{border-color:rgba(239,68,68,.9)}}
+
+.btn-next{background:linear-gradient(135deg,var(--correct),#059669);color:white;border:none;border-radius:50px;padding:.85rem 2.5rem;font-size:1rem;font-weight:700;font-family:inherit;cursor:pointer;width:100%;display:none;transition:all .18s;box-shadow:0 4px 16px rgba(16,185,129,.45)}
+.btn-next:hover{transform:translateY(-2px);box-shadow:0 7px 22px rgba(16,185,129,.65)}
+
+.score-pop{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%) scale(0);font-size:2.8rem;font-weight:900;z-index:200;pointer-events:none;animation:popAnim .9s ease forwards}
+@keyframes popAnim{0%{transform:translate(-50%,-50%) scale(0);opacity:1}55%{transform:translate(-50%,-90%) scale(1.2);opacity:1}100%{transform:translate(-50%,-140%) scale(1);opacity:0}}
+
+/* 結果畫面 */
+.res-emoji{font-size:4.5rem;display:block;animation:bounce 1.8s ease-in-out infinite;margin-bottom:.4rem}
+.res-title{font-size:1.7rem;font-weight:900;margin-bottom:.2rem}
+.res-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.2rem}
+.breakdown{display:grid;grid-template-columns:repeat(3,1fr);gap:.6rem;margin-bottom:1.1rem}
+.bd-item{background:var(--card2);border-radius:14px;padding:.85rem .5rem}
+.bd-num{font-size:1.5rem;font-weight:900}
+.bd-lbl{font-size:.72rem;color:var(--muted)}
+.lb-final{background:var(--card2);border-radius:16px;padding:1rem 1.2rem;margin-bottom:1.1rem}
+.saving-note{font-size:.8rem;color:var(--muted);margin:.4rem 0 .8rem}
+.best-note{margin-top:.75rem;font-size:.78rem;color:var(--muted)}
+
+/* 翻轉統計卡 */
+.flip-stat{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.85rem;color:#fca5a5;text-align:center;display:none}
+</style>
+</head>
+<body>
+
+<div id="bg-syms"></div>
+
+<div id="app">
+
+  <!-- 開始畫面 -->
+  <div class="screen active" id="s-start">
+    <div class="main-card">
+      <span class="mascot">⚖️</span>
+      <div class="game-title">不等號翻轉大作戰</div>
+      <div class="game-sub">4-2 解一元一次不等式及其應用</div>
+
+      <div class="rules-box">
+        <h3>遊戲規則</h3>
+        <div class="rule">📋 共 10 題，涵蓋五大主題</div>
+        <div class="rule">⚠️ 小心！乘除負數要翻轉</div>
+        <div class="rule">✅ 答對 +10 分，答錯不扣分</div>
+        <div class="rule">🏆 完成後上傳全班排行榜</div>
+      </div>
+
+      <div class="name-row">
+        <select class="name-input cls-select" id="clsSel">
+          <option value="">班級</option>
+          <option>701</option><option>702</option><option>703</option>
+          <option>704</option><option>705</option><option>706</option>
+          <option>707</option><option>708</option>
+        </select>
+        <input class="name-input seat-input" id="seatInp" type="number" min="1" max="50" placeholder="座號">
+        <input class="name-input" id="nameInp" type="text" placeholder="姓名" maxlength="10">
+      </div>
+
+      <div class="lb-box" id="lbPreview">
+        <div class="lb-title">🏆 全班排行榜</div>
+        <div id="lbRows"><div class="lb-empty">載入中…</div></div>
+      </div>
+
+      <div class="best-note" id="bestNote"></div>
+      <button class="btn-main" onclick="startGame()">⚖️ 開始挑戰！</button>
+      <a href="index.html" class="btn-home">📚 回駕駛艙</a>
+      <a href="../index.html" class="btn-home" style="margin-top:.3rem">🏠 回首頁</a>
+    </div>
+  </div>
+
+  <!-- 遊戲畫面 -->
+  <div class="screen" id="s-game">
+    <div class="main-card">
+      <div class="game-hdr">
+        <button class="btn-back-sm" onclick="backToStart()">← 放棄</button>
+        <div class="prog-area">
+          <div class="prog-label" id="progLabel">題目 1 / 10</div>
+          <div class="prog-bg"><div class="prog-fill" id="progFill" style="width:0%"></div></div>
+        </div>
+        <div class="score-chip">
+          <div class="score-num" id="scoreDisp">0</div>
+          <div class="score-lbl">分</div>
+        </div>
+      </div>
+
+      <div class="q-card">
+        <div class="flip-alert" id="flipAlert">⚠️ 本題含負數乘除，小心翻轉！</div>
+        <div class="type-tag" id="typeTag"></div>
+        <div class="q-text" id="qText"></div>
+      </div>
+
+      <div class="opts" id="opts"></div>
+
+      <div class="fb-box" id="fbBox">
+        <div class="fb-top">
+          <span class="fb-emoji" id="fbEmoji"></span>
+          <span class="fb-title" id="fbTitle"></span>
+        </div>
+        <div class="fb-explain" id="fbExplain"></div>
+      </div>
+
+      <button class="btn-next" id="btnNext" onclick="nextQ()">下一題 →</button>
+    </div>
+  </div>
+
+  <!-- 結果畫面 -->
+  <div class="screen" id="s-result">
+    <div class="main-card">
+      <span class="res-emoji" id="resEmoji"></span>
+      <div class="res-title" id="resTitle"></div>
+      <div class="res-sub" id="resSub"></div>
+
+      <div class="breakdown">
+        <div class="bd-item">
+          <div class="bd-num" id="bdScore" style="color:var(--primary-light)"></div>
+          <div class="bd-lbl">總分</div>
+        </div>
+        <div class="bd-item">
+          <div class="bd-num" id="bdCorrect" style="color:var(--correct)"></div>
+          <div class="bd-lbl">答對題數</div>
+        </div>
+        <div class="bd-item">
+          <div class="bd-num" id="bdFlip" style="color:#fca5a5"></div>
+          <div class="bd-lbl">翻轉題答對</div>
+        </div>
+      </div>
+
+      <div class="flip-stat" id="flipStat"></div>
+
+      <div class="lb-final">
+        <div class="lb-title">🏆 全班排行榜</div>
+        <div class="saving-note" id="savingNote">儲存成績中…</div>
+        <div id="lbFinalRows"><div class="lb-empty">載入中…</div></div>
+      </div>
+
+      <button class="btn-main" onclick="restartGame()">🔄 再挑戰一次</button>
+      <a href="index.html" class="btn-home">📚 回駕駛艙</a>
+    </div>
+  </div>
+
+</div><!-- #app -->
+
+<script>
+// ===== 題庫 =====
+const QUESTIONS = [
+  {
+    type:'prop', tag:'tag-prop', label:'加減性質',
+    text:'已知 <strong class="q-ineq">a &gt; b</strong>，兩邊同加 (−5) 後，結果為：',
+    opts:['a − 5 > b − 5','a − 5 < b − 5','a − 5 = b − 5','無法判斷'],
+    ans:0,
+    isFlip:false,
+    explain:'同加任意數（含負數），不等號方向不變。a > b，同加 (−5) → a−5 > b−5'
+  },
+  {
+    type:'prop', tag:'tag-prop', label:'乘除正數',
+    text:'已知 <strong class="q-ineq">a &gt; b</strong>，兩邊同乘以 4 後，結果為：',
+    opts:['4a > 4b','4a < 4b','4a = 4b','無法判斷'],
+    ans:0,
+    isFlip:false,
+    explain:'乘以正數（4 > 0），不等號方向不變。a > b → 4a > 4b'
+  },
+  {
+    type:'flip', tag:'tag-flip', label:'⚠️ 乘負數翻轉',
+    text:'已知 <strong class="q-ineq">a &gt; b</strong>，兩邊同乘以 (−2) 後，結果為：',
+    opts:['−2a > −2b','−2a < −2b','−2a = −2b','無法判斷'],
+    ans:1,
+    isFlip:true,
+    explain:'⚠️ 乘以負數（−2 < 0），不等號方向改變！a > b → −2a < −2b'
+  },
+  {
+    type:'solve', tag:'tag-solve', label:'解不等式',
+    text:'解不等式 <strong class="q-ineq">x − 3 &gt; 5</strong>，其解為：',
+    opts:['x > 2','x < 2','x > 8','x < 8'],
+    ans:2,
+    isFlip:false,
+    explain:'x − 3 > 5，將 −3 移到右邊變 +3：x > 5 + 3 = 8'
+  },
+  {
+    type:'flip', tag:'tag-flip', label:'⚠️ 解不等式（翻轉）',
+    text:'解不等式 <strong class="q-ineq">−2x ≤ 6</strong>，其解為：',
+    opts:['x ≤ −3','x ≥ −3','x ≤ 3','x ≥ 3'],
+    ans:1,
+    isFlip:true,
+    explain:'⚠️ 兩邊除以 −2（負數），不等號翻轉！−2x ≤ 6 → x ≥ 6÷(−2) = −3'
+  },
+  {
+    type:'solve', tag:'tag-solve', label:'解不等式（移項）',
+    text:'解不等式 <strong class="q-ineq">3x + 2 &gt; x − 4</strong>，其解為：',
+    opts:['x > 3','x < 3','x > −3','x < −3'],
+    ans:2,
+    isFlip:false,
+    explain:'移項：3x − x > −4 − 2 → 2x > −6 → x > −3'
+  },
+  {
+    type:'flip', tag:'tag-flip', label:'⚠️ 展開解不等式',
+    text:'解不等式 <strong class="q-ineq">4(−x + 2) ≤ 7 − 9x</strong>，其解為：',
+    opts:['x ≤ −1/5','x ≥ −1/5','x ≤ 1/5','x ≥ 1/5'],
+    ans:0,
+    isFlip:true,
+    explain:'展開：−4x+8 ≤ 7−9x → 移項：5x ≤ −1 → 除以5（正數）→ x ≤ −1/5'
+  },
+  {
+    type:'frac', tag:'tag-frac', label:'分數係數',
+    text:'解不等式 <strong class="q-ineq">x/2 − 1 &lt; 3</strong>，其解為：',
+    opts:['x < 4','x > 4','x < 8','x > 8'],
+    ans:2,
+    isFlip:false,
+    explain:'兩邊乘以 2（正數，方向不變）：x − 2 < 6 → x < 8'
+  },
+  {
+    type:'frac', tag:'tag-frac', label:'小數係數',
+    text:'解不等式 <strong class="q-ineq">0.3x + 3.5 ≥ 1.3x − 5</strong>，其解為：',
+    opts:['x ≤ 17/2','x ≥ 17/2','x ≤ −17/2','x ≥ −17/2'],
+    ans:0,
+    isFlip:true,
+    explain:'×10 → 3x+35 ≥ 13x−50 → −10x ≥ −85 → 除以−10（⚠️翻轉）→ x ≤ 17/2'
+  },
+  {
+    type:'app', tag:'tag-app', label:'應用問題',
+    text:'購買生鮮雜貨享 8 折優惠，折抵金額 = 原價 × 0.2。媽媽想折抵到 300 元，至少要買多少元？',
+    opts:['至少 1000 元','至少 1200 元','至少 1500 元','至少 2000 元'],
+    ans:2,
+    isFlip:false,
+    explain:'設買 x 元，0.2x ≥ 300 → 兩邊除以 0.2（正數）→ x ≥ 1500 元'
+  },
+];
+
+// ===== 狀態 =====
+let qIdx=0, score=0, correctCount=0, flipCorrect=0, flipTotal=0;
+let playerName='';
+
+// ===== 背景符號 =====
+(function(){
+  const syms=['<','>','≤','≥','≠','x','⚠️'];
+  const wrap=document.getElementById('bg-syms');
+  for(let i=0;i<14;i++){
+    const el=document.createElement('div');
+    el.className='bsym';
+    el.textContent=syms[i%syms.length];
+    el.style.left=Math.random()*100+'%';
+    el.style.animationDuration=(12+Math.random()*18)+'s';
+    el.style.animationDelay=(-Math.random()*20)+'s';
+    el.style.fontSize=(1.2+Math.random()*1.4)+'rem';
+    wrap.appendChild(el);
+  }
+})();
+
+// ===== 排行榜 =====
+function renderLb(rows, containerId){
+  const el=document.getElementById(containerId);
+  if(!rows.length){el.innerHTML='<div class="lb-empty">還沒有紀錄，快來挑戰！</div>';return;}
+  el.innerHTML=rows.map((r,i)=>`
+    <div class="lb-row">
+      <div class="lb-rank ${i===0?'g1':i===1?'g2':i===2?'g3':''}">${i===0?'🥇':i===1?'🥈':i===2?'🥉':i+1}</div>
+      <div class="lb-name">${r.name||'匿名'}</div>
+      <div class="lb-score">${r.score} 分</div>
+    </div>`).join('');
+}
+async function loadLb(containerId){
+  try{const rows=await window._fbLoad();renderLb(rows,containerId);}
+  catch{document.getElementById(containerId).innerHTML='<div class="lb-empty">排行榜暫時無法連線</div>';}
+}
+loadLb('lbRows');
+
+// ===== 開始遊戲 =====
+function startGame(){
+  const cls=document.getElementById('clsSel').value;
+  const seat=document.getElementById('seatInp').value;
+  const name=document.getElementById('nameInp').value.trim();
+  if(!name){alert('請輸入姓名');return;}
+  playerName=`${cls?cls+'-':''}${seat?seat+'號 ':''}${name}`;
+  qIdx=0;score=0;correctCount=0;flipCorrect=0;flipTotal=0;
+  showScreen('s-game');
+  renderQ();
+}
+
+// ===== 渲染題目 =====
+function renderQ(){
+  const q=QUESTIONS[qIdx];
+  document.getElementById('progLabel').textContent=`題目 ${qIdx+1} / ${QUESTIONS.length}`;
+  document.getElementById('progFill').style.width=`${(qIdx/QUESTIONS.length)*100}%`;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('typeTag').className=`type-tag ${q.tag}`;
+  document.getElementById('typeTag').textContent=q.label;
+  document.getElementById('qText').innerHTML=q.text;
+  document.getElementById('flipAlert').style.display=q.isFlip?'block':'none';
+  document.getElementById('fbBox').style.display='none';
+  document.getElementById('btnNext').style.display='none';
+
+  const optsEl=document.getElementById('opts');
+  optsEl.innerHTML=q.opts.map((o,i)=>`
+    <button class="opt-btn" onclick="pick(this,${i})">${o}</button>
+  `).join('');
+}
+
+// ===== 選答案 =====
+function pick(btn, idx){
+  const q=QUESTIONS[qIdx];
+  const btns=document.querySelectorAll('.opt-btn');
+  btns.forEach(b=>b.disabled=true);
+  const isOk=(idx===q.ans);
+  btns.forEach((b,i)=>{
+    if(i===q.ans) b.classList.add('correct');
+    else if(i===idx&&!isOk) b.classList.add('wrong');
+    else b.classList.add('dimmed');
+  });
+  // ripple
+  const r=document.createElement('span');r.className='ripple';
+  const rect=btn.getBoundingClientRect();
+  r.style.left=(rect.width/2)+'px';r.style.top=(rect.height/2)+'px';
+  btn.appendChild(r);setTimeout(()=>r.remove(),600);
+
+  if(isOk){
+    score+=10;correctCount++;
+    if(q.isFlip) flipCorrect++;
+    showPop('+10 ✓');
+  }
+  if(q.isFlip) flipTotal++;
+
+  // feedback
+  const fb=document.getElementById('fbBox');
+  fb.className=`fb-box ${isOk?'correct':'wrong'}`;
+  fb.style.display='block';
+  document.getElementById('fbEmoji').textContent=isOk?'🎉':'💡';
+  document.getElementById('fbTitle').textContent=isOk?'答對了！':'解析';
+  document.getElementById('fbExplain').textContent=q.explain;
+  document.getElementById('scoreDisp').textContent=score;
+  document.getElementById('btnNext').style.display='block';
+}
+
+function showPop(txt){
+  const el=document.createElement('div');
+  el.className='score-pop';el.textContent=txt;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(),1000);
+}
+
+// ===== 下一題 =====
+function nextQ(){
+  qIdx++;
+  if(qIdx>=QUESTIONS.length) showResult();
+  else renderQ();
+}
+
+// ===== 結果 =====
+async function showResult(){
+  showScreen('s-result');
+  const pct=Math.round(correctCount/QUESTIONS.length*100);
+  const emojis=['😅','🤔','😊','😎','🏆'];
+  const titles=['加油！繼續練習','還不錯，再努力！','表現不錯！','超強！','滿分王！'];
+  const tier=Math.min(4,Math.floor(pct/20));
+  document.getElementById('resEmoji').textContent=emojis[tier];
+  document.getElementById('resTitle').textContent=titles[tier];
+  document.getElementById('resSub').textContent=`${playerName} ｜ 得分 ${score} 分`;
+  document.getElementById('bdScore').textContent=score;
+  document.getElementById('bdCorrect').textContent=`${correctCount}/${QUESTIONS.length}`;
+  document.getElementById('bdFlip').textContent=`${flipCorrect}/${flipTotal}`;
+  if(flipTotal>0&&flipCorrect<flipTotal){
+    const el=document.getElementById('flipStat');
+    el.style.display='block';
+    el.textContent=`⚠️ 翻轉題答對 ${flipCorrect}/${flipTotal}，記住口訣：「乘負翻、除負翻」！`;
+  }
+  try{
+    await window._fbSave(playerName,score);
+    document.getElementById('savingNote').textContent='✅ 成績已上傳！';
+  } catch{
+    document.getElementById('savingNote').textContent='⚠️ 上傳失敗（離線模式）';
+  }
+  loadLb('lbFinalRows');
+}
+
+// ===== 其他操作 =====
+function backToStart(){if(confirm('確定要放棄本次挑戰？')){showScreen('s-start');loadLb('lbRows');}}
+function restartGame(){showScreen('s-start');loadLb('lbRows');}
+function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+</script>
+</body>
+</html>
