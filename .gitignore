@@ -1,0 +1,9 @@
+# Large video files - store locally or use YouTube embed
+*.mp4
+*.mov
+*.avi
+*.mkv
+
+# System files
+.DS_Store
+Thumbs.db
