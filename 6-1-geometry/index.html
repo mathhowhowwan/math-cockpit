@@ -1,0 +1,1374 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>6-1 幾何圖形、線對稱與三視圖 教學駕駛艙</title>
+<style>
+/* ===== 全域變數 & Reset ===== */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#1a2a1a;--surface:rgba(255,255,255,0.06);--border:rgba(255,255,255,0.15);
+  --chalk:#e8e4d8;--yellow:#ffd54f;--pink:#ff8a80;--blue:#81d4fa;--green:#a5d6a7;
+  --wood1:#8d6e4a;--wood2:#6d4c2a;--accent:#2e7d32;
+}
+body{background:var(--bg);color:var(--chalk);font-family:'Noto Sans TC',sans-serif;min-height:100vh;}
+
+/* ===== HEADER ===== */
+.header{
+  background:linear-gradient(135deg,var(--wood1),var(--wood2));
+  padding:12px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  box-shadow:0 3px 12px rgba(0,0,0,0.5);
+  border-bottom:3px solid #5d3a1a;
+}
+.header-left{display:flex;align-items:center;gap:12px;}
+.header-title{font-size:1.2rem;color:#fff8e1;font-weight:bold;text-shadow:1px 1px 3px rgba(0,0,0,0.5);}
+.header-sub{font-size:0.8rem;color:#ffe0b2;opacity:0.85;}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
+
+/* ===== MODE BAR ===== */
+.mode-bar{background:rgba(0,0,0,0.3);padding:8px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.mode-btn{background:var(--surface);border:1px solid var(--border);color:var(--chalk);padding:5px 16px;border-radius:15px;cursor:pointer;font-size:0.85rem;transition:all 0.2s;}
+.mode-btn.active{background:var(--accent);border-color:#4caf50;color:#fff;}
+.mode-btn:hover{background:rgba(255,255,255,0.12);}
+#teacher-area{display:none;}
+.teacher-mode #teacher-area{display:block;}
+
+/* ===== MAIN LAYOUT ===== */
+.main{max-width:1200px;margin:0 auto;padding:20px;padding-right:80px;}
+
+/* ===== 學習目標 ===== */
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;}
+.goal-chip{background:rgba(46,125,50,0.3);border:1px solid var(--green);color:var(--green);padding:5px 14px;border-radius:20px;font-size:0.82rem;}
+
+/* ===== 主題導覽 ===== */
+.nav-pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px;}
+.nav-pill{background:var(--surface);border:1px solid var(--border);color:var(--chalk);padding:6px 18px;border-radius:20px;cursor:pointer;font-size:0.85rem;text-decoration:none;transition:all 0.2s;}
+.nav-pill:hover{background:rgba(255,213,79,0.15);border-color:var(--yellow);color:var(--yellow);}
+
+/* ===== SECTION ===== */
+.section{margin-bottom:40px;border:1px solid var(--border);border-radius:14px;overflow:hidden;}
+.section-header{background:rgba(0,0,0,0.3);padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.section-icon{font-size:1.5rem;}
+.section-title{font-size:1.15rem;color:var(--yellow);font-weight:bold;}
+.section-body{padding:20px;}
+
+/* ===== 簡報翻頁器 ===== */
+.carousel-wrap{margin-bottom:20px;}
+.carousel-container{position:relative;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;}
+.carousel-inner img{width:100%;height:100%;object-fit:contain;display:none;}
+.carousel-inner img.active{display:block;}
+.carousel-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:1rem;background:rgba(0,0,0,0.5);}
+.carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;}
+.car-btn{background:var(--surface);border:1px solid var(--border);color:var(--chalk);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
+.car-btn:hover{background:rgba(255,213,79,0.2);border-color:var(--yellow);}
+.car-counter{font-size:0.85rem;color:rgba(255,255,255,0.5);}
+
+/* ===== CANVAS 互動 ===== */
+.canvas-wrap{background:rgba(0,0,0,0.2);border-radius:10px;padding:12px;margin-bottom:20px;}
+.canvas-title{font-size:0.9rem;color:var(--blue);margin-bottom:8px;}
+canvas{display:block;border-radius:8px;cursor:pointer;touch-action:none;width:100%;height:auto;}
+.canvas-hint{font-size:0.78rem;color:rgba(255,255,255,0.4);margin-top:6px;text-align:center;}
+.btn-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px;}
+.cv-btn{background:var(--surface);border:1px solid var(--border);color:var(--chalk);padding:5px 14px;border-radius:10px;cursor:pointer;font-size:0.82rem;transition:all 0.2s;}
+.cv-btn:hover,.cv-btn.active{background:rgba(129,212,250,0.2);border-color:var(--blue);color:var(--blue);}
+
+/* ===== 概念卡片 ===== */
+.concept-card{background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;padding:20px;margin:16px 0;}
+.concept-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:10px;}
+.concept-icon{font-size:1.4rem;}
+.concept-card-title{color:var(--yellow);font-size:1.1rem;margin:0;}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.concept-def,.concept-formula,.concept-keypoints,.concept-example{background:rgba(0,0,0,0.2);border-radius:8px;padding:12px;}
+.card-label{display:inline-block;background:var(--accent);color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:10px;margin-bottom:6px;}
+.formula-text{color:var(--blue);font-family:monospace;font-size:1.05rem;text-align:center;padding:4px 0;}
+.concept-card-body ul{margin:4px 0 0 16px;padding:0;}
+.concept-card-body li{color:var(--chalk);font-size:0.9rem;margin-bottom:4px;}
+
+/* ===== 形成性評量 ===== */
+.quiz-wrap{margin:16px 0;}
+.quiz-title{font-size:0.95rem;color:var(--yellow);margin-bottom:12px;display:flex;align-items:center;gap:6px;}
+.quiz-q{background:rgba(0,0,0,0.2);border-radius:10px;padding:14px;margin-bottom:12px;}
+.quiz-q p{margin-bottom:10px;line-height:1.6;}
+.quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.quiz-opt{background:var(--surface);border:1px solid var(--border);color:var(--chalk);padding:8px 12px;border-radius:8px;cursor:pointer;font-size:0.88rem;text-align:left;transition:all 0.2s;}
+.quiz-opt:hover{background:rgba(255,255,255,0.1);}
+.quiz-opt.correct{background:rgba(46,125,50,0.4);border-color:#4caf50;color:#a5d6a7;}
+.quiz-opt.wrong{background:rgba(211,47,47,0.3);border-color:#ef5350;color:#ff8a80;}
+.quiz-feedback{display:none;margin-top:8px;padding:8px 12px;border-radius:8px;font-size:0.85rem;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.ok{background:rgba(46,125,50,0.2);color:var(--green);}
+.quiz-feedback.no{background:rgba(211,47,47,0.15);color:var(--pink);}
+
+/* ===== 教師區 ===== */
+.teacher-box{background:rgba(255,193,7,0.08);border:1px dashed rgba(255,193,7,0.3);border-radius:10px;padding:14px;margin-top:12px;}
+.teacher-box-title{color:#ffc107;font-size:0.85rem;font-weight:bold;margin-bottom:6px;}
+.teacher-box p,.teacher-box li{font-size:0.88rem;color:rgba(255,255,255,0.7);line-height:1.6;}
+.teacher-box ul{margin-left:16px;}
+
+/* ===== 總結 Cheat Sheet ===== */
+.cheat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-top:12px;}
+.cheat-card{background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:14px;}
+.cheat-card h4{color:var(--yellow);font-size:0.9rem;margin-bottom:8px;}
+.cheat-card p,.cheat-card li{font-size:0.82rem;line-height:1.6;color:rgba(255,255,255,0.8);}
+.cheat-card ul{margin-left:14px;}
+
+/* ===== 影片 ===== */
+.video-wrap{border-radius:10px;overflow:hidden;margin-bottom:16px;}
+video,iframe{width:100%;border-radius:10px;}
+.video-placeholder{background:rgba(0,0,0,0.4);border:1px dashed var(--border);border-radius:10px;padding:40px;text-align:center;color:rgba(255,255,255,0.3);}
+
+/* ===== 浮動工具 ===== */
+.float-tools{position:fixed;right:12px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:8px;z-index:200;}
+.ft-btn{background:rgba(30,50,30,0.9);border:1px solid var(--border);color:var(--chalk);width:44px;height:44px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;backdrop-filter:blur(4px);}
+.ft-btn:hover{background:rgba(255,213,79,0.2);border-color:var(--yellow);}
+.tool-panel{position:fixed;right:64px;background:rgba(20,35,20,0.95);border:1px solid var(--border);border-radius:12px;padding:14px;min-width:180px;display:none;z-index:300;backdrop-filter:blur(8px);}
+.tool-panel.open{display:block;}
+.tool-panel h4{font-size:0.85rem;color:var(--yellow);margin-bottom:8px;}
+.tool-panel input[type=number]{background:var(--surface);border:1px solid var(--border);color:var(--chalk);width:60px;padding:4px 8px;border-radius:6px;font-size:0.9rem;}
+
+/* 抽籤 */
+.draw-num{font-size:2rem;color:var(--yellow);text-align:center;font-weight:bold;min-height:48px;margin:8px 0;}
+
+/* 計時器 */
+.timer-display{font-size:1.8rem;color:var(--blue);text-align:center;font-weight:bold;font-family:monospace;margin:8px 0;}
+.timer-btns{display:flex;gap:6px;}
+.timer-btns button{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--chalk);padding:4px;border-radius:6px;cursor:pointer;font-size:0.8rem;}
+.timer-btns button:hover{background:rgba(255,255,255,0.1);}
+
+/* 畫筆 */
+#draw-btn{position:fixed;left:14px;bottom:14px;z-index:200;background:rgba(30,50,30,0.9);border:1px solid var(--border);width:44px;height:44px;border-radius:50%;font-size:1.2rem;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--chalk);transition:all 0.2s;}
+#draw-btn.active{background:rgba(255,213,79,0.3);border-color:var(--yellow);}
+#draw-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:150;display:none;pointer-events:none;}
+#draw-canvas.active{display:block;pointer-events:auto;}
+
+/* ===== MEDIA QUERIES ===== */
+@media(max-width:1024px){.main{padding:16px;padding-right:70px;}}
+@media(max-width:768px){
+  .header-title{font-size:1rem;}
+  .concept-card-body{grid-template-columns:1fr;}
+  .quiz-opts{grid-template-columns:1fr;}
+  .cheat-grid{grid-template-columns:1fr 1fr;}
+  .float-tools{right:8px;}
+}
+@media(max-width:480px){.cheat-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-left">
+    <div>
+      <div class="header-title">📐 6-1 幾何圖形、線對稱與三視圖</div>
+      <div class="header-sub">第六章 生活中的幾何圖形 ｜ 國中數學七年級下</div>
+    </div>
+  </div>
+  <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+</header>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <span style="font-size:0.82rem;color:rgba(255,255,255,0.5);">模式：</span>
+  <button class="mode-btn active" onclick="setMode('student')">🎒 學生模式</button>
+  <button class="mode-btn" onclick="setMode('teacher')">👩‍🏫 教師模式</button>
+</div>
+
+<div class="main" id="app">
+
+  <!-- 學習目標 -->
+  <div class="goals">
+    <span class="goal-chip">S-7-1 幾何符號</span>
+    <span class="goal-chip">S-7-3 垂直與距離</span>
+    <span class="goal-chip">S-7-4 線對稱性質</span>
+    <span class="goal-chip">S-7-5 對稱基本圖形</span>
+    <span class="goal-chip">S-7-2 三視圖</span>
+  </div>
+
+  <!-- 主題導覽 -->
+  <div class="nav-pills">
+    <a class="nav-pill" href="#sec1">📌 幾何符號</a>
+    <a class="nav-pill" href="#sec2">⊥ 垂直與距離</a>
+    <a class="nav-pill" href="#sec3">🔁 線對稱圖形</a>
+    <a class="nav-pill" href="#sec4">✨ 線對稱性質</a>
+    <a class="nav-pill" href="#sec5">📦 三視圖</a>
+    <a class="nav-pill" href="#cheatsheet">📋 重點整理</a>
+    <a class="nav-pill" href="#video-nlm">🎬 自學影片</a>
+  </div>
+
+  <!-- ========== SEC 1：幾何圖形符號 ========== -->
+  <div class="section" id="sec1">
+    <div class="section-header">
+      <span class="section-icon">📌</span>
+      <span class="section-title">1 幾何圖形符號</span>
+    </div>
+    <div class="section-body">
+
+      <!-- 簡報區（圖片載入後顯示） -->
+      <div class="carousel-wrap" id="car-sec1">
+        <div class="carousel-container">
+          <div class="carousel-inner" id="ci-sec1">
+            <div class="carousel-placeholder">📊 簡報圖片生成中，稍後會自動顯示</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" onclick="carGo('ci-sec1',-1)">‹</button>
+          <span class="car-counter" id="cc-sec1">- / -</span>
+          <button class="car-btn" onclick="carGo('ci-sec1',1)">›</button>
+        </div>
+      </div>
+
+      <!-- Canvas 互動：直線/線段/射線分辨器 -->
+      <div class="canvas-wrap">
+        <div class="canvas-title">🖊️ 互動：認識直線、線段、射線</div>
+        <canvas id="cv1" height="200"></canvas>
+        <div class="btn-row">
+          <button class="cv-btn active" onclick="cv1Show('line')">直線 ↔</button>
+          <button class="cv-btn" onclick="cv1Show('seg')">線段 —</button>
+          <button class="cv-btn" onclick="cv1Show('ray')">射線 →</button>
+          <button class="cv-btn" onclick="cv1Show('angle')">角 ∠</button>
+        </div>
+        <div class="canvas-hint">點擊按鈕切換圖形，觀察符號與特徵</div>
+      </div>
+
+      <!-- 概念卡片 -->
+      <div class="concept-card">
+        <div class="concept-card-header">
+          <span class="concept-icon">📐</span>
+          <h3 class="concept-card-title">幾何圖形基本符號</h3>
+        </div>
+        <div class="concept-card-body">
+          <div class="concept-def">
+            <span class="card-label">定義</span>
+            <p>平面上的<b>點</b>表示位置（不考慮大小），用大寫字母 A、B、C 表示。<b>線</b>是點移動的路徑，分直線、折線、曲線。</p>
+          </div>
+          <div class="concept-formula">
+            <span class="card-label">符號</span>
+            <p class="formula-text">直線 AB：↔AB<br>線段 AB：—AB（兩端點）<br>射線 AB：→AB（一端無限）</p>
+          </div>
+          <div class="concept-keypoints">
+            <span class="card-label">重要提醒</span>
+            <ul>
+              <li>相異兩點決定唯一直線</li>
+              <li>AB 長度也用 AB 表示（不加橫線）</li>
+              <li>角由一個頂點與兩個邊構成，記為 ∠A</li>
+              <li>多邊形：n 個頂點與 n 條線段圍成</li>
+            </ul>
+          </div>
+          <div class="concept-example">
+            <span class="card-label">例</span>
+            <p>夏季大三角：牛郎星 A、織女星 B、天津四 C，BC 為射線，AB 為線段，AC 為射線。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 形成性評量 -->
+      <div class="quiz-wrap">
+        <div class="quiz-title">✏️ 形成性評量</div>
+        <div class="quiz-q" id="q1-1">
+          <p>下列哪個符號表示「以 A 為端點，經過 B 的射線」？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q1-1',this,false)">A) 直線 AB（↔AB）</button>
+            <button class="quiz-opt" onclick="checkQ('q1-1',this,true)">B) 射線 AB（→AB）</button>
+            <button class="quiz-opt" onclick="checkQ('q1-1',this,false)">C) 線段 AB（—AB）</button>
+            <button class="quiz-opt" onclick="checkQ('q1-1',this,false)">D) ∠AB</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q1-1"></div>
+        </div>
+        <div class="quiz-q" id="q1-2">
+          <p>下列敘述何者正確？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q1-2',this,false)">A) 線段可向兩端無限延伸</button>
+            <button class="quiz-opt" onclick="checkQ('q1-2',this,false)">B) 直線只有一個端點</button>
+            <button class="quiz-opt" onclick="checkQ('q1-2',this,true)">C) 相異兩點可決定唯一一條直線</button>
+            <button class="quiz-opt" onclick="checkQ('q1-2',this,false)">D) 射線兩端都有端點</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q1-2"></div>
+        </div>
+      </div>
+
+      <div id="teacher-area">
+        <div class="teacher-box">
+          <div class="teacher-box-title">👩‍🏫 教學提醒</div>
+          <ul>
+            <li>從日常生活引入：鐵路（直線）、河流（曲線）、折尺（折線）</li>
+            <li>強調 <b>AB 上面加橫線</b>（線段）vs <b>不加橫線</b>（長度）的符號差異</li>
+            <li>多邊形：依頂點順時針或逆時針排列命名，如 △ABC、四邊形 ABCD</li>
+            <li>正多邊形：每邊等長且每角相等</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SEC 2：垂直與距離 ========== -->
+  <div class="section" id="sec2">
+    <div class="section-header">
+      <span class="section-icon">⊥</span>
+      <span class="section-title">2 垂直與距離</span>
+    </div>
+    <div class="section-body">
+
+      <div class="carousel-wrap" id="car-sec2">
+        <div class="carousel-container">
+          <div class="carousel-inner" id="ci-sec2">
+            <div class="carousel-placeholder">📊 簡報圖片生成中</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" onclick="carGo('ci-sec2',-1)">‹</button>
+          <span class="car-counter" id="cc-sec2">- / -</span>
+          <button class="car-btn" onclick="carGo('ci-sec2',1)">›</button>
+        </div>
+      </div>
+
+      <!-- Canvas：點到直線距離互動 -->
+      <div class="canvas-wrap">
+        <div class="canvas-title">🖊️ 互動：拖曳點 P，觀察最短距離</div>
+        <canvas id="cv2" height="220"></canvas>
+        <div class="canvas-hint">拖曳紅色點 P，觀察 P 到直線 L 的各條線段長度，垂線段最短</div>
+      </div>
+
+      <!-- 概念卡片 -->
+      <div class="concept-card">
+        <div class="concept-card-header">
+          <span class="concept-icon">⊥</span>
+          <h3 class="concept-card-title">垂直、中垂線與點到直線距離</h3>
+        </div>
+        <div class="concept-card-body">
+          <div class="concept-def">
+            <span class="card-label">定義</span>
+            <p>兩直線相交成直角（90°），稱互相<b>垂直</b>，記為 AB⊥BC。交點稱<b>垂足</b>。</p>
+          </div>
+          <div class="concept-formula">
+            <span class="card-label">公式</span>
+            <p class="formula-text">AB⊥BC ⟺ ∠ABC = 90°<br>中點 M：PM = MQ<br>中垂線 ⊥ PQ 且平分 PQ</p>
+          </div>
+          <div class="concept-keypoints">
+            <span class="card-label">重要提醒</span>
+            <ul>
+              <li>點到直線的距離 = 垂線段長度（最短）</li>
+              <li>垂直平分線（中垂線）= 線段中垂線 = 中線</li>
+              <li>對摺線段使端點重疊，摺痕即為中垂線</li>
+            </ul>
+          </div>
+          <div class="concept-example">
+            <span class="card-label">例</span>
+            <p>旗桿 PT⊥地面 L，旗手站在 Q、R、S、T，PT 最短，故 PT 為 P 到 L 的距離。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 形成性評量 -->
+      <div class="quiz-wrap">
+        <div class="quiz-title">✏️ 形成性評量</div>
+        <div class="quiz-q" id="q2-1">
+          <p>直線外一點 P 到直線 L 的距離，是指下列哪一條線段的長度？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q2-1',this,false)">A) P 到 L 上任意一點的連線</button>
+            <button class="quiz-opt" onclick="checkQ('q2-1',this,true)">B) P 到 L 的垂線段（最短）</button>
+            <button class="quiz-opt" onclick="checkQ('q2-1',this,false)">C) P 到 L 上最遠點的連線</button>
+            <button class="quiz-opt" onclick="checkQ('q2-1',this,false)">D) P 到 L 的任一斜線</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q2-1"></div>
+        </div>
+        <div class="quiz-q" id="q2-2">
+          <p>線段 PQ 的垂直平分線（中垂線）具有哪項性質？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q2-2',this,false)">A) 通過 P 點且平行 PQ</button>
+            <button class="quiz-opt" onclick="checkQ('q2-2',this,true)">B) 垂直 PQ 且過 PQ 中點</button>
+            <button class="quiz-opt" onclick="checkQ('q2-2',this,false)">C) 與 PQ 等長</button>
+            <button class="quiz-opt" onclick="checkQ('q2-2',this,false)">D) 通過 Q 點且平行 PQ</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q2-2"></div>
+        </div>
+      </div>
+
+      <div id="teacher-area">
+        <div class="teacher-box">
+          <div class="teacher-box-title">👩‍🏫 教學提醒</div>
+          <ul>
+            <li>用三角板夾角畫垂直，引導學生認識垂直符號</li>
+            <li>旗桿情境：PT⊥L，PQ、PR、PS 均比 PT 長，PT 最短</li>
+            <li>中垂線：對摺紙使 P 與 Q 重疊，摺痕為中垂線（本單元暫不引入尺規作圖）</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SEC 3：線對稱圖形 ========== -->
+  <div class="section" id="sec3">
+    <div class="section-header">
+      <span class="section-icon">🔁</span>
+      <span class="section-title">3 線對稱圖形</span>
+    </div>
+    <div class="section-body">
+
+      <div class="carousel-wrap" id="car-sec3">
+        <div class="carousel-container">
+          <div class="carousel-inner" id="ci-sec3">
+            <div class="carousel-placeholder">📊 簡報圖片生成中</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" onclick="carGo('ci-sec3',-1)">‹</button>
+          <span class="car-counter" id="cc-sec3">- / -</span>
+          <button class="car-btn" onclick="carGo('ci-sec3',1)">›</button>
+        </div>
+      </div>
+
+      <!-- Canvas：對稱圖形展示 -->
+      <div class="canvas-wrap">
+        <div class="canvas-title">🖊️ 互動：找出對稱圖形與對稱軸</div>
+        <canvas id="cv3" height="200"></canvas>
+        <div class="btn-row">
+          <button class="cv-btn active" onclick="cv3Show('triangle')">等腰三角形</button>
+          <button class="cv-btn" onclick="cv3Show('rect')">矩形</button>
+          <button class="cv-btn" onclick="cv3Show('hex')">正六邊形</button>
+          <button class="cv-btn" onclick="cv3Show('kite')">箏形</button>
+        </div>
+        <div class="canvas-hint">點擊圖形名稱，觀察其對稱軸（虛線）數目</div>
+      </div>
+
+      <!-- 概念卡片 -->
+      <div class="concept-card">
+        <div class="concept-card-header">
+          <span class="concept-icon">🦋</span>
+          <h3 class="concept-card-title">線對稱圖形</h3>
+        </div>
+        <div class="concept-card-body">
+          <div class="concept-def">
+            <span class="card-label">定義</span>
+            <p>將圖形沿某直線對摺，若兩側完全重疊，稱為<b>線對稱圖形</b>，該直線稱為<b>對稱軸</b>。</p>
+          </div>
+          <div class="concept-formula">
+            <span class="card-label">對稱軸數</span>
+            <p class="formula-text">等腰△：1條<br>矩形：2條　正方形：4條<br>菱形：2條　正n邊形：n條</p>
+          </div>
+          <div class="concept-keypoints">
+            <span class="card-label">重要提醒</span>
+            <ul>
+              <li>圓形有無限多條對稱軸</li>
+              <li>平行四邊形（非矩形）無對稱軸</li>
+              <li>等腰梯形：1條（上下底中垂線）</li>
+            </ul>
+          </div>
+          <div class="concept-example">
+            <span class="card-label">例</span>
+            <p>英文字母 H、A、M、Y 為線對稱圖形；B、C、D 只有水平對稱軸；S、Z 不是線對稱圖形。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 形成性評量 -->
+      <div class="quiz-wrap">
+        <div class="quiz-title">✏️ 形成性評量</div>
+        <div class="quiz-q" id="q3-1">
+          <p>正六邊形共有幾條對稱軸？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q3-1',this,false)">A) 3 條</button>
+            <button class="quiz-opt" onclick="checkQ('q3-1',this,true)">B) 6 條</button>
+            <button class="quiz-opt" onclick="checkQ('q3-1',this,false)">C) 4 條</button>
+            <button class="quiz-opt" onclick="checkQ('q3-1',this,false)">D) 無限多條</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q3-1"></div>
+        </div>
+        <div class="quiz-q" id="q3-2">
+          <p>下列哪個圖形「不是」線對稱圖形？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q3-2',this,false)">A) 等腰三角形</button>
+            <button class="quiz-opt" onclick="checkQ('q3-2',this,false)">B) 矩形</button>
+            <button class="quiz-opt" onclick="checkQ('q3-2',this,true)">C) 平行四邊形（非矩形）</button>
+            <button class="quiz-opt" onclick="checkQ('q3-2',this,false)">D) 正五邊形</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q3-2"></div>
+        </div>
+      </div>
+
+      <div id="teacher-area">
+        <div class="teacher-box">
+          <div class="teacher-box-title">👩‍🏫 教學提醒</div>
+          <ul>
+            <li>生活情境：校徽、性別符號 ♀♂、喜字，請學生指出對稱軸</li>
+            <li>讓學生用附件 4 摺紙，找出矩形（2 條）和正六邊形（6 條）的對稱軸</li>
+            <li>正多邊形的對稱軸條數 = 邊數</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SEC 4：線對稱性質 ========== -->
+  <div class="section" id="sec4">
+    <div class="section-header">
+      <span class="section-icon">✨</span>
+      <span class="section-title">4 線對稱性質與作圖</span>
+    </div>
+    <div class="section-body">
+
+      <div class="carousel-wrap" id="car-sec4">
+        <div class="carousel-container">
+          <div class="carousel-inner" id="ci-sec4">
+            <div class="carousel-placeholder">📊 簡報圖片生成中</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" onclick="carGo('ci-sec4',-1)">‹</button>
+          <span class="car-counter" id="cc-sec4">- / -</span>
+          <button class="car-btn" onclick="carGo('ci-sec4',1)">›</button>
+        </div>
+      </div>
+
+      <!-- Canvas：對稱性質動畫 -->
+      <div class="canvas-wrap">
+        <div class="canvas-title">🖊️ 互動：等腰三角形的線對稱性質</div>
+        <canvas id="cv4" height="240"></canvas>
+        <div class="btn-row">
+          <button class="cv-btn active" onclick="cv4Show('fold')">沿對稱軸對摺</button>
+          <button class="cv-btn" onclick="cv4Show('segs')">對稱線段等長</button>
+          <button class="cv-btn" onclick="cv4Show('angles')">對稱角相等</button>
+          <button class="cv-btn" onclick="cv4Show('perp')">對稱軸垂直平分</button>
+        </div>
+        <div class="canvas-hint">切換觀看線對稱圖形的三大性質</div>
+      </div>
+
+      <!-- 概念卡片 -->
+      <div class="concept-card">
+        <div class="concept-card-header">
+          <span class="concept-icon">✨</span>
+          <h3 class="concept-card-title">線對稱圖形三大性質</h3>
+        </div>
+        <div class="concept-card-body">
+          <div class="concept-def">
+            <span class="card-label">性質一</span>
+            <p>沿對稱軸對摺，兩側圖形<b>完全重疊</b>。對稱線段等長（AB = A'B'）。</p>
+          </div>
+          <div class="concept-formula">
+            <span class="card-label">性質二三</span>
+            <p class="formula-text">對稱角相等：∠B = ∠C<br>對稱軸⊥平分對稱點連線<br>∠BMA = 90°，BM = MC</p>
+          </div>
+          <div class="concept-keypoints">
+            <span class="card-label">重要提醒</span>
+            <ul>
+              <li>等腰△ABC：AM 為對稱軸，AB = AC（等腰）</li>
+              <li>∠B = ∠C（兩底角相等）</li>
+              <li>AM⊥BC 且 BM = MC（AM 垂直平分 BC）</li>
+            </ul>
+          </div>
+          <div class="concept-example">
+            <span class="card-label">例</span>
+            <p>菱形 ABCD 以 AC 為對稱軸：B、D 為對稱點，AB = AD（對稱線段等長），∠ABC = ∠ADC（對稱角相等），AC⊥BD（對稱軸垂直平分 BD）。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 形成性評量 -->
+      <div class="quiz-wrap">
+        <div class="quiz-title">✏️ 形成性評量</div>
+        <div class="quiz-q" id="q4-1">
+          <p>在線對稱圖形中，對稱點 B 和 C 的連線段 BC 與對稱軸的關係是？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q4-1',this,false)">A) 平行對稱軸</button>
+            <button class="quiz-opt" onclick="checkQ('q4-1',this,false)">B) 與對稱軸等長</button>
+            <button class="quiz-opt" onclick="checkQ('q4-1',this,true)">C) 被對稱軸垂直平分</button>
+            <button class="quiz-opt" onclick="checkQ('q4-1',this,false)">D) 通過對稱軸端點</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q4-1"></div>
+        </div>
+        <div class="quiz-q" id="q4-2">
+          <p>等腰三角形 ABC（AB = AC），以 AM 為對稱軸，下列何者正確？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q4-2',this,false)">A) ∠BAM = ∠BAC</button>
+            <button class="quiz-opt" onclick="checkQ('q4-2',this,true)">B) ∠B = ∠C 且 BM = MC</button>
+            <button class="quiz-opt" onclick="checkQ('q4-2',this,false)">C) AM = BC</button>
+            <button class="quiz-opt" onclick="checkQ('q4-2',this,false)">D) ∠AMB = 45°</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q4-2"></div>
+        </div>
+        <div class="quiz-q" id="q4-3">
+          <p>利用方格紙，以直線 L 為對稱軸畫對稱圖形，步驟為何？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q4-3',this,false)">A) 直接平移圖形到另一側</button>
+            <button class="quiz-opt" onclick="checkQ('q4-3',this,true)">B) 找各頂點對 L 的對稱點，再連接各點</button>
+            <button class="quiz-opt" onclick="checkQ('q4-3',this,false)">C) 旋轉圖形 180°</button>
+            <button class="quiz-opt" onclick="checkQ('q4-3',this,false)">D) 放大圖形一倍</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q4-3"></div>
+        </div>
+      </div>
+
+      <div id="teacher-area">
+        <div class="teacher-box">
+          <div class="teacher-box-title">👩‍🏫 教學提醒</div>
+          <ul>
+            <li>等腰△探索：對摺兩腰，從 3 個現象歸納 3 條性質（線段等長/角相等/垂直平分）</li>
+            <li>畫對稱圖形：先找對稱點（對稱軸為對稱點連線的垂直平分線），再連接</li>
+            <li>摺紙剪圖：正方形對摺兩次後剪去一角，展開後為線對稱圖形</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== SEC 5：三視圖 ========== -->
+  <div class="section" id="sec5">
+    <div class="section-header">
+      <span class="section-icon">📦</span>
+      <span class="section-title">5 三視圖</span>
+    </div>
+    <div class="section-body">
+
+      <div class="carousel-wrap" id="car-sec5">
+        <div class="carousel-container">
+          <div class="carousel-inner" id="ci-sec5">
+            <div class="carousel-placeholder">📊 簡報圖片生成中</div>
+          </div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" onclick="carGo('ci-sec5',-1)">‹</button>
+          <span class="car-counter" id="cc-sec5">- / -</span>
+          <button class="car-btn" onclick="carGo('ci-sec5',1)">›</button>
+        </div>
+      </div>
+
+      <!-- Canvas：三視圖方塊模擬器 -->
+      <div class="canvas-wrap">
+        <div class="canvas-title">🖊️ 互動：正方體積木堆疊三視圖</div>
+        <canvas id="cv5" height="260"></canvas>
+        <div class="btn-row">
+          <button class="cv-btn active" onclick="cv5Show('model1')">範例 1（8塊）</button>
+          <button class="cv-btn" onclick="cv5Show('model2')">範例 2（9塊）</button>
+          <button class="cv-btn" onclick="cv5Show('front')">前視圖</button>
+          <button class="cv-btn" onclick="cv5Show('right')">右視圖</button>
+          <button class="cv-btn" onclick="cv5Show('top')">上視圖</button>
+        </div>
+        <div class="canvas-hint">選擇模型或視圖方向，觀察三視圖的繪製方式</div>
+      </div>
+
+      <!-- 概念卡片 -->
+      <div class="concept-card">
+        <div class="concept-card-header">
+          <span class="concept-icon">📦</span>
+          <h3 class="concept-card-title">三視圖</h3>
+        </div>
+        <div class="concept-card-body">
+          <div class="concept-def">
+            <span class="card-label">定義</span>
+            <p>從<b>前面、右面、上面</b>三個方向觀察立體結構所得的平面圖像，分別稱為<b>前視圖、右視圖、上視圖</b>。</p>
+          </div>
+          <div class="concept-formula">
+            <span class="card-label">規則</span>
+            <p class="formula-text">前視圖：從正前方觀察<br>右視圖：從右方觀察<br>上視圖：從前面俯視（往下看）</p>
+          </div>
+          <div class="concept-keypoints">
+            <span class="card-label">重要提醒</span>
+            <ul>
+              <li>立體圖形限於 3×3×3 正方體堆疊，不得中空</li>
+              <li>上視圖從「前面」俯視，不是從正上方往下看</li>
+              <li>左視圖與右視圖形狀相同，方向相反</li>
+            </ul>
+          </div>
+          <div class="concept-example">
+            <span class="card-label">例</span>
+            <p>牛奶盒從前方看→長方形（前視圖），從右方看→正方形（右視圖），從上方往下俯視→長方形（上視圖）。</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 形成性評量 -->
+      <div class="quiz-wrap">
+        <div class="quiz-title">✏️ 形成性評量</div>
+        <div class="quiz-q" id="q5-1">
+          <p>三視圖中，「上視圖」的繪製方式是從哪個方向觀察？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q5-1',this,false)">A) 從正右方看向左</button>
+            <button class="quiz-opt" onclick="checkQ('q5-1',this,true)">B) 從前面往下俯視</button>
+            <button class="quiz-opt" onclick="checkQ('q5-1',this,false)">C) 從正左方看向右</button>
+            <button class="quiz-opt" onclick="checkQ('q5-1',this,false)">D) 從後面往前看</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q5-1"></div>
+        </div>
+        <div class="quiz-q" id="q5-2">
+          <p>關於三視圖的規定，下列何者正確？</p>
+          <div class="quiz-opts">
+            <button class="quiz-opt" onclick="checkQ('q5-2',this,false)">A) 立體圖形可以中空</button>
+            <button class="quiz-opt" onclick="checkQ('q5-2',this,false)">B) 最多只能堆 2×2×2 的正方體</button>
+            <button class="quiz-opt" onclick="checkQ('q5-2',this,true)">C) 限於 3×3×3 正方體堆疊且不得中空</button>
+            <button class="quiz-opt" onclick="checkQ('q5-2',this,false)">D) 左視圖和前視圖完全相同</button>
+          </div>
+          <div class="quiz-feedback" id="fb-q5-2"></div>
+        </div>
+      </div>
+
+      <div id="teacher-area">
+        <div class="teacher-box">
+          <div class="teacher-box-title">👩‍🏫 教學提醒</div>
+          <ul>
+            <li>生活引入：模型社黑光秀，從不同角度拍攝同一積木模型</li>
+            <li>常見錯誤：混淆左右視圖方向；誤解上視圖為「從正上方往下看」</li>
+            <li>先用附件 10、11 操作三視圖觀察，再「去鷹架」自己畫</li>
+            <li>九宮格輔助線：考試時建議用虛線，不算主要線段</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 總結 Cheat Sheet ========== -->
+  <div class="section" id="cheatsheet">
+    <div class="section-header">
+      <span class="section-icon">📋</span>
+      <span class="section-title">重點整理 Cheat Sheet</span>
+    </div>
+    <div class="section-body">
+      <div class="cheat-grid">
+        <div class="cheat-card">
+          <h4>📌 幾何符號</h4>
+          <ul>
+            <li>直線：↔AB（兩端無限）</li>
+            <li>線段：—AB（兩端點）</li>
+            <li>射線：→AB（一端無限）</li>
+            <li>角：∠A（頂點 + 兩邊）</li>
+            <li>正多邊形：各邊等長且各角相等</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h4>⊥ 垂直與距離</h4>
+          <ul>
+            <li>AB⊥BC → ∠ABC = 90°</li>
+            <li>點到直線距離 = 垂線段長（最短）</li>
+            <li>中垂線 = 垂直 + 平分線段</li>
+            <li>對摺線段使端點重疊 → 摺痕 = 中垂線</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h4>🔁 線對稱圖形</h4>
+          <ul>
+            <li>對摺完全重疊 = 線對稱圖形</li>
+            <li>等腰△：1 條軸；矩形：2 條</li>
+            <li>正方形：4 條；正n邊形：n 條</li>
+            <li>圓形：無限多條</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h4>✨ 線對稱性質</h4>
+          <ul>
+            <li>對稱線段等長</li>
+            <li>對稱角相等</li>
+            <li>對稱軸⊥平分對稱點連線</li>
+            <li>等腰△：∠B=∠C，AM⊥BC，BM=MC</li>
+          </ul>
+        </div>
+        <div class="cheat-card">
+          <h4>📦 三視圖</h4>
+          <ul>
+            <li>前視圖：從前方看</li>
+            <li>右視圖：從右方看</li>
+            <li>上視圖：從前面俯視</li>
+            <li>限制：3×3×3，不得中空</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 自學影片 ========== -->
+  <div class="section" id="video-nlm">
+    <div class="section-header">
+      <span class="section-icon">🎬</span>
+      <span class="section-title">學生自學影片</span>
+    </div>
+    <div class="section-body">
+      <div class="video-wrap" id="video-student-wrap">
+        <video id="video-student" preload="none" controls style="width:100%;border-radius:10px;">
+          <source src="assets/自學影片.mp4" type="video/mp4">
+        </video>
+      </div>
+      <p style="font-size:0.82rem;color:rgba(255,255,255,0.4);margin-top:8px;">影片由 NotebookLM 生成，完整講解 6-1 所有重點</p>
+
+      <div id="teacher-area" style="margin-top:20px;">
+        <div class="teacher-box">
+          <div class="teacher-box-title">🔗 NotebookLM 連結</div>
+          <p><a href="https://notebooklm.google.com/notebook/51d8f3ba-88c7-4b82-992f-27668bd60d04" target="_blank" style="color:var(--blue);">👉 6-1 NotebookLM 筆記本</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- ===== 浮動工具面板 ===== -->
+<div class="float-tools">
+  <button class="ft-btn" title="抽籤" onclick="togglePanel('draw-panel')">🎲</button>
+  <button class="ft-btn" title="計時器" onclick="togglePanel('timer-panel')">⏱️</button>
+</div>
+
+<!-- 抽籤面板 -->
+<div class="tool-panel" id="draw-panel">
+  <h4>🎲 隨機抽籤</h4>
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:8px;">
+    <span style="font-size:0.8rem;">座號 1～</span>
+    <input type="number" id="draw-max" value="30" min="1" max="60">
+  </div>
+  <div class="draw-num" id="draw-result">—</div>
+  <button onclick="doDrawLot()" style="width:100%;background:var(--accent);border:none;color:#fff;padding:7px;border-radius:8px;cursor:pointer;font-size:0.9rem;">抽！</button>
+</div>
+
+<!-- 計時器面板 -->
+<div class="tool-panel" id="timer-panel">
+  <h4>⏱️ 計時器</h4>
+  <div style="display:flex;gap:6px;align-items:center;margin-bottom:6px;">
+    <span style="font-size:0.8rem;">秒數</span>
+    <input type="number" id="timer-sec" value="60" min="5" max="600" style="width:70px;">
+  </div>
+  <div class="timer-display" id="timer-display">01:00</div>
+  <div class="timer-btns">
+    <button onclick="startTimer()">▶ 開始</button>
+    <button onclick="resetTimer()">↺ 重設</button>
+  </div>
+</div>
+
+<!-- 畫筆按鈕 -->
+<button id="draw-btn" onclick="toggleDrawMode()" title="畫筆">✏️</button>
+<canvas id="draw-canvas"></canvas>
+
+<script>
+// ===== 模式切換 =====
+function setMode(m){
+  document.body.classList.toggle('teacher-mode', m==='teacher');
+  document.querySelectorAll('.mode-btn').forEach((b,i)=>{
+    b.classList.toggle('active', (i===0&&m==='student')||(i===1&&m==='teacher'));
+  });
+  if(m==='teacher'){
+    const pw = prompt('請輸入教師密碼：');
+    if(pw!=='math2026'){
+      setMode('student');
+      alert('密碼錯誤');
+    }
+  }
+}
+
+// ===== 翻頁器 =====
+const carState = {};
+function carGo(id, delta){
+  const imgs = document.querySelectorAll(`#${id} img`);
+  if(!imgs.length) return;
+  if(!carState[id]) carState[id] = 0;
+  const n = imgs.length;
+  carState[id] = (carState[id] + delta + n) % n;
+  imgs.forEach((img,i) => img.classList.toggle('active', i===carState[id]));
+  const ccId = 'cc-' + id.replace('ci-','');
+  const cc = document.getElementById(ccId);
+  if(cc) cc.textContent = `${carState[id]+1} / ${n}`;
+}
+
+// ===== 形成性評量 =====
+function checkQ(qid, btn, correct){
+  const q = document.getElementById(qid);
+  if(q.dataset.done) return;
+  q.dataset.done = '1';
+  q.querySelectorAll('.quiz-opt').forEach(b => b.disabled = true);
+  btn.classList.add(correct ? 'correct' : 'wrong');
+  if(!correct){
+    q.querySelectorAll('.quiz-opt').forEach(b => {
+      b.onclick.toString().includes('true') && b.classList.add('correct');
+    });
+  }
+  const fb = document.getElementById('fb-' + qid);
+  fb.className = 'quiz-feedback show ' + (correct ? 'ok' : 'no');
+  fb.textContent = correct ? '✅ 正確！' : '❌ 再想想，正確答案已標示為綠色。';
+}
+
+// ===== 浮動工具 =====
+function togglePanel(id){
+  const p = document.getElementById(id);
+  const isOpen = p.classList.contains('open');
+  document.querySelectorAll('.tool-panel').forEach(x => x.classList.remove('open'));
+  if(!isOpen) p.classList.add('open');
+}
+document.addEventListener('click', e => {
+  if(!e.target.closest('.float-tools') && !e.target.closest('.tool-panel'))
+    document.querySelectorAll('.tool-panel').forEach(x => x.classList.remove('open'));
+});
+
+// 抽籤
+function doDrawLot(){
+  const max = parseInt(document.getElementById('draw-max').value)||30;
+  const n = Math.floor(Math.random()*max)+1;
+  const el = document.getElementById('draw-result');
+  let cnt=0, iv=setInterval(()=>{
+    el.textContent = Math.floor(Math.random()*max)+1;
+    if(++cnt>15){clearInterval(iv);el.textContent=n;}
+  },60);
+}
+
+// 計時器
+let timerIv=null, timerLeft=60;
+function updateTimerDisplay(){
+  const m=Math.floor(timerLeft/60), s=timerLeft%60;
+  document.getElementById('timer-display').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+}
+function startTimer(){
+  if(timerIv) return;
+  timerLeft = parseInt(document.getElementById('timer-sec').value)||60;
+  timerIv = setInterval(()=>{
+    timerLeft--;
+    updateTimerDisplay();
+    if(timerLeft<=0){clearInterval(timerIv);timerIv=null;alert('時間到！');}
+  },1000);
+  updateTimerDisplay();
+}
+function resetTimer(){
+  clearInterval(timerIv);timerIv=null;
+  timerLeft=parseInt(document.getElementById('timer-sec').value)||60;
+  updateTimerDisplay();
+}
+
+// ===== 畫筆 =====
+let drawing=false, drawMode=false;
+const drawCanvas = document.getElementById('draw-canvas');
+const dctx = drawCanvas.getContext('2d');
+function resizeDrawCanvas(){
+  drawCanvas.width=window.innerWidth;
+  drawCanvas.height=window.innerHeight;
+}
+resizeDrawCanvas();
+window.addEventListener('resize', resizeDrawCanvas);
+function toggleDrawMode(){
+  drawMode=!drawMode;
+  document.getElementById('draw-btn').classList.toggle('active',drawMode);
+  drawCanvas.classList.toggle('active',drawMode);
+}
+drawCanvas.addEventListener('mousedown', e=>{if(!drawMode)return;drawing=true;dctx.beginPath();dctx.moveTo(e.clientX,e.clientY);});
+drawCanvas.addEventListener('mousemove', e=>{if(!drawing)return;dctx.lineTo(e.clientX,e.clientY);dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.stroke();});
+drawCanvas.addEventListener('mouseup',()=>drawing=false);
+drawCanvas.addEventListener('touchstart',e=>{if(!drawMode)return;e.preventDefault();drawing=true;dctx.beginPath();dctx.moveTo(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
+drawCanvas.addEventListener('touchmove',e=>{if(!drawing)return;e.preventDefault();dctx.lineTo(e.touches[0].clientX,e.touches[0].clientY);dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.stroke();},{passive:false});
+drawCanvas.addEventListener('touchend',()=>drawing=false);
+
+// ===== CANVAS 互動 =====
+// — cv1：直線/線段/射線/角 —
+let cv1Mode='line';
+function cv1Show(m){
+  cv1Mode=m;
+  document.querySelectorAll('#sec1 .cv-btn').forEach((b,i)=>b.classList.toggle('active',['line','seg','ray','angle'][i]===m));
+  drawCv1();
+}
+function drawCv1(){
+  const canvas=document.getElementById('cv1');
+  const w=canvas.offsetWidth||600, h=200;
+  canvas.width=w; canvas.height=h;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#1a2a1a';
+  ctx.fillRect(0,0,w,h);
+  const cx=w/2, cy=h/2;
+
+  function chalkLine(x1,y1,x2,y2,color='#e8e4d8',dashes=[]){
+    ctx.save();ctx.strokeStyle=color;ctx.lineWidth=2.5;ctx.setLineDash(dashes);
+    ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();ctx.restore();
+  }
+  function dot(x,y,label,color='#ffd54f'){
+    ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();
+    ctx.fillStyle=color;ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText(label,x,y-10);
+  }
+  function arrowHead(x,y,dir){ // dir: 'right','left'
+    ctx.save();ctx.fillStyle='#e8e4d8';ctx.beginPath();
+    if(dir==='right'){ctx.moveTo(x,y);ctx.lineTo(x-10,y-5);ctx.lineTo(x-10,y+5);}
+    else{ctx.moveTo(x,y);ctx.lineTo(x+10,y-5);ctx.lineTo(x+10,y+5);}
+    ctx.closePath();ctx.fill();ctx.restore();
+  }
+  function label(txt,x,y,color='#81d4fa'){
+    ctx.fillStyle=color;ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.fillText(txt,x,y);
+  }
+
+  if(cv1Mode==='line'){
+    chalkLine(50,cy,w-50,cy);
+    arrowHead(w-50,cy,'right');arrowHead(50,cy,'left');
+    dot(cx-60,cy,'A');dot(cx+60,cy,'B');
+    label('直線 AB（↔AB）：兩端無限延伸',cx,40,'#81d4fa');
+    label('相異兩點決定唯一直線',cx,h-20,'rgba(255,255,255,0.5)');
+  }else if(cv1Mode==='seg'){
+    chalkLine(cx-100,cy,cx+100,cy);
+    dot(cx-100,cy,'A','#ffd54f');dot(cx+100,cy,'B','#ffd54f');
+    label('線段 AB（AB 上加橫線）：兩端有端點',cx,40,'#81d4fa');
+    label('AB 長度也記作 AB（不加橫線）',cx,h-20,'rgba(255,255,255,0.5)');
+  }else if(cv1Mode==='ray'){
+    chalkLine(cx-80,cy,w-50,cy);
+    arrowHead(w-50,cy,'right');
+    dot(cx-80,cy,'A','#ff8a80');
+    ctx.beginPath();ctx.arc(cx+60,cy,5,0,Math.PI*2);ctx.fillStyle='#a5d6a7';ctx.fill();
+    ctx.fillStyle='#a5d6a7';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText('B',cx+60,cy-10);
+    label('射線 AB（→AB）：A 為端點，經過 B 無限延伸',cx,40,'#81d4fa');
+  }else if(cv1Mode==='angle'){
+    const ox=cx, oy=cy+30;
+    chalkLine(ox,oy,ox-80,oy-70,'#ffd54f');
+    chalkLine(ox,oy,ox+80,oy-70,'#ffd54f');
+    ctx.beginPath();ctx.arc(ox,oy,30,Math.PI+0.8,2*Math.PI-0.8,false);
+    ctx.strokeStyle='#ff8a80';ctx.lineWidth=2;ctx.stroke();
+    dot(ox,oy,'A（頂點）','#ff8a80');
+    ctx.fillStyle='#a5d6a7';ctx.font='13px sans-serif';
+    ctx.textAlign='left';ctx.fillText('邊 AB',ox-90,oy-75);
+    ctx.textAlign='right';ctx.fillText('邊 AC',ox+90,oy-75);
+    ctx.fillStyle='#ff8a80';ctx.font='15px sans-serif';ctx.textAlign='center';ctx.fillText('∠A（角 A）',ox,oy-80);
+    label('角由頂點 + 兩邊構成，大小只與張開幅度有關',cx,h-20,'rgba(255,255,255,0.5)');
+  }
+}
+
+// — cv2：點到直線距離 —
+let cv2P={x:0,y:0},cv2Drag=false;
+function initCv2(){
+  const c=document.getElementById('cv2');
+  const w=c.offsetWidth||600;c.width=w;c.height=220;
+  cv2P={x:w/2-60,y:60};drawCv2();
+}
+function drawCv2(){
+  const c=document.getElementById('cv2');
+  const ctx=c.getContext('2d');
+  const w=c.width,h=c.height;
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,w,h);
+  const ly=h-60,x1=40,x2=w-40;
+  // 直線 L
+  ctx.strokeStyle='#81d4fa';ctx.lineWidth=2.5;
+  ctx.beginPath();ctx.moveTo(x1,ly);ctx.lineTo(x2,ly);ctx.stroke();
+  ctx.fillStyle='#81d4fa';ctx.font='bold 14px sans-serif';ctx.fillText('L',x2+8,ly+5);
+  // 垂足
+  const foot={x:cv2P.x,y:ly};
+  // 斜線 (Q, R, S)
+  const pts=[{x:cv2P.x-120,lbl:'Q'},{x:cv2P.x-60,lbl:'R'},{x:cv2P.x+60,lbl:'S'}];
+  pts.forEach(p=>{
+    ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.lineWidth=1.5;ctx.setLineDash([4,4]);
+    ctx.beginPath();ctx.moveTo(cv2P.x,cv2P.y);ctx.lineTo(p.x,ly);ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px sans-serif';ctx.textAlign='center';ctx.fillText(p.lbl,p.x,ly+16);
+  });
+  // 垂線（紅色）
+  ctx.strokeStyle='#ff8a80';ctx.lineWidth=2.5;ctx.setLineDash([]);
+  ctx.beginPath();ctx.moveTo(cv2P.x,cv2P.y);ctx.lineTo(foot.x,foot.y);ctx.stroke();
+  // 直角符號
+  ctx.strokeStyle='#ff8a80';ctx.lineWidth=1.5;
+  ctx.strokeRect(foot.x-6,foot.y-6,6,6);
+  // 垂足標 T
+  ctx.fillStyle='#ff8a80';ctx.font='bold 13px sans-serif';ctx.textAlign='center';ctx.fillText('T',foot.x,foot.y+18);
+  // 點 P（可拖曳）
+  ctx.beginPath();ctx.arc(cv2P.x,cv2P.y,8,0,Math.PI*2);
+  ctx.fillStyle='#ff5252';ctx.fill();
+  ctx.fillStyle='#ff8a80';ctx.font='bold 14px sans-serif';ctx.textAlign='center';ctx.fillText('P',cv2P.x,cv2P.y-14);
+  // 距離標示
+  const dist=Math.round(Math.abs(cv2P.y-ly));
+  ctx.fillStyle='#ffd54f';ctx.font='bold 13px sans-serif';ctx.textAlign='left';
+  ctx.fillText(`PT = ${dist}（最短距離）`,cv2P.x+14,cv2P.y+Math.floor((ly-cv2P.y)/2));
+  ctx.setLineDash([]);
+}
+function getCv2Pos(e,c){
+  const r=c.getBoundingClientRect();
+  const t=e.touches?e.touches[0]:e;
+  return{x:t.clientX-r.left,y:t.clientY-r.top};
+}
+document.getElementById('cv2').addEventListener('mousedown',e=>{
+  const c=document.getElementById('cv2'),p=getCv2Pos(e,c);
+  if(Math.hypot(p.x-cv2P.x,p.y-cv2P.y)<16){cv2Drag=true;}
+});
+document.addEventListener('mousemove',e=>{
+  if(!cv2Drag)return;
+  const c=document.getElementById('cv2'),p=getCv2Pos(e,c);
+  cv2P.x=Math.max(60,Math.min(c.width-60,p.x));
+  cv2P.y=Math.max(20,Math.min(c.height-80,p.y));
+  drawCv2();
+});
+document.addEventListener('mouseup',()=>cv2Drag=false);
+document.getElementById('cv2').addEventListener('touchstart',e=>{
+  e.preventDefault();const c=document.getElementById('cv2'),p=getCv2Pos(e,c);
+  if(Math.hypot(p.x-cv2P.x,p.y-cv2P.y)<24)cv2Drag=true;
+},{passive:false});
+document.addEventListener('touchmove',e=>{
+  if(!cv2Drag)return;e.preventDefault();
+  const c=document.getElementById('cv2'),p=getCv2Pos(e,c);
+  cv2P.x=Math.max(60,Math.min(c.width-60,p.x));
+  cv2P.y=Math.max(20,Math.min(c.height-80,p.y));
+  drawCv2();
+},{passive:false});
+document.addEventListener('touchend',()=>cv2Drag=false);
+
+// — cv3：對稱圖形 —
+let cv3Mode='triangle';
+function cv3Show(m){
+  cv3Mode=m;
+  document.querySelectorAll('#sec3 .cv-btn').forEach((b,i)=>b.classList.toggle('active',['triangle','rect','hex','kite'][i]===m));
+  drawCv3();
+}
+function drawCv3(){
+  const c=document.getElementById('cv3');
+  const w=c.offsetWidth||600;c.width=w;c.height=200;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,w,h=200);
+  ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,w,200);
+  const cx=w/2,cy=105;
+
+  function drawAxes(axes){
+    ctx.save();ctx.strokeStyle='rgba(255,213,79,0.6)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);
+    axes.forEach(a=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(a[2],a[3]);ctx.stroke();});
+    ctx.restore();ctx.setLineDash([]);
+  }
+
+  if(cv3Mode==='triangle'){
+    const pts=[[cx,cy-70],[cx-60,cy+40],[cx+60,cy+40]];
+    ctx.beginPath();ctx.moveTo(...pts[0]);pts.forEach(p=>ctx.lineTo(...p));ctx.closePath();
+    ctx.strokeStyle='#a5d6a7';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='rgba(165,214,167,0.1)';ctx.fill();
+    drawAxes([[cx,cy-90,cx,cy+60]]);
+    ctx.fillStyle='#ffd54f';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('等腰三角形：1 條對稱軸',cx,185);
+  }else if(cv3Mode==='rect'){
+    const rx=cx-70,ry=cy-45,rw=140,rh=90;
+    ctx.strokeStyle='#81d4fa';ctx.lineWidth=2.5;ctx.strokeRect(rx,ry,rw,rh);
+    ctx.fillStyle='rgba(129,212,250,0.08)';ctx.fillRect(rx,ry,rw,rh);
+    drawAxes([[cx,ry-20,cx,ry+rh+20],[rx-20,cy,rx+rw+20,cy]]);
+    ctx.fillStyle='#ffd54f';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('矩形：2 條對稱軸（兩邊中垂線）',cx,185);
+  }else if(cv3Mode==='hex'){
+    const r=55,pts=[];
+    for(let i=0;i<6;i++) pts.push([cx+r*Math.cos(i*Math.PI/3-Math.PI/6),cy+r*Math.sin(i*Math.PI/3-Math.PI/6)]);
+    ctx.beginPath();ctx.moveTo(...pts[0]);pts.forEach(p=>ctx.lineTo(...p));ctx.closePath();
+    ctx.strokeStyle='#ff8a80';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='rgba(255,138,128,0.08)';ctx.fill();
+    const axes=[];
+    for(let i=0;i<6;i++){
+      const a=i*Math.PI/3-Math.PI/6+Math.PI/6;
+      axes.push([cx+r*1.3*Math.cos(a),cy+r*1.3*Math.sin(a),cx-r*1.3*Math.cos(a),cy-r*1.3*Math.sin(a)]);
+    }
+    drawAxes(axes);
+    ctx.fillStyle='#ffd54f';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('正六邊形：6 條對稱軸',cx,185);
+  }else if(cv3Mode==='kite'){
+    const pts=[[cx,cy-70],[cx+55,cy],[cx,cy+50],[cx-55,cy]];
+    ctx.beginPath();ctx.moveTo(...pts[0]);pts.forEach(p=>ctx.lineTo(...p));ctx.closePath();
+    ctx.strokeStyle='#ffd54f';ctx.lineWidth=2.5;ctx.stroke();
+    ctx.fillStyle='rgba(255,213,79,0.08)';ctx.fill();
+    drawAxes([[cx,cy-90,cx,cy+70]]);
+    ctx.fillStyle='#ffd54f';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('箏形：1 條對稱軸（對角線）',cx,185);
+  }
+}
+
+// — cv4：線對稱性質 —
+let cv4Mode='fold';
+function cv4Show(m){
+  cv4Mode=m;
+  document.querySelectorAll('#sec4 .cv-btn').forEach((b,i)=>b.classList.toggle('active',['fold','segs','angles','perp'][i]===m));
+  drawCv4();
+}
+function drawCv4(){
+  const c=document.getElementById('cv4');
+  const w=c.offsetWidth||600;c.width=w;c.height=240;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,w,240);
+  ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,w,240);
+  const cx=w/2,A={x:cx,y:30},B={x:cx-90,y:200},C={x:cx+90,y:200},M={x:cx,y:200};
+
+  function triangle(alpha=1){
+    ctx.globalAlpha=alpha;
+    ctx.strokeStyle='#a5d6a7';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(C.x,C.y);ctx.closePath();ctx.stroke();
+    ctx.fillStyle='rgba(165,214,167,0.06)';ctx.fill();
+    ctx.globalAlpha=1;
+    ['A','B','C','M'].forEach(k=>{
+      const p={A,B,C,M}[k];
+      ctx.fillStyle=k==='A'?'#ffd54f':k==='M'?'#ff8a80':'#a5d6a7';
+      ctx.font='bold 13px sans-serif';ctx.textAlign='center';
+      ctx.fillText(k,p.x+(k==='B'?-12:k==='C'?12:0),p.y+(k==='A'?-10:k==='M'?18:18));
+    });
+  }
+  function axis(){
+    ctx.save();ctx.strokeStyle='rgba(255,213,79,0.7)';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);
+    ctx.beginPath();ctx.moveTo(cx,10);ctx.lineTo(cx,220);ctx.stroke();ctx.restore();ctx.setLineDash([]);
+  }
+
+  if(cv4Mode==='fold'){
+    triangle();axis();
+    ctx.fillStyle='rgba(255,213,79,0.15)';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(cx,A.y);ctx.lineTo(cx,200);ctx.closePath();ctx.fill();
+    ctx.fillStyle='rgba(255,138,128,0.08)';ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.lineTo(cx,200);ctx.closePath();ctx.fill();
+    ctx.fillStyle='#ffd54f';ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('沿 AM 對摺，左右兩側完全重疊',cx,230);
+  }else if(cv4Mode==='segs'){
+    triangle();axis();
+    ctx.strokeStyle='#ffd54f';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(B.x,B.y);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(C.x,C.y);ctx.stroke();
+    ctx.fillStyle='#ffd54f';ctx.font='bold 13px sans-serif';
+    ctx.textAlign='right';ctx.fillText('AB',A.x-8,(A.y+B.y)/2+4);
+    ctx.textAlign='left';ctx.fillText('AC',A.x+8,(A.y+C.y)/2+4);
+    ctx.fillStyle='#ffd54f';ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('AB = AC（對稱線段等長）',cx,230);
+  }else if(cv4Mode==='angles'){
+    triangle();axis();
+    function arc(px,py,r,a1,a2,color){ctx.beginPath();ctx.arc(px,py,r,a1,a2);ctx.strokeStyle=color;ctx.lineWidth=2;ctx.stroke();}
+    arc(B.x,B.y,28,-Math.PI*0.85,0,'#ff8a80');
+    arc(C.x,C.y,28,-Math.PI,-Math.PI*0.15,'#ff8a80');
+    ctx.fillStyle='#ff8a80';ctx.font='13px sans-serif';
+    ctx.textAlign='right';ctx.fillText('∠B',B.x+18,B.y-12);
+    ctx.textAlign='left';ctx.fillText('∠C',C.x-18,C.y-12);
+    ctx.fillStyle='#ffd54f';ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('∠B = ∠C（對稱角相等，兩底角相等）',cx,230);
+  }else if(cv4Mode==='perp'){
+    triangle();axis();
+    ctx.strokeStyle='#ff8a80';ctx.lineWidth=2.5;
+    ctx.beginPath();ctx.moveTo(B.x,M.y);ctx.lineTo(C.x,M.y);ctx.stroke();
+    ctx.strokeStyle='#ff8a80';ctx.lineWidth=1.5;ctx.strokeRect(M.x-6,M.y-6,6,6);
+    ctx.strokeStyle='rgba(255,138,128,0.6)';ctx.lineWidth=2;
+    ctx.beginPath();ctx.moveTo(A.x,A.y);ctx.lineTo(M.x,M.y);ctx.stroke();
+    ctx.fillStyle='rgba(255,138,128,0.3)';
+    ctx.fillRect(M.x-3,M.y-3,6,6);
+    ctx.fillStyle='#ffd54f';ctx.font='14px sans-serif';ctx.textAlign='center';
+    ctx.fillText('AM⊥BC 且 BM = MC（對稱軸垂直平分對稱點連線）',cx,230);
+  }
+}
+
+// — cv5：三視圖 —
+let cv5Mode='model1';
+const models={
+  model1:[ // 8塊積木 前視圖/右視圖/上視圖
+    {col:0,row:1,lyr:0},{col:1,row:1,lyr:0},{col:1,row:0,lyr:0},{col:1,row:1,lyr:1},
+    {col:2,row:1,lyr:0},{col:2,row:0,lyr:0},{col:2,row:1,lyr:1},{col:2,row:0,lyr:1}
+  ],
+  model2:[ // 9塊
+    {col:0,row:2,lyr:0},{col:1,row:2,lyr:0},{col:2,row:2,lyr:0},
+    {col:0,row:1,lyr:0},{col:1,row:1,lyr:0},{col:2,row:1,lyr:0},
+    {col:2,row:0,lyr:0},{col:2,row:1,lyr:1},{col:2,row:2,lyr:1}
+  ]
+};
+function cv5Show(m){
+  cv5Mode=m;
+  document.querySelectorAll('#sec5 .cv-btn').forEach((b,i)=>b.classList.toggle('active',['model1','model2','front','right','top'][i]===m));
+  drawCv5();
+}
+function drawCv5(){
+  const c=document.getElementById('cv5');
+  const w=c.offsetWidth||600;c.width=w;c.height=260;
+  const ctx=c.getContext('2d');
+  ctx.clearRect(0,0,w,260);
+  ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,w,260);
+
+  const cs=32; // cell size
+
+  function drawGrid(blocks,ox,oy,cols,rows,color='#81d4fa',filled=false){
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x=ox+c*cs, y=oy+r*cs;
+        if(filled){
+          ctx.fillStyle='rgba(129,212,250,0.15)';ctx.fillRect(x,y,cs,cs);
+        }
+        ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=0.5;
+        ctx.strokeRect(x,y,cs,cs);
+      }
+    }
+    blocks.forEach(b=>{
+      const x=ox+b.c*cs,y=oy+b.r*cs;
+      ctx.fillStyle=color==='#ff8a80'?'rgba(255,138,128,0.35)':color==='#ffd54f'?'rgba(255,213,79,0.35)':'rgba(129,212,250,0.35)';
+      ctx.fillRect(x+1,y+1,cs-2,cs-2);
+      ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.strokeRect(x+1,y+1,cs-2,cs-2);
+    });
+  }
+
+  function gridLabel(txt,x,y,color){
+    ctx.fillStyle=color||'#ffd54f';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(txt,x,y);
+  }
+
+  if(cv5Mode==='model1'||cv5Mode==='model2'){
+    // 示意圖：等角投影積木堆
+    const mname=cv5Mode==='model1'?'model1':'model2';
+    const bs=models[mname];
+    // 簡化：畫等角投影
+    const iso=(c,r,l)=>({x:w/3+c*20-l*10,y:100+r*14+l*(-18)-c*6});
+    const colors=['#ef5350','#fdd835','#1e88e5'];
+    bs.forEach(b=>{
+      const C=[b.col,b.row,b.lyr];
+      const top=[iso(C[0],C[1],C[2]),iso(C[0]+1,C[1],C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0],C[1]+1,C[2])];
+      const right=[iso(C[0]+1,C[1],C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]-1),iso(C[0]+1,C[1],C[2]-1)];
+      const front=[iso(C[0],C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]-1),iso(C[0],C[1]+1,C[2]-1)];
+      [[front,colors[2]],[right,colors[1]],[top,colors[0]]].forEach(([pts,col])=>{
+        ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();
+        ctx.fillStyle=col+'55';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.stroke();
+      });
+    });
+    gridLabel(`積木模型 (${cv5Mode==='model1'?8:9}塊) — 點選視圖按鈕觀察三視圖`,w/3,230,'rgba(255,255,255,0.4)');
+
+    // 三視圖縮略
+    const frontBlocks=bs.map(b=>({c:b.col,r:2-b.lyr}));
+    const rightBlocks=bs.map(b=>({c:b.row,r:2-b.lyr}));
+    const topBlocks=bs.map(b=>({c:b.col,r:b.row}));
+    const unique=(arr)=>[...new Map(arr.map(x=>[`${x.c},${x.r}`,x])).values()];
+    const ox2=w*0.62,oy2=30;
+    ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fillRect(ox2-5,oy2-20,w-ox2,220);
+    gridLabel('前視圖',ox2+48,oy2-6,'#ff8a80');drawGrid(unique(frontBlocks),ox2,oy2,3,3,'#ff8a80');
+    gridLabel('右視圖',ox2+48,oy2+120,'#ffd54f');drawGrid(unique(rightBlocks),ox2,oy2+104,3,3,'#ffd54f');
+  }else{
+    const mBlocks=models['model1'];
+    const frontB=[...new Map(mBlocks.map(b=>({c:b.col,r:2-b.lyr})).map(x=>[`${x.c},${x.r}`,x])).values()];
+    const rightB=[...new Map(mBlocks.map(b=>({c:b.row,r:2-b.lyr})).map(x=>[`${x.c},${x.r}`,x])).values()];
+    const topB=[...new Map(mBlocks.map(b=>({c:b.col,r:b.row})).map(x=>[`${x.c},${x.r}`,x])).values()];
+
+    const configs={front:{blocks:frontB,label:'前視圖（從前方看）',color:'#ff8a80'},
+                   right:{blocks:rightB,label:'右視圖（從右方看）',color:'#ffd54f'},
+                   top:{blocks:topB,label:'上視圖（從前面俯視）',color:'#81d4fa'}};
+    const cfg=configs[cv5Mode];
+    const ox=(w-3*cs)/2,oy=60;
+    gridLabel(cfg.label,w/2,40,cfg.color);
+    drawGrid(cfg.blocks,ox,oy,3,3,cfg.color,true);
+
+    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px sans-serif';ctx.textAlign='center';
+    ctx.fillText('（範例 model1，8 塊積木）',w/2,220);
+  }
+}
+
+// ===== Resize All Canvases =====
+function resizeCanvases(){
+  drawCv1();initCv2();drawCv3();drawCv4();drawCv5();
+}
+window.addEventListener('resize', ()=>setTimeout(resizeCanvases,100));
+
+// ===== INIT =====
+window.addEventListener('load',()=>{
+  drawCv1();initCv2();drawCv3();drawCv4();drawCv5();
+  // 如果 assets 資料夾有圖片，自動載入
+  autoLoadSlides();
+});
+
+function autoLoadSlides(){
+  const sections=[
+    {ciId:'ci-sec1',ccId:'cc-sec1',prefix:'slide_',from:1,to:3},
+    {ciId:'ci-sec2',ccId:'cc-sec2',prefix:'slide_',from:4,to:6},
+    {ciId:'ci-sec3',ccId:'cc-sec3',prefix:'slide_',from:7,to:9},
+    {ciId:'ci-sec4',ccId:'cc-sec4',prefix:'slide_',from:10,to:12},
+    {ciId:'ci-sec5',ccId:'cc-sec5',prefix:'slide_',from:13,to:15},
+  ];
+  sections.forEach(s=>{
+    const ci=document.getElementById(s.ciId);
+    let loaded=0;
+    for(let i=s.from;i<=s.to;i++){
+      const img=new Image();
+      img.src=`assets/${s.prefix}${String(i).padStart(2,'0')}.jpg`;
+      img.loading='lazy';
+      img.onload=()=>{
+        if(loaded===0){
+          ci.innerHTML=''; // 清除 placeholder
+          carState[s.ciId]=0;
+        }
+        img.classList.toggle('active',loaded===0);
+        ci.appendChild(img);
+        loaded++;
+        const cc=document.getElementById(s.ccId);
+        if(cc) cc.textContent=`1 / ${loaded}`;
+      };
+      img.onerror=()=>{};
+    }
+  });
+}
+</script>
+</body>
+</html>
