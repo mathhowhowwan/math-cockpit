@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5-1 統計圖表與平均數、中位數、眾數</title>
+<style>
+:root{--bg:#1a2a1a;--bg2:#243424;--bg3:#2e3e2e;--chalk:#e8e4d8;--yellow:#ffd54f;--pink:#ff8a80;--blue:#81d4fa;--green:#a5d6a7;--orange:#ffcc80;--wood:#8d6e4a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--chalk);font-family:'Noto Sans TC',sans-serif;min-height:100vh;}
+
+/* HEADER */
+.site-header{background:linear-gradient(135deg,#6d4c2a,var(--wood),#a07850);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;border-bottom:3px solid #5d3e28;position:sticky;top:0;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,0.5);}
+.header-title{display:flex;align-items:center;gap:12px;}
+.header-title h1{font-size:1.25rem;color:#fff8e1;text-shadow:1px 1px 3px rgba(0,0,0,0.5);}
+.chalk-badge{background:rgba(255,255,255,0.15);border:1px dashed rgba(255,255,255,0.4);color:#fff8e1;font-size:0.75rem;padding:2px 8px;border-radius:10px;}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25);}
+
+/* MODE BAR */
+.mode-bar{background:var(--bg3);padding:8px 24px;display:flex;align-items:center;gap:16px;border-bottom:1px solid rgba(255,255,255,0.1);}
+.mode-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:4px 14px;border-radius:12px;cursor:pointer;font-size:0.82rem;transition:all 0.2s;}
+.mode-btn.active{background:var(--yellow);color:#1a1a1a;border-color:var(--yellow);}
+.mode-label{font-size:0.8rem;color:rgba(255,255,255,0.5);}
+
+/* OBJECTIVES */
+.objectives{padding:20px 24px;background:linear-gradient(to right,rgba(255,213,79,0.08),transparent);}
+.objectives h2{color:var(--yellow);font-size:1rem;margin-bottom:10px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);color:var(--chalk);font-size:0.8rem;padding:4px 12px;border-radius:20px;}
+.chip.d71{border-color:var(--blue);color:var(--blue);}
+.chip.d72{border-color:var(--green);color:var(--green);}
+
+/* NAV PILLS */
+.nav-pills{display:flex;gap:8px;padding:12px 24px;overflow-x:auto;border-bottom:1px solid rgba(255,255,255,0.1);}
+.nav-pill{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:var(--chalk);padding:6px 16px;border-radius:20px;cursor:pointer;font-size:0.82rem;text-decoration:none;white-space:nowrap;transition:all 0.2s;}
+.nav-pill:hover{background:rgba(255,255,255,0.12);}
+.nav-pill.p1{border-color:var(--blue);}
+.nav-pill.p2{border-color:var(--green);}
+.nav-pill.p3{border-color:var(--yellow);}
+.nav-pill.p4{border-color:var(--pink);}
+.nav-pill.p5{border-color:var(--orange);}
+
+/* SECTION */
+.section{padding:32px 24px;border-bottom:1px solid rgba(255,255,255,0.06);}
+.section-header{display:flex;align-items:center;gap:12px;margin-bottom:24px;}
+.sec-num{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:bold;flex-shrink:0;}
+.n1{background:var(--blue);color:#1a1a1a;}
+.n2{background:var(--green);color:#1a1a1a;}
+.n3{background:var(--yellow);color:#1a1a1a;}
+.n4{background:var(--pink);color:#1a1a1a;}
+.n5{background:var(--orange);color:#1a1a1a;}
+.section-header h2{font-size:1.3rem;color:var(--chalk);}
+
+/* CAROUSEL */
+.carousel-wrap{position:relative;background:var(--bg2);border-radius:12px;overflow:hidden;margin-bottom:24px;}
+.carousel-inner{position:relative;}
+.carousel-inner img{width:100%;display:none;border-radius:8px;}
+.carousel-inner img.active{display:block;}
+.carousel-ctrl{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3);color:#fff;width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;z-index:5;}
+.carousel-ctrl.prev{left:8px;}
+.carousel-ctrl.next{right:8px;}
+.carousel-counter{text-align:center;padding:6px;font-size:0.78rem;color:rgba(255,255,255,0.5);}
+
+/* CANVAS */
+canvas{display:block;border-radius:10px;background:var(--bg2);}
+.canvas-wrap{margin-bottom:24px;}
+.canvas-title{font-size:0.82rem;color:rgba(255,255,255,0.5);margin-bottom:6px;}
+
+/* CONCEPT CARD */
+.concept-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:20px;margin:16px 0;}
+.concept-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:10px;}
+.concept-icon{font-size:1.4rem;}
+.concept-card-title{color:var(--yellow);font-size:1.1rem;margin:0;}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.concept-def,.concept-formula,.concept-keypoints,.concept-example{background:rgba(0,0,0,0.2);border-radius:8px;padding:12px;}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:10px;margin-bottom:6px;}
+.formula-text{color:var(--blue);font-family:monospace;font-size:1.05rem;text-align:center;padding:4px 0;line-height:1.6;}
+.concept-card-body ul{margin:4px 0 0 16px;padding:0;}
+.concept-card-body li{color:var(--chalk);font-size:0.9rem;margin-bottom:4px;}
+.concept-card-body p{font-size:0.9rem;line-height:1.6;}
+
+/* QUIZ */
+.quiz-section{margin:24px 0;}
+.quiz-section h3{color:var(--yellow);font-size:0.95rem;margin-bottom:16px;border-left:3px solid var(--yellow);padding-left:10px;}
+.quiz-item{background:var(--bg2);border-radius:10px;padding:16px;margin-bottom:14px;}
+.quiz-q{font-size:0.9rem;margin-bottom:12px;line-height:1.6;}
+.quiz-opts{display:flex;flex-direction:column;gap:6px;}
+.quiz-opt{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);color:var(--chalk);padding:8px 14px;border-radius:8px;cursor:pointer;text-align:left;font-size:0.85rem;transition:all 0.2s;}
+.quiz-opt:hover{background:rgba(255,255,255,0.1);}
+.quiz-opt.correct{background:rgba(46,125,50,0.4);border-color:#4caf50;}
+.quiz-opt.wrong{background:rgba(183,28,28,0.3);border-color:#ef5350;}
+.quiz-fb{display:none;margin-top:10px;padding:8px 12px;border-radius:8px;font-size:0.82rem;background:rgba(0,0,0,0.25);border-left:3px solid var(--green);}
+.quiz-fb.show{display:block;}
+
+/* TEACHER HINT */
+.teacher-hint{display:none;background:rgba(255,213,79,0.08);border:1px dashed rgba(255,213,79,0.3);border-radius:10px;padding:14px;margin:16px 0;}
+.teacher-hint h4{color:var(--yellow);font-size:0.85rem;margin-bottom:8px;}
+.teacher-hint p,.teacher-hint li{font-size:0.85rem;line-height:1.6;}
+.teacher-hint ul{padding-left:16px;}
+.teacher-mode .teacher-hint{display:block;}
+
+/* CHEAT SHEET */
+.cheat-sheet{background:var(--bg2);border:1px solid rgba(255,255,255,0.12);border-radius:12px;padding:24px;margin:32px 0;}
+.cheat-sheet h2{color:var(--yellow);font-size:1.1rem;margin-bottom:20px;text-align:center;}
+.cheat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.cheat-item{background:rgba(0,0,0,0.25);border-radius:10px;padding:14px;}
+.cheat-item h4{font-size:0.85rem;color:var(--yellow);margin-bottom:8px;}
+.cheat-item p,.cheat-item li{font-size:0.82rem;line-height:1.7;color:var(--chalk);}
+.cheat-item ul{padding-left:14px;}
+.cheat-formula{color:var(--blue);font-family:monospace;font-size:0.95rem;}
+
+/* VIDEO */
+.video-section{padding:24px;background:var(--bg2);border-radius:12px;margin:24px 0;}
+.video-section h3{color:var(--yellow);font-size:0.95rem;margin-bottom:14px;}
+video{width:100%;border-radius:8px;}
+.yt-placeholder{background:rgba(0,0,0,0.3);border:1px dashed rgba(255,255,255,0.2);border-radius:10px;padding:40px;text-align:center;color:rgba(255,255,255,0.4);font-size:0.85rem;}
+
+/* FLOAT TOOLS */
+.float-tools{position:fixed;right:16px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:10px;z-index:90;}
+.ftool-btn{width:44px;height:44px;border-radius:50%;background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.ftool-btn:hover{background:rgba(255,255,255,0.15);}
+.ftool-panel{display:none;position:absolute;right:54px;background:var(--bg3);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:16px;min-width:180px;top:0;}
+.ftool-panel.open{display:block;}
+.ftool-panel h4{font-size:0.82rem;color:var(--yellow);margin-bottom:10px;}
+#rand-result{font-size:2rem;text-align:center;color:var(--yellow);font-weight:bold;padding:10px 0;}
+.ftool-panel input[type=number]{background:var(--bg2);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:4px 8px;border-radius:6px;width:60px;font-size:0.85rem;}
+.ftool-panel button{background:var(--bg2);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:4px 10px;border-radius:6px;cursor:pointer;font-size:0.82rem;margin-top:6px;}
+#timer-display{font-size:1.6rem;text-align:center;font-family:monospace;color:var(--yellow);padding:8px 0;}
+
+/* DRAW BUTTON */
+.draw-btn{position:fixed;left:16px;bottom:80px;width:44px;height:44px;border-radius:50%;background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);cursor:pointer;font-size:1.1rem;z-index:90;display:flex;align-items:center;justify-content:center;}
+#draw-canvas{position:fixed;top:0;left:0;width:100%;height:100%;z-index:200;display:none;cursor:crosshair;}
+
+/* RESPONSIVE */
+@media(max-width:1024px){.cheat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:768px){.concept-card-body{grid-template-columns:1fr;}.cheat-grid{grid-template-columns:1fr;}.section{padding:20px 14px;}.site-header{padding:10px 14px;}.nav-pills{padding:10px 14px;}}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-title">
+    <div>
+      <h1>📊 5-1 統計圖表與平均數、中位數、眾數</h1>
+      <div style="display:flex;gap:6px;margin-top:4px;">
+        <span class="chalk-badge">七年級下</span>
+        <span class="chalk-badge">第五章</span>
+      </div>
+    </div>
+  </div>
+  <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+</header>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <span class="mode-label">模式：</span>
+  <button class="mode-btn active" id="btn-student" onclick="setMode('student')">👨‍🎓 學生</button>
+  <button class="mode-btn" id="btn-teacher" onclick="promptTeacher()">👩‍🏫 教師</button>
+</div>
+
+<!-- OBJECTIVES -->
+<div class="objectives">
+  <h2>🎯 學習目標</h2>
+  <div class="chips">
+    <span class="chip d71">D-7-1 統計圖表</span>
+    <span class="chip d71">判讀長條圖、折線圖、圓形圖、直方圖、列聯表</span>
+    <span class="chip d72">D-7-2 統計數據</span>
+    <span class="chip d72">計算平均數、中位數、眾數</span>
+    <span class="chip">理解三種代表值的特性與適用時機</span>
+  </div>
+</div>
+
+<!-- NAV PILLS -->
+<nav class="nav-pills">
+  <a class="nav-pill p1" href="#sec1">① 統計圖表判讀</a>
+  <a class="nav-pill p2" href="#sec2">② 次數分配表與圖</a>
+  <a class="nav-pill p3" href="#sec3">③ 平均數</a>
+  <a class="nav-pill p4" href="#sec4">④ 中位數</a>
+  <a class="nav-pill p5" href="#sec5">⑤ 眾數</a>
+  <a class="nav-pill" href="#cheatsheet">📋 Cheat Sheet</a>
+</nav>
+
+<!-- OPENING CAROUSEL (slides) -->
+<div style="padding:20px 24px 0;">
+  <div style="font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:8px;">📽 授課簡報</div>
+  <div class="carousel-wrap" id="car-main">
+    <div class="carousel-inner" id="ci-main">
+      <img src="assets/slide_01.jpg" class="active" loading="lazy" alt="slide 1">
+      <img src="assets/slide_02.jpg" loading="lazy" alt="slide 2">
+      <img src="assets/slide_03.jpg" loading="lazy" alt="slide 3">
+      <img src="assets/slide_04.jpg" loading="lazy" alt="slide 4">
+      <img src="assets/slide_05.jpg" loading="lazy" alt="slide 5">
+      <img src="assets/slide_06.jpg" loading="lazy" alt="slide 6">
+      <img src="assets/slide_07.jpg" loading="lazy" alt="slide 7">
+      <img src="assets/slide_08.jpg" loading="lazy" alt="slide 8">
+      <img src="assets/slide_09.jpg" loading="lazy" alt="slide 9">
+      <img src="assets/slide_10.jpg" loading="lazy" alt="slide 10">
+      <img src="assets/slide_11.jpg" loading="lazy" alt="slide 11">
+      <img src="assets/slide_12.jpg" loading="lazy" alt="slide 12">
+      <img src="assets/slide_13.jpg" loading="lazy" alt="slide 13">
+      <img src="assets/slide_14.jpg" loading="lazy" alt="slide 14">
+      <img src="assets/slide_15.jpg" loading="lazy" alt="slide 15">
+      <img src="assets/slide_16.jpg" loading="lazy" alt="slide 16">
+      <img src="assets/slide_17.jpg" loading="lazy" alt="slide 17">
+      <img src="assets/slide_18.jpg" loading="lazy" alt="slide 18">
+      <img src="assets/slide_19.jpg" loading="lazy" alt="slide 19">
+      <img src="assets/slide_20.jpg" loading="lazy" alt="slide 20">
+    </div>
+    <button class="carousel-ctrl prev" onclick="carGo('ci-main',-1)">‹</button>
+    <button class="carousel-ctrl next" onclick="carGo('ci-main',1)">›</button>
+    <div class="carousel-counter" id="cc-main">1 / 20</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 1: 統計圖表的呈現與判讀 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section" id="sec1">
+  <div class="section-header">
+    <div class="sec-num n1">1</div>
+    <h2>統計圖表的呈現與判讀</h2>
+  </div>
+
+  <!-- Canvas: 圖表類型互動選擇器 -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">▶ 點擊圖表類型，查看其特徵與適用時機</div>
+    <canvas id="c1" width="800" height="340"></canvas>
+  </div>
+
+  <!-- Concept Card -->
+  <div class="concept-card">
+    <div class="concept-card-header">
+      <span class="concept-icon">📊</span>
+      <h3 class="concept-card-title">統計圖表的呈現與判讀</h3>
+    </div>
+    <div class="concept-card-body">
+      <div class="concept-def">
+        <span class="card-label">長條圖</span>
+        <p>呈現<strong>各類別次數</strong>。條形之間有間隔，資料不必按大小順序排列。例：各尺寸T恤件數。</p>
+      </div>
+      <div class="concept-def">
+        <span class="card-label">折線圖</span>
+        <p>呈現資料<strong>隨時間的變化趨勢</strong>。連點成線，可看出上升、下降趨勢。例：PM₂.₅隨時間變化。</p>
+      </div>
+      <div class="concept-formula">
+        <span class="card-label">直方圖 vs 長條圖</span>
+        <p class="formula-text">長條圖：類別資料，條有間隔<br>直方圖：數值資料，條緊密相連</p>
+      </div>
+      <div class="concept-def">
+        <span class="card-label">圓形圖 & 列聯表</span>
+        <p><strong>圓形圖</strong>：呈現各項佔整體的百分比。<strong>列聯表</strong>：同時呈現兩種類別變數的次數分配。</p>
+      </div>
+      <div class="concept-keypoints">
+        <span class="card-label">重要提醒</span>
+        <ul>
+          <li>直方圖的每個長條底邊必須緊密相接</li>
+          <li>圓形圖難以比較不同扇區大小，常被統計學家批評</li>
+          <li>列聯表可呈現兩個屬性變數的不同類別</li>
+        </ul>
+      </div>
+      <div class="concept-example">
+        <span class="card-label">例</span>
+        <p>PM₂.₅排放源：工業16865、車輛16756、商業6440、營建27662、其他6132 公噸/年。<br>營建所佔百分比：27662÷73855×100%≈37%</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Teacher Hint -->
+  <div class="teacher-hint">
+    <h4>🗝️ 教學提示</h4>
+    <ul>
+      <li>引導學生區分長條圖與直方圖的差異：一個是類別資料，一個是數值資料且有大小順序</li>
+      <li>圓形圖需用刻度為100等分的量角器，每個扇形的度數 = 百分比 × 3.6°</li>
+      <li>列聯表Contingency Table：兩個屬性變數交叉呈現，可做百分比分析</li>
+    </ul>
+  </div>
+
+  <!-- Quiz -->
+  <div class="quiz-section">
+    <h3>📝 形成性評量</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. 七年甲班各種尺寸T恤的需求件數：S=4、M=14、L=7、XL=5。若要呈現各尺寸的件數，最適合用哪種統計圖？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q1')">A. 折線圖</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec1q1')">B. 長條圖</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q1')">C. 直方圖</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q1')">D. 圓形圖</button>
+      </div>
+      <div class="quiz-fb" id="sec1q1">✅ 正確！尺寸是類別資料（S/M/L/XL沒有連續大小關係），適合用<strong>長條圖</strong>。若想看各尺寸占總數的比例，才用圓形圖。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. 下列敘述何者正確？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q2')">A. 直方圖的長條之間有間隔</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q2')">B. 折線圖適合呈現類別資料的次數</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec1q2')">C. 列聯表可同時呈現兩種類別的統計資料</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q2')">D. 長條圖的資料必須按大小順序排列</button>
+      </div>
+      <div class="quiz-fb" id="sec1q2">✅ 正確！列聯表（Contingency Table）將兩個屬性變數的不同類別置於行與列，呈現各組合的次數。A錯：直方圖長條緊密相接。B錯：折線圖呈現數值隨時間變化。D錯：長條圖不必按順序。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q3. 某校調查學生接種疫苗意願：七年級願意140人、不願意20人；八年級願意162人、不願意38人。願意接種的學生占全體七八年級的百分比約為？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q3')">A. 70%</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q3')">B. 78%</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec1q3')">C. 83%</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec1q3')">D. 90%</button>
+      </div>
+      <div class="quiz-fb" id="sec1q3">✅ 願意：140+162=302人，總計：(140+20)+(162+38)=360人，302÷360×100%≈<strong>83.9%≈83%</strong>。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 2: 次數分配表與直方圖/折線圖 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section" id="sec2">
+  <div class="section-header">
+    <div class="sec-num n2">2</div>
+    <h2>統計資料的整理與分析</h2>
+  </div>
+
+  <!-- Canvas: 互動直方圖 -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">▶ 拖曳滑桿，調整各組次數，觀察直方圖與折線圖的變化</div>
+    <canvas id="c2" width="800" height="380"></canvas>
+  </div>
+
+  <!-- Concept Card -->
+  <div class="concept-card">
+    <div class="concept-card-header">
+      <span class="concept-icon">📋</span>
+      <h3 class="concept-card-title">次數分配表與直方圖</h3>
+    </div>
+    <div class="concept-card-body">
+      <div class="concept-def">
+        <span class="card-label">次數分配表</span>
+        <p>將資料按大小分組整理。步驟：① 找最大最小值 ② 決定組距（通常10分為一組）③ 用正字記號統計次數 ④ 填入次數欄</p>
+      </div>
+      <div class="concept-formula">
+        <span class="card-label">關鍵概念</span>
+        <p class="formula-text">組距 = 各組的上限 − 下限<br>組中點 = (上限 + 下限) ÷ 2<br>包含下限，不含上限（含上限的100分歸入90~100）</p>
+      </div>
+      <div class="concept-def">
+        <span class="card-label">次數分配折線圖</span>
+        <p>以各組的<strong>組中點</strong>為橫坐標，各組次數為縱坐標，標出各點後依次用線段連接。</p>
+      </div>
+      <div class="concept-keypoints">
+        <span class="card-label">重要提醒</span>
+        <ul>
+          <li>分組時各組都「包含下限，不含上限」</li>
+          <li>100分通常歸入90~100這組</li>
+          <li>直方圖：以組距為底，次數為高，長條緊密相連</li>
+          <li>折線圖：用組中點代表各組資料平均</li>
+        </ul>
+      </div>
+      <div class="concept-example">
+        <span class="card-label">例</span>
+        <p>成績資料最高100分，最低42分。從40分起，每10分一組：40~50（3人）、50~60（4人）、60~70（5人）、70~80（8人）、80~90（6人）、90~100（4人）。組中點分別為45,55,65,75,85,95。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="teacher-hint">
+    <h4>🗝️ 教學提示</h4>
+    <ul>
+      <li>分組時，「40~50 表示成績≥40 且 &lt;50」，避免與不等式「以下」混淆</li>
+      <li>統計課程中不用「以下」這個名詞，避免和不等式的「以下」衝突</li>
+      <li>折線圖的組中點只需將各組上限與下限相加除以2即可</li>
+      <li>可搭配電腦 Excel 實際操作次數分配表的製作</li>
+    </ul>
+  </div>
+
+  <div class="quiz-section">
+    <h3>📝 形成性評量</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. 七年甲班數學小考成績次數分配表如下：<br>40~50：3人、50~60：4人、60~70：5人、70~80：8人、80~90：6人、90~100：4人<br>若及格標準為60分，則不及格的人數有幾人？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q1')">A. 3人</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q1')">B. 5人</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec2q1')">C. 7人</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q1')">D. 12人</button>
+      </div>
+      <div class="quiz-fb" id="sec2q1">✅ 不及格（60分以下）：40~50有3人，50~60有4人，共 3+4 = <strong>7人</strong>。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. 成績分組為40~50，其組中點為？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q2')">A. 40</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec2q2')">B. 45</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q2')">C. 50</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec2q2')">D. 44</button>
+      </div>
+      <div class="quiz-fb" id="sec2q2">✅ 組中點 = (40+50)÷2 = <strong>45</strong>。組中點用來代表該組每位學生的成績估計值。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 3: 平均數 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section" id="sec3">
+  <div class="section-header">
+    <div class="sec-num n3">3</div>
+    <h2>平均數</h2>
+  </div>
+
+  <!-- Canvas: 天平互動 -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">▶ 點擊按鈕，加入極端值，觀察平均數如何被影響</div>
+    <canvas id="c3" width="800" height="320"></canvas>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;">
+      <button onclick="c3AddVal(5)" style="background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem;">+5萬元</button>
+      <button onclick="c3AddVal(6)" style="background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem;">+6萬元</button>
+      <button onclick="c3AddVal(35)" style="background:rgba(183,28,28,0.3);border:1px solid #ef5350;color:#ef5350;padding:5px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem;">+35萬元（極端值）</button>
+      <button onclick="c3Reset()" style="background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);padding:5px 12px;border-radius:8px;cursor:pointer;font-size:0.82rem;">重置</button>
+    </div>
+  </div>
+
+  <!-- Concept Card -->
+  <div class="concept-card">
+    <div class="concept-card-header">
+      <span class="concept-icon">⚖️</span>
+      <h3 class="concept-card-title">平均數（算術平均數）</h3>
+    </div>
+    <div class="concept-card-body">
+      <div class="concept-def">
+        <span class="card-label">定義</span>
+        <p>n個數值資料的平均數，是這n個數值資料的<strong>總和除以資料個數n</strong>。又稱算術平均數。</p>
+      </div>
+      <div class="concept-formula">
+        <span class="card-label">公式</span>
+        <p class="formula-text">平均數 = 數值總和 ÷ n<br><br>已分組：平均數 ≈ Σ(組中點×次數) ÷ 總次數<br><br>合併：平均數 = (甲總和+乙總和) ÷ (甲人數+乙人數)</p>
+      </div>
+      <div class="concept-keypoints">
+        <span class="card-label">重要提醒</span>
+        <ul>
+          <li>平均數容易受<strong>極端值</strong>影響</li>
+          <li>已分組資料用組中點估算平均數（會有誤差）</li>
+          <li>不能直接平均兩組的平均數（需加權）</li>
+          <li>計算機 M+ 鍵可累加乘積</li>
+        </ul>
+      </div>
+      <div class="concept-example">
+        <span class="card-label">例</span>
+        <p>年終獎金：5、5、5、6、7、8、8、11、35（萬元）<br>平均 = (5+5+5+6+7+8+8+11+35)÷9 = 90÷9 = <strong>10萬元</strong><br>但35太極端，10不代表多數人的實際獎金。</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="teacher-hint">
+    <h4>🗝️ 教學提示</h4>
+    <ul>
+      <li>說明平均數的意義：代表資料的「集中趨勢」，但易受極端值影響</li>
+      <li>已分組求平均：以組中點×次數估計各組總分，再除以總人數。結果為估計值</li>
+      <li>合併平均：不能直接平均兩組的平均數！需各組總分相加後除以總人數</li>
+      <li>計算機技巧：利用 M+ 鍵累加各組（組中點×次數）的值</li>
+    </ul>
+  </div>
+
+  <div class="quiz-section">
+    <h3>📝 形成性評量</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. 勇士隊五場得分：113、132、118、116、129。騎士隊五場得分：91、113、113、137、120。哪隊平均得分較高？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec3q1')">A. 勇士隊（121.6分）</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q1')">B. 騎士隊（114.8分）</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q1')">C. 兩隊相同</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q1')">D. 無法比較</button>
+      </div>
+      <div class="quiz-fb" id="sec3q1">✅ 勇士：(113+132+118+116+129)÷5 = 608÷5 = <strong>121.6</strong>。騎士：(91+113+113+137+120)÷5 = 574÷5 = 114.8。勇士隊較高。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. 七年乙班29人平均數學成績74分，七年丙班32人平均71分，兩班合併的全體平均數為？（四捨五入至小數點後第1位）</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q2')">A. 72.0分</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q2')">B. 72.5分</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec3q2')">C. 72.4分</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q2')">D. 73.0分</button>
+      </div>
+      <div class="quiz-fb" id="sec3q2">✅ 乙班總分：74×29=2146；丙班總分：71×32=2272；合計：4418÷61≈<strong>72.4分</strong>。不能直接用(74+71)÷2，因為兩班人數不同！</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q3. 七年甲班30位同學公共服務時數次數分配：0時6人、1時2人、2時7人、3時6人、4時5人、5時0人、6時4人。全班平均公共服務時數為？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q3')">A. 2.0時</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q3')">B. 2.4時</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec3q3')">C. 2.6時</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec3q3')">D. 3.0時</button>
+      </div>
+      <div class="quiz-fb" id="sec3q3">✅ 總時數 = 0×6+1×2+2×7+3×6+4×5+5×0+6×4 = 0+2+14+18+20+0+24 = 78。平均 = 78÷30 = <strong>2.6時</strong>。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 4: 中位數 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section" id="sec4">
+  <div class="section-header">
+    <div class="sec-num n4">4</div>
+    <h2>中位數</h2>
+  </div>
+
+  <!-- Canvas: 中位數互動 -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">▶ 點擊切換奇數/偶數筆資料，觀察中位數的位置</div>
+    <canvas id="c4" width="800" height="300"></canvas>
+    <div style="display:flex;gap:10px;margin-top:10px;flex-wrap:wrap;">
+      <button onclick="c4Toggle('odd')" id="btn-c4-odd" style="background:var(--pink);color:#1a1a1a;border:none;padding:5px 14px;border-radius:8px;cursor:pointer;font-size:0.82rem;font-weight:bold;">奇數筆（9筆）</button>
+      <button onclick="c4Toggle('even')" id="btn-c4-even" style="background:var(--bg3);border:1px solid rgba(255,255,255,0.2);color:var(--chalk);padding:5px 14px;border-radius:8px;cursor:pointer;font-size:0.82rem;">偶數筆（10筆）</button>
+    </div>
+  </div>
+
+  <!-- Concept Card -->
+  <div class="concept-card">
+    <div class="concept-card-header">
+      <span class="concept-icon">🎯</span>
+      <h3 class="concept-card-title">中位數</h3>
+    </div>
+    <div class="concept-card-body">
+      <div class="concept-def">
+        <span class="card-label">定義</span>
+        <p>將n筆數值資料由小到大排列後，取<strong>最中間的數</strong>來代表這群資料。中位數<strong>不易受極端值影響</strong>。</p>
+      </div>
+      <div class="concept-formula">
+        <span class="card-label">公式</span>
+        <p class="formula-text">n是奇數：中位數 = 第 (n+1)/2 個資料值<br><br>n是偶數：中位數 = 第 n/2 個 與 第 n/2+1 個 資料值的平均數</p>
+      </div>
+      <div class="concept-keypoints">
+        <span class="card-label">重要提醒</span>
+        <ul>
+          <li>排列前一定要先由<strong>小到大</strong>排序</li>
+          <li>偶數筆：取中間兩個數的平均</li>
+          <li>已分組：從最低組累加次數，找到超過一半的那一組</li>
+          <li>不宜求連續型（已分組）資料的確切眾數</li>
+        </ul>
+      </div>
+      <div class="concept-example">
+        <span class="card-label">例</span>
+        <p>9筆：5,5,5,6,<span style="color:var(--pink);font-weight:bold;">7</span>,8,8,11,35 → 中位數 = 第5個 = <strong>7萬元</strong><br>10筆（加入10）：5,5,5,6,<span style="color:var(--pink);font-weight:bold;">7,8</span>,8,10,11,35 → 中位數 = (7+8)÷2 = <strong>7.5萬元</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="teacher-hint">
+    <h4>🗝️ 教學提示</h4>
+    <ul>
+      <li>特地用含極端值（35）的例子，說明中位數為何比平均數更能代表「一般水準」</li>
+      <li>已分組求中位數位置：30人→找第15和第16個的平均；先累加各組，看哪組跨越第15個</li>
+      <li>圓形圖求中位數：各扇區累計百分比超過50%時，跨越的那個類別就是中位數</li>
+    </ul>
+  </div>
+
+  <div class="quiz-section">
+    <h3>📝 形成性評量</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. 牛仔褲設計師隨機問了9位青少年的身高（公分）：163、166、192、171、172、158、169、170、162，這群人身高的中位數為？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q1')">A. 166</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q1')">B. 168</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec4q1')">C. 169</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q1')">D. 170</button>
+      </div>
+      <div class="quiz-fb" id="sec4q1">✅ 由小到大排列：158、162、163、166、<strong>169</strong>、170、171、172、192。9筆（奇數），中位數為第(9+1)/2=第5個：<strong>169公分</strong>。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. 七年甲班30位同學家中人口數次數分配：2口1人、3口4人、4口10人、5口7人、6口5人、7口2人、8口1人。中位數為幾口？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q2')">A. 4口</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec4q2')">B. 4.5口</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q2')">C. 5口</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec4q2')">D. 4.2口</button>
+      </div>
+      <div class="quiz-fb" id="sec4q2">✅ 30人→中位數為第15和第16個的平均。累計：2口1人、3口5人、4口15人。4口以下有15人，5口以下有22人。第15個=4，第16個=5，中位數 = (4+5)÷2 = <strong>4.5口</strong>。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- SECTION 5: 眾數 -->
+<!-- ═══════════════════════════════════════ -->
+<section class="section" id="sec5">
+  <div class="section-header">
+    <div class="sec-num n5">5</div>
+    <h2>眾數</h2>
+  </div>
+
+  <!-- Canvas: 眾數互動 -->
+  <div class="canvas-wrap">
+    <div class="canvas-title">▶ 點擊長條增加次數，觀察眾數的變化（黃色標示眾數）</div>
+    <canvas id="c5" width="800" height="300"></canvas>
+    <div style="margin-top:8px;text-align:center;font-size:0.85rem;color:rgba(255,255,255,0.6);" id="c5-info">目前眾數：5萬元（出現2次）</div>
+  </div>
+
+  <!-- Concept Card -->
+  <div class="concept-card">
+    <div class="concept-card-header">
+      <span class="concept-icon">🏆</span>
+      <h3 class="concept-card-title">眾數</h3>
+    </div>
+    <div class="concept-card-body">
+      <div class="concept-def">
+        <span class="card-label">定義</span>
+        <p>一群資料中，<strong>出現次數最多的資料</strong>（或其類別），稱為這群資料的眾數。</p>
+      </div>
+      <div class="concept-formula">
+        <span class="card-label">特性</span>
+        <p class="formula-text">眾數不受極端值影響<br>可以有一個或多個眾數<br>類別資料也可求眾數<br>不宜求已分組連續資料的眾數</p>
+      </div>
+      <div class="concept-keypoints">
+        <span class="card-label">三種代表值比較</span>
+        <ul>
+          <li><strong>平均數</strong>：最常用，易受極端值影響</li>
+          <li><strong>中位數</strong>：不受極端值影響，代表「中間水準」</li>
+          <li><strong>眾數</strong>：不受極端值影響，最直觀，適合市場調查</li>
+        </ul>
+      </div>
+      <div class="concept-example">
+        <span class="card-label">例</span>
+        <p>年終獎金：4、5、5、5、6、6、7、7、20、35（萬元）<br>眾數 = <strong>5萬元</strong>（出現3次最多）<br>里長選舉：1號1527票、2號1860票、3號253票 → 眾數 = <strong>2號</strong>（1860票，得票最多的類別）</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="teacher-hint">
+    <h4>🗝️ 教學提示</h4>
+    <ul>
+      <li>眾數可應用於類別資料（如服飾尺寸、投票結果），這是平均數和中位數做不到的</li>
+      <li>眾數可以不只一個（多峰分布）</li>
+      <li>迷思：里長選舉「眾數」不是得票數1860，而是得票最多的候選人「2號」</li>
+      <li>加減乘除對三種代表值的影響：全部加k→各加k；全部乘k→各乘k</li>
+    </ul>
+  </div>
+
+  <div class="quiz-section">
+    <h3>📝 形成性評量</h3>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q1. 某公司部門年終獎金（萬元）：4、5、5、5、6、6、7、7、20、35。下列敘述何者正確？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q1')">A. 平均數為5萬元，眾數也是5萬元</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q1')">B. 平均數為10萬元，最能代表一般員工的獎金</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec5q1')">C. 眾數為5萬元，不受20和35這兩個極端值的影響</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q1')">D. 此資料沒有眾數</button>
+      </div>
+      <div class="quiz-fb" id="sec5q1">✅ 眾數=5萬元（出現3次）。平均數=(4+5+5+5+6+6+7+7+20+35)÷10=100÷10=10萬元，但10萬被20和35拉高，不代表一般員工。眾數5萬更接近多數人的實際水準。</div>
+    </div>
+
+    <div class="quiz-item">
+      <div class="quiz-q">Q2. 孟林老師將全班30位同學的數學成績，先加上原來分數的10%，再加8分（加分後沒人超過100分）。若加分前全班平均60分、中位數50分、眾數45分，則加分後的眾數為？</div>
+      <div class="quiz-opts">
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q2')">A. 53分</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q2')">B. 55分</button>
+        <button class="quiz-opt" onclick="ansQ(this,true,'sec5q2')">C. 57.5分</button>
+        <button class="quiz-opt" onclick="ansQ(this,false,'sec5q2')">D. 60分</button>
+      </div>
+      <div class="quiz-fb" id="sec5q2">✅ 每位同學都做相同運算：新分數 = 原分數×1.1+8。眾數45分→新眾數 = 45×1.1+8 = 49.5+8 = <strong>57.5分</strong>。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- CHEAT SHEET -->
+<!-- ═══════════════════════════════════════ -->
+<div class="cheat-sheet" id="cheatsheet">
+  <h2>📋 5-1 總結 Cheat Sheet</h2>
+  <div class="cheat-grid">
+    <div class="cheat-item">
+      <h4>📊 統計圖表比較</h4>
+      <ul>
+        <li><strong>長條圖</strong>：類別資料，條有間隔</li>
+        <li><strong>直方圖</strong>：數值資料，條緊相連</li>
+        <li><strong>折線圖</strong>：呈現趨勢變化</li>
+        <li><strong>圓形圖</strong>：呈現比例（%）</li>
+        <li><strong>列聯表</strong>：兩種類別的交叉統計</li>
+      </ul>
+    </div>
+    <div class="cheat-item">
+      <h4>📋 次數分配</h4>
+      <ul>
+        <li>組距 = 上限 − 下限</li>
+        <li>組中點 = (上限+下限)÷2</li>
+        <li>包含下限，不含上限</li>
+        <li>100分歸入90~100組</li>
+        <li>折線圖以組中點為橫坐標</li>
+      </ul>
+    </div>
+    <div class="cheat-item">
+      <h4>⚖️ 平均數</h4>
+      <p class="cheat-formula">平均數 = 總和 ÷ n</p>
+      <ul>
+        <li>已分組：Σ(組中點×次數)÷n</li>
+        <li>合併：(甲總分+乙總分)÷(甲n+乙n)</li>
+        <li>⚠️ 易受極端值影響</li>
+      </ul>
+    </div>
+    <div class="cheat-item">
+      <h4>🎯 中位數</h4>
+      <p class="cheat-formula">先由小到大排列</p>
+      <ul>
+        <li>n奇數：第(n+1)/2個</li>
+        <li>n偶數：第n/2與n/2+1個的平均</li>
+        <li>已分組：累加找跨越n/2的那組</li>
+        <li>✅ 不受極端值影響</li>
+      </ul>
+    </div>
+    <div class="cheat-item">
+      <h4>🏆 眾數</h4>
+      <p class="cheat-formula">出現次數最多的資料</p>
+      <ul>
+        <li>可以有多個眾數</li>
+        <li>類別資料也能用</li>
+        <li>✅ 不受極端值影響</li>
+        <li>常用於市場調查</li>
+      </ul>
+    </div>
+    <div class="cheat-item">
+      <h4>🔄 加減乘除的影響</h4>
+      <ul>
+        <li>全部+k → 平均/中位/眾數各+k</li>
+        <li>全部×k → 平均/中位/眾數各×k</li>
+        <li>新值 = a×原值+b → 代入計算</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- VIDEO SECTION -->
+<div class="video-section" style="margin:0 24px 24px;">
+  <h3>🎬 學生自學影片</h3>
+  <video id="study-video" controls preload="none" style="width:100%;border-radius:8px;">
+    <source src="assets/自學影片.mp4" type="video/mp4">
+    影片載入中，若無法播放請確認 assets/自學影片.mp4 是否存在。
+  </video>
+</div>
+
+<div class="video-section teacher-hint" style="margin:0 24px 24px;display:none;" id="yt-section">
+  <h3>📹 YouTube 教學影片</h3>
+  <div class="yt-placeholder">
+    YouTube 影片連結：上傳後貼入 src="https://www.youtube.com/embed/影片ID"
+    <br><br>
+    <iframe width="100%" height="400" src="" frameborder="0" allowfullscreen style="border-radius:8px;display:none;" id="yt-iframe"></iframe>
+  </div>
+</div>
+
+<!-- NotebookLM Section (Teacher only) -->
+<div class="teacher-hint" style="margin:24px;padding:16px;">
+  <h4>🔗 NotebookLM 連結</h4>
+  <p><a href="https://notebooklm.google.com/notebook/12e9476e-9280-4257-8e09-bfc5c5a7ee8e" target="_blank" style="color:var(--blue);">5-1 NotebookLM 筆記本</a></p>
+</div>
+
+<!-- FLOAT TOOLS -->
+<div class="float-tools">
+  <!-- Seat Picker -->
+  <div style="position:relative;">
+    <button class="ftool-btn" onclick="togglePanel('rand-panel')" title="抽籤">🎲</button>
+    <div class="ftool-panel" id="rand-panel">
+      <h4>🎲 座號抽籤</h4>
+      <div id="rand-result">—</div>
+      <div style="font-size:0.78rem;color:rgba(255,255,255,0.5);margin-bottom:6px;">範圍：<input type="number" id="rand-min" value="1" min="1"> ~ <input type="number" id="rand-max" value="30" max="99"></div>
+      <button onclick="doRand()">抽！</button>
+    </div>
+  </div>
+  <!-- Timer -->
+  <div style="position:relative;">
+    <button class="ftool-btn" onclick="togglePanel('timer-panel')" title="計時器">⏱</button>
+    <div class="ftool-panel" id="timer-panel">
+      <h4>⏱ 計時器</h4>
+      <div id="timer-display">00:00</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button onclick="timerStart()">開始</button>
+        <button onclick="timerPause()">暫停</button>
+        <button onclick="timerReset()">重置</button>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:4px;flex-wrap:wrap;">
+        <button onclick="timerSet(60)">1分</button>
+        <button onclick="timerSet(180)">3分</button>
+        <button onclick="timerSet(300)">5分</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAW BUTTON -->
+<button class="draw-btn" onclick="toggleDraw()" title="畫筆">✏️</button>
+<canvas id="draw-canvas"></canvas>
+
+<script>
+// ── Mode ──
+let isTeacher = false;
+function setMode(m){
+  isTeacher = m==='teacher';
+  document.body.classList.toggle('teacher-mode', isTeacher);
+  document.getElementById('btn-student').classList.toggle('active', !isTeacher);
+  document.getElementById('btn-teacher').classList.toggle('active', isTeacher);
+}
+function promptTeacher(){
+  const pw = prompt('請輸入教師密碼：');
+  if(pw==='math2026') setMode('teacher');
+  else if(pw!==null) alert('密碼錯誤');
+}
+
+// ── Carousel ──
+const carState = {};
+function carGo(id, dir){
+  const ci = document.getElementById(id);
+  const imgs = ci.querySelectorAll('img');
+  if(!carState[id]) carState[id]=0;
+  imgs[carState[id]].classList.remove('active');
+  carState[id] = (carState[id]+dir+imgs.length)%imgs.length;
+  imgs[carState[id]].classList.add('active');
+  const ccId = id.replace('ci-','cc-');
+  const cc = document.getElementById(ccId);
+  if(cc) cc.textContent = (carState[id]+1)+' / '+imgs.length;
+}
+
+// ── Quiz ──
+function ansQ(btn, correct, fbId){
+  const opts = btn.parentElement.querySelectorAll('.quiz-opt');
+  opts.forEach(o=>o.disabled=true);
+  btn.classList.add(correct?'correct':'wrong');
+  const fb = document.getElementById(fbId);
+  if(fb){ fb.classList.add('show'); }
+}
+
+// ── Panels ──
+function togglePanel(id){
+  const p = document.getElementById(id);
+  p.classList.toggle('open');
+}
+
+// ── Rand ──
+function doRand(){
+  const mn = parseInt(document.getElementById('rand-min').value)||1;
+  const mx = parseInt(document.getElementById('rand-max').value)||30;
+  const r = Math.floor(Math.random()*(mx-mn+1))+mn;
+  document.getElementById('rand-result').textContent = r;
+}
+
+// ── Timer ──
+let timerInt=null, timerSec=0, timerRunning=false;
+function timerTick(){ timerSec++; timerRender(); }
+function timerRender(){
+  const m=Math.floor(timerSec/60), s=timerSec%60;
+  document.getElementById('timer-display').textContent = String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+}
+function timerStart(){ if(!timerRunning){ timerRunning=true; timerInt=setInterval(timerTick,1000); } }
+function timerPause(){ timerRunning=false; clearInterval(timerInt); }
+function timerReset(){ timerPause(); timerSec=0; timerRender(); }
+function timerSet(s){ timerReset(); timerSec=s; timerRender(); }
+
+// ── Draw Canvas ──
+let drawActive=false;
+const dc = document.getElementById('draw-canvas');
+const dctx = dc.getContext('2d');
+let drawing=false, lastX=0, lastY=0;
+function toggleDraw(){
+  drawActive=!drawActive;
+  dc.style.display = drawActive?'block':'none';
+  if(drawActive){ dc.width=window.innerWidth; dc.height=window.innerHeight; }
+}
+dc.addEventListener('mousedown',e=>{drawing=true;[lastX,lastY]=[e.clientX,e.clientY];});
+dc.addEventListener('mousemove',e=>{
+  if(!drawing)return;
+  dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';
+  dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(e.clientX,e.clientY);dctx.stroke();
+  [lastX,lastY]=[e.clientX,e.clientY];
+});
+dc.addEventListener('mouseup',()=>drawing=false);
+dc.addEventListener('touchstart',e=>{
+  const t=e.touches[0]; drawing=true; [lastX,lastY]=[t.clientX,t.clientY]; e.preventDefault();
+},{passive:false});
+dc.addEventListener('touchmove',e=>{
+  if(!drawing)return;
+  const t=e.touches[0];
+  dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';
+  dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(t.clientX,t.clientY);dctx.stroke();
+  [lastX,lastY]=[t.clientX,t.clientY]; e.preventDefault();
+},{passive:false});
+dc.addEventListener('touchend',()=>drawing=false);
+
+// ════════════════════════════════
+// CANVAS 1: 圖表類型選擇器
+// ════════════════════════════════
+const c1 = document.getElementById('c1');
+const ctx1 = c1.getContext('2d');
+const chartTypes = [
+  {name:'長條圖', icon:'📊', color:'#81d4fa', desc:'呈現各類別的次數\n條有間隔，不必按順序', ex:'尺寸S=4, M=14, L=7, XL=5'},
+  {name:'折線圖', icon:'📈', color:'#a5d6a7', desc:'呈現資料隨時間的變化\n連點成線，看趨勢', ex:'PM₂.₅逐時變化'},
+  {name:'圓形圖', icon:'🥧', color:'#ffcc80', desc:'呈現各項占整體百分比\n用360°等比例分扇形', ex:'污染源比例分布'},
+  {name:'直方圖', icon:'📉', color:'#ffd54f', desc:'呈現數值資料的分布\n條緊密相連，有組距', ex:'成績次數分配'},
+  {name:'列聯表', icon:'📋', color:'#ff8a80', desc:'同時呈現兩種類別\n行×列交叉統計', ex:'年級×性別統計'},
+];
+let c1sel = 0;
+
+function fitText(ctx, text, style, init, maxW, min=6){
+  let s=init;
+  ctx.font=style+' '+s+'px sans-serif';
+  while(ctx.measureText(text).width>maxW && s>min){ s-=0.5; ctx.font=style+' '+s+'px sans-serif'; }
+  return s;
+}
+
+function drawC1(){
+  const W=c1.width, H=c1.height;
+  ctx1.clearRect(0,0,W,H);
+  ctx1.fillStyle='#1a2a1a';
+  ctx1.fillRect(0,0,W,H);
+
+  const bw=W/chartTypes.length, pad=8;
+  chartTypes.forEach((t,i)=>{
+    const x=i*bw, sel=(i===c1sel);
+    ctx1.fillStyle=sel?t.color+'33':'rgba(255,255,255,0.04)';
+    ctx1.strokeStyle=sel?t.color:'rgba(255,255,255,0.12)';
+    ctx1.lineWidth=sel?2:1;
+    roundRect(ctx1, x+pad, pad, bw-pad*2, 80, 10);
+
+    const iconSz=fitText(ctx1,'📊','',Math.min(32,H*0.1),bw-pad*4);
+    ctx1.font=iconSz+'px serif';
+    ctx1.textAlign='center';ctx1.textBaseline='middle';
+    ctx1.fillStyle='#fff';
+    ctx1.fillText(t.icon, x+bw/2, pad+22);
+
+    const nameSz=fitText(ctx1,t.name,'bold',Math.min(14,(80-44)*0.6),bw-pad*4);
+    ctx1.font='bold '+nameSz+'px sans-serif';
+    ctx1.fillStyle=sel?t.color:'#e8e4d8';
+    ctx1.fillText(t.name, x+bw/2, pad+58);
+  });
+
+  // Detail panel
+  const t=chartTypes[c1sel];
+  const dy=100;
+  ctx1.fillStyle='rgba(255,255,255,0.05)';
+  roundRectFill(ctx1, pad, dy, W-pad*2, H-dy-pad, 12);
+  ctx1.strokeStyle=t.color+'66';ctx1.lineWidth=1;
+  roundRectStroke(ctx1, pad, dy, W-pad*2, H-dy-pad, 12);
+
+  ctx1.textAlign='left'; ctx1.textBaseline='top';
+  ctx1.fillStyle=t.color;
+  const titleSz=fitText(ctx1,t.icon+' '+t.name,'bold',Math.min(18,(H-dy-pad)*0.25),W-pad*4);
+  ctx1.font='bold '+titleSz+'px sans-serif';
+  ctx1.fillText(t.icon+' '+t.name, pad*2+4, dy+14);
+
+  ctx1.fillStyle='#e8e4d8';
+  const descLines=t.desc.split('\n');
+  const dSz=fitText(ctx1,descLines[0],'',Math.min(14,(H-dy-pad-titleSz-30)*0.35),W-pad*4);
+  ctx1.font=dSz+'px sans-serif';
+  descLines.forEach((l,i)=>ctx1.fillText(l, pad*2+4, dy+20+titleSz+i*(dSz+4)));
+
+  ctx1.fillStyle='rgba(255,255,255,0.4)';
+  const exSz=fitText(ctx1,'例：'+t.ex,'',Math.min(12,(H-dy-pad)*0.2),W-pad*4);
+  ctx1.font=exSz+'px sans-serif';
+  ctx1.fillText('例：'+t.ex, pad*2+4, H-pad*2-exSz);
+}
+
+function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();ctx.stroke();}
+function roundRectFill(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.fill();}
+function roundRectStroke(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();ctx.stroke();}
+
+c1.addEventListener('click',e=>{
+  const bw=c1.width/chartTypes.length;
+  const i=Math.floor(e.offsetX/bw);
+  if(i>=0 && i<chartTypes.length){ c1sel=i; drawC1(); }
+});
+c1.addEventListener('touchend',e=>{
+  const rect=c1.getBoundingClientRect();
+  const tx=(e.changedTouches[0].clientX-rect.left)*(c1.width/rect.width);
+  const bw=c1.width/chartTypes.length;
+  const i=Math.floor(tx/bw);
+  if(i>=0 && i<chartTypes.length){ c1sel=i; drawC1(); }
+  e.preventDefault();
+},{passive:false});
+
+// ════════════════════════════════
+// CANVAS 2: 直方圖 + 折線圖
+// ════════════════════════════════
+const c2 = document.getElementById('c2');
+const ctx2 = c2.getContext('2d');
+const groups=['40~50','50~60','60~70','70~80','80~90','90~100'];
+const midPts=[45,55,65,75,85,95];
+let freqs=[3,4,5,8,6,4];
+let dragging2=-1;
+
+function drawC2(){
+  const W=c2.width, H=c2.height;
+  ctx2.clearRect(0,0,W,H);
+  ctx2.fillStyle='#1a2a1a';ctx2.fillRect(0,0,W,H);
+
+  const lpad=50, rpad=20, tpad=30, bpad=60;
+  const cW=W-lpad-rpad, cH=H-tpad-bpad;
+  const maxF=Math.max(...freqs,1);
+  const barW=cW/freqs.length;
+
+  // Grid
+  ctx2.strokeStyle='rgba(255,255,255,0.06)';ctx2.lineWidth=1;
+  for(let i=0;i<=maxF;i++){
+    const y=tpad+cH-(i/maxF)*cH;
+    ctx2.beginPath();ctx2.moveTo(lpad,y);ctx2.lineTo(lpad+cW,y);ctx2.stroke();
+    ctx2.fillStyle='rgba(255,255,255,0.4)';
+    const sz=fitText(ctx2,String(i),'',Math.min(11,bpad*0.18),lpad-6);
+    ctx2.font=sz+'px sans-serif';ctx2.textAlign='right';ctx2.textBaseline='middle';
+    ctx2.fillText(i, lpad-4, y);
+  }
+
+  // Bars (histogram)
+  freqs.forEach((f,i)=>{
+    const x=lpad+i*barW, bH=(f/maxF)*cH;
+    const y=tpad+cH-bH;
+    ctx2.fillStyle='rgba(129,212,250,0.35)';
+    ctx2.strokeStyle='#81d4fa';ctx2.lineWidth=1.5;
+    ctx2.fillRect(x, y, barW, bH);
+    ctx2.strokeRect(x, y, barW, bH);
+    // freq label
+    ctx2.fillStyle='#e8e4d8';
+    const fSz=fitText(ctx2,String(f),'bold',Math.min(13,bH*0.4),barW-4);
+    ctx2.font='bold '+fSz+'px sans-serif';ctx2.textAlign='center';ctx2.textBaseline='bottom';
+    ctx2.fillText(f, x+barW/2, y-2);
+    // x label
+    const lSz=fitText(ctx2,groups[i],'',Math.min(11,bpad*0.2),barW-4);
+    ctx2.font=lSz+'px sans-serif';ctx2.fillStyle='rgba(255,255,255,0.6)';ctx2.textBaseline='top';
+    ctx2.fillText(groups[i], x+barW/2, tpad+cH+4);
+  });
+
+  // Polyline
+  ctx2.strokeStyle='#ff8a80';ctx2.lineWidth=2;ctx2.setLineDash([]);
+  ctx2.beginPath();
+  freqs.forEach((f,i)=>{
+    const x=lpad+i*barW+barW/2, y=tpad+cH-(f/maxF)*cH;
+    if(i===0) ctx2.moveTo(x,y); else ctx2.lineTo(x,y);
+  });
+  ctx2.stroke();
+  freqs.forEach((f,i)=>{
+    const x=lpad+i*barW+barW/2, y=tpad+cH-(f/maxF)*cH;
+    ctx2.fillStyle='#ff8a80';ctx2.beginPath();ctx2.arc(x,y,4,0,Math.PI*2);ctx2.fill();
+    // midPt label
+    ctx2.fillStyle='rgba(255,138,128,0.7)';
+    const mSz=fitText(ctx2,String(midPts[i]),'',Math.min(10,12),barW-4);
+    ctx2.font=mSz+'px sans-serif';ctx2.textAlign='center';ctx2.textBaseline='bottom';
+    ctx2.fillText(midPts[i], x, y-8);
+  });
+
+  // Legend
+  ctx2.fillStyle='rgba(129,212,250,0.6)';ctx2.fillRect(lpad,4,14,10);
+  ctx2.fillStyle='#e8e4d8';ctx2.font='10px sans-serif';ctx2.textAlign='left';ctx2.textBaseline='middle';
+  ctx2.fillText('直方圖',lpad+18,9);
+  ctx2.strokeStyle='#ff8a80';ctx2.lineWidth=2;ctx2.beginPath();ctx2.moveTo(lpad+80,9);ctx2.lineTo(lpad+94,9);ctx2.stroke();
+  ctx2.fillStyle='#ff8a80';ctx2.beginPath();ctx2.arc(lpad+87,9,3,0,Math.PI*2);ctx2.fill();
+  ctx2.fillStyle='#e8e4d8';ctx2.fillText('折線圖',lpad+98,9);
+}
+
+// drag to adjust bars
+c2.addEventListener('mousedown',e=>{
+  const W=c2.width, lpad=50, tpad=30, bpad=60, rpad=20;
+  const cW=W-lpad-rpad, barW=cW/freqs.length;
+  const ox=e.offsetX-lpad, i=Math.floor(ox/barW);
+  if(i>=0&&i<freqs.length) dragging2=i;
+});
+c2.addEventListener('mousemove',e=>{
+  if(dragging2<0) return;
+  const H=c2.height, tpad=30, bpad=60, cH=H-tpad-bpad;
+  const oy=e.offsetY-tpad, maxF=10;
+  const f=Math.round(Math.max(0,Math.min(maxF,(1-oy/cH)*maxF)));
+  freqs[dragging2]=f; drawC2();
+});
+c2.addEventListener('mouseup',()=>dragging2=-1);
+
+// ════════════════════════════════
+// CANVAS 3: 平均數天平
+// ════════════════════════════════
+const c3 = document.getElementById('c3');
+const ctx3 = c3.getContext('2d');
+let c3data=[5,5,5,6,7,8,8,11];
+
+function c3AddVal(v){ c3data.push(v); drawC3(); }
+function c3Reset(){ c3data=[5,5,5,6,7,8,8,11]; drawC3(); }
+
+function drawC3(){
+  const W=c3.width, H=c3.height;
+  ctx3.clearRect(0,0,W,H);
+  ctx3.fillStyle='#1a2a1a';ctx3.fillRect(0,0,W,H);
+
+  const avg=(c3data.reduce((a,b)=>a+b,0)/c3data.length);
+  const maxV=Math.max(...c3data,avg+2);
+
+  // Title
+  ctx3.fillStyle='#e8e4d8';
+  const tSz=fitText(ctx3,'年終獎金分布（萬元）','bold',Math.min(15,H*0.05),W-40);
+  ctx3.font='bold '+tSz+'px sans-serif';ctx3.textAlign='center';ctx3.textBaseline='top';
+  ctx3.fillText('年終獎金分布（萬元）',W/2,8);
+
+  // Bar chart
+  const lpad=40, rpad=20, tpad=30, bpad=60;
+  const cW=W-lpad-rpad, cH=H-tpad-bpad;
+  const bw=Math.max(4,cW/c3data.length-2);
+
+  c3data.forEach((v,i)=>{
+    const x=lpad+i*(cW/c3data.length)+2;
+    const bH=(v/maxV)*cH;
+    const y=tpad+cH-bH;
+    const isExtreme=(v>=20);
+    ctx3.fillStyle=isExtreme?'rgba(239,83,80,0.5)':'rgba(165,214,167,0.4)';
+    ctx3.strokeStyle=isExtreme?'#ef5350':'#a5d6a7';ctx3.lineWidth=1;
+    ctx3.fillRect(x,y,bw,bH);ctx3.strokeRect(x,y,bw,bH);
+    ctx3.fillStyle=isExtreme?'#ef5350':'#e8e4d8';
+    const vSz=fitText(ctx3,String(v),'bold',Math.min(11,bH*0.5-2),bw+2);
+    ctx3.font='bold '+vSz+'px sans-serif';ctx3.textAlign='center';ctx3.textBaseline='bottom';
+    ctx3.fillText(v,x+bw/2,y-1);
+  });
+
+  // Average line
+  const avgY=tpad+cH-(avg/maxV)*cH;
+  ctx3.strokeStyle='#ffd54f';ctx3.lineWidth=2;ctx3.setLineDash([6,4]);
+  ctx3.beginPath();ctx3.moveTo(lpad,avgY);ctx3.lineTo(lpad+cW,avgY);ctx3.stroke();
+  ctx3.setLineDash([]);
+
+  // Avg label
+  ctx3.fillStyle='#ffd54f';
+  const aSz=fitText(ctx3,'平均='+avg.toFixed(1)+'萬','bold',Math.min(13,14),120);
+  ctx3.font='bold '+aSz+'px sans-serif';ctx3.textAlign='right';ctx3.textBaseline='bottom';
+  ctx3.fillText('平均='+avg.toFixed(1)+'萬',lpad+cW,avgY-2);
+
+  // Count
+  ctx3.fillStyle='rgba(255,255,255,0.45)';
+  ctx3.font='11px sans-serif';ctx3.textAlign='left';ctx3.textBaseline='top';
+  ctx3.fillText('n='+c3data.length+' 人',lpad+4,tpad+2);
+}
+
+// ════════════════════════════════
+// CANVAS 4: 中位數
+// ════════════════════════════════
+const c4=document.getElementById('c4');
+const ctx4=c4.getContext('2d');
+let c4mode='odd';
+const dataOdd=[5,5,5,6,7,8,8,11,35];
+const dataEven=[5,5,5,6,7,8,8,10,11,35];
+
+function c4Toggle(m){
+  c4mode=m;
+  document.getElementById('btn-c4-odd').style.background=m==='odd'?'var(--pink)':'var(--bg3)';
+  document.getElementById('btn-c4-odd').style.color=m==='odd'?'#1a1a1a':'var(--chalk)';
+  document.getElementById('btn-c4-even').style.background=m==='even'?'var(--blue)':'var(--bg3)';
+  document.getElementById('btn-c4-even').style.color=m==='even'?'#1a1a1a':'var(--chalk)';
+  drawC4();
+}
+
+function drawC4(){
+  const W=c4.width, H=c4.height;
+  ctx4.clearRect(0,0,W,H);
+  ctx4.fillStyle='#1a2a1a';ctx4.fillRect(0,0,W,H);
+
+  const data=c4mode==='odd'?dataOdd:dataEven;
+  const n=data.length;
+  const pad=20, cellW=(W-pad*2)/n, cellH=70;
+  const startY=H/2-cellH/2;
+
+  // Title
+  ctx4.fillStyle='#e8e4d8';
+  const tSz=fitText(ctx4,'年終獎金（萬元），由小到大排列','bold',Math.min(14,H*0.05),W-40);
+  ctx4.font='bold '+tSz+'px sans-serif';ctx4.textAlign='center';ctx4.textBaseline='top';
+  ctx4.fillText('年終獎金（萬元），由小到大排列',W/2,8);
+
+  // Determine median positions
+  let med1=-1, med2=-1;
+  if(n%2===1){ med1=Math.floor(n/2); }
+  else { med1=n/2-1; med2=n/2; }
+
+  data.forEach((v,i)=>{
+    const x=pad+i*cellW;
+    const isMed=(i===med1||i===med2);
+    ctx4.fillStyle=isMed?'rgba(255,138,128,0.3)':'rgba(255,255,255,0.06)';
+    ctx4.strokeStyle=isMed?'#ff8a80':'rgba(255,255,255,0.15)';
+    ctx4.lineWidth=isMed?2:1;
+    ctx4.fillRect(x+1,startY,cellW-2,cellH);ctx4.strokeRect(x+1,startY,cellW-2,cellH);
+
+    // Value
+    const vSz=fitText(ctx4,String(v),'bold',Math.min(20,cellH*0.38),cellW-6);
+    ctx4.font='bold '+vSz+'px sans-serif';
+    ctx4.fillStyle=isMed?'#ff8a80':'#e8e4d8';
+    ctx4.textAlign='center';ctx4.textBaseline='middle';
+    ctx4.fillText(v,x+cellW/2,startY+cellH/2);
+
+    // Index
+    const iSz=fitText(ctx4,String(i+1),'',Math.min(10,12),cellW-4);
+    ctx4.font=iSz+'px sans-serif';
+    ctx4.fillStyle='rgba(255,255,255,0.35)';
+    ctx4.fillText(i+1,x+cellW/2,startY+cellH-8);
+  });
+
+  // Median label
+  let medVal, medText;
+  if(n%2===1){
+    medVal=data[med1];
+    medText='中位數 = 第'+(med1+1)+'個 = '+medVal+'萬元';
+  } else {
+    medVal=(data[med1]+data[med2])/2;
+    medText='中位數 = ('+data[med1]+'+'+data[med2]+')÷2 = '+medVal+'萬元';
+  }
+  const mSz=fitText(ctx4,medText,'bold',Math.min(15,H*0.06),W-40);
+  ctx4.font='bold '+mSz+'px sans-serif';
+  ctx4.fillStyle='#ff8a80';ctx4.textAlign='center';ctx4.textBaseline='bottom';
+  ctx4.fillText(medText,W/2,H-8);
+
+  // n label
+  ctx4.fillStyle='rgba(255,255,255,0.4)';
+  ctx4.font='11px sans-serif';ctx4.textAlign='left';ctx4.textBaseline='top';
+  ctx4.fillText('n='+n+' 筆 ('+(n%2===1?'奇數':'偶數')+')',pad,startY-18);
+}
+
+// ════════════════════════════════
+// CANVAS 5: 眾數長條圖
+// ════════════════════════════════
+const c5=document.getElementById('c5');
+const ctx5=c5.getContext('2d');
+const c5labels=['4萬','5萬','6萬','7萬','20萬','35萬'];
+let c5data=[1,3,2,2,1,1];
+
+function drawC5(){
+  const W=c5.width, H=c5.height;
+  ctx5.clearRect(0,0,W,H);
+  ctx5.fillStyle='#1a2a1a';ctx5.fillRect(0,0,W,H);
+
+  const lpad=40, rpad=20, tpad=20, bpad=50;
+  const cW=W-lpad-rpad, cH=H-tpad-bpad;
+  const maxF=Math.max(...c5data,1);
+  const modeIdxs=c5data.map((v,i)=>v===maxF?i:-1).filter(i=>i>=0);
+  const barW=cW/c5data.length;
+
+  // y grid
+  for(let i=0;i<=maxF;i++){
+    const y=tpad+cH-(i/maxF)*cH;
+    ctx5.strokeStyle='rgba(255,255,255,0.05)';ctx5.lineWidth=1;
+    ctx5.beginPath();ctx5.moveTo(lpad,y);ctx5.lineTo(lpad+cW,y);ctx5.stroke();
+    ctx5.fillStyle='rgba(255,255,255,0.35)';
+    const sz=fitText(ctx5,String(i),'',Math.min(10,11),lpad-4);
+    ctx5.font=sz+'px sans-serif';ctx5.textAlign='right';ctx5.textBaseline='middle';
+    ctx5.fillText(i,lpad-4,y);
+  }
+
+  c5data.forEach((v,i)=>{
+    const x=lpad+i*barW+2;
+    const bH=(v/maxF)*cH;
+    const y=tpad+cH-bH;
+    const isMode=modeIdxs.includes(i);
+    ctx5.fillStyle=isMode?'rgba(255,213,79,0.4)':'rgba(255,255,255,0.1)';
+    ctx5.strokeStyle=isMode?'#ffd54f':'rgba(255,255,255,0.2)';ctx5.lineWidth=isMode?2:1;
+    ctx5.fillRect(x,y,barW-4,bH);ctx5.strokeRect(x,y,barW-4,bH);
+
+    const vSz=fitText(ctx5,String(v),'bold',Math.min(13,bH*0.5),barW-8);
+    ctx5.font='bold '+vSz+'px sans-serif';
+    ctx5.fillStyle=isMode?'#ffd54f':'#e8e4d8';
+    ctx5.textAlign='center';ctx5.textBaseline='bottom';
+    ctx5.fillText(v,x+(barW-4)/2,y-2);
+
+    const lSz=fitText(ctx5,c5labels[i],'',Math.min(11,12),barW-4);
+    ctx5.font=lSz+'px sans-serif';
+    ctx5.fillStyle=isMode?'#ffd54f':'rgba(255,255,255,0.55)';
+    ctx5.textBaseline='top';
+    ctx5.fillText(c5labels[i],x+(barW-4)/2,tpad+cH+4);
+  });
+
+  // Mode label
+  const modeLabels=modeIdxs.map(i=>c5labels[i]);
+  const infoEl=document.getElementById('c5-info');
+  if(infoEl) infoEl.textContent='目前眾數：'+modeLabels.join('、')+'（出現'+maxF+'次）';
+}
+
+c5.addEventListener('click',e=>{
+  const lpad=40, rpad=20, cW=c5.width-lpad-rpad;
+  const barW=cW/c5data.length;
+  const i=Math.floor((e.offsetX-lpad)/barW);
+  if(i>=0&&i<c5data.length){ c5data[i]=Math.min(c5data[i]+1,8); drawC5(); }
+});
+c5.addEventListener('dblclick',e=>{
+  const lpad=40, rpad=20, cW=c5.width-lpad-rpad;
+  const barW=cW/c5data.length;
+  const i=Math.floor((e.offsetX-lpad)/barW);
+  if(i>=0&&i<c5data.length){ c5data[i]=Math.max(c5data[i]-1,0); drawC5(); }
+});
+
+// ── Resize handler ──
+function resizeAll(){
+  const W=Math.min(window.innerWidth-48, 900);
+  [c1,c2,c3,c4,c5].forEach(c=>{
+    c.width=W;
+  });
+  c1.height=Math.max(240,W*0.38);
+  c2.height=Math.max(260,W*0.43);
+  c3.height=Math.max(220,W*0.36);
+  c4.height=Math.max(200,W*0.32);
+  c5.height=Math.max(200,W*0.32);
+  drawC1();drawC2();drawC3();drawC4();drawC5();
+}
+window.addEventListener('resize',resizeAll);
+resizeAll();
+</script>
+</body>
+</html>
