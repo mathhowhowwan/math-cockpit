@@ -640,8 +640,8 @@ video,iframe{width:100%;border-radius:10px;}
         <div class="canvas-title">🖊️ 互動：正方體積木堆疊三視圖</div>
         <canvas id="cv5" height="260"></canvas>
         <div class="btn-row">
-          <button class="cv-btn active" onclick="cv5Show('model1')">範例 1（8塊）</button>
-          <button class="cv-btn" onclick="cv5Show('model2')">範例 2（9塊）</button>
+          <button class="cv-btn active" onclick="cv5Show('model1')">範例 1（5塊）</button>
+          <button class="cv-btn" onclick="cv5Show('model2')">範例 2（6塊）</button>
           <button class="cv-btn" onclick="cv5Show('front')">前視圖</button>
           <button class="cv-btn" onclick="cv5Show('right')">右視圖</button>
           <button class="cv-btn" onclick="cv5Show('top')">上視圖</button>
@@ -1232,99 +1232,127 @@ function drawCv4(){
 }
 
 // — cv5：三視圖 —
+// 座標：col=左右(0=左)，row=前後深度(0=前)，lyr=高度(0=地面)
 let cv5Mode='model1';
 const models={
-  model1:[ // 8塊積木 前視圖/右視圖/上視圖
-    {col:0,row:1,lyr:0},{col:1,row:1,lyr:0},{col:1,row:0,lyr:0},{col:1,row:1,lyr:1},
-    {col:2,row:1,lyr:0},{col:2,row:0,lyr:0},{col:2,row:1,lyr:1},{col:2,row:0,lyr:1}
+  // 範例1：5塊 — 前視圖左高右低，右視圖前高後低，上視圖L形
+  model1:[
+    {col:0,row:0,lyr:0},{col:1,row:0,lyr:0},{col:2,row:0,lyr:0},
+    {col:2,row:1,lyr:0},{col:0,row:0,lyr:1}
   ],
-  model2:[ // 9塊
-    {col:0,row:2,lyr:0},{col:1,row:2,lyr:0},{col:2,row:2,lyr:0},
-    {col:0,row:1,lyr:0},{col:1,row:1,lyr:0},{col:2,row:1,lyr:0},
-    {col:2,row:0,lyr:0},{col:2,row:1,lyr:1},{col:2,row:2,lyr:1}
+  // 範例2：6塊 — 前視圖左高，右視圖後高，上視圖反L形
+  model2:[
+    {col:0,row:0,lyr:0},{col:0,row:1,lyr:0},{col:0,row:2,lyr:0},
+    {col:1,row:2,lyr:0},{col:2,row:2,lyr:0},{col:0,row:2,lyr:1}
   ]
 };
+// 三視圖投影規則（3×3格，r=0頂部，r=2底部）：
+// 前視圖：col→c，2-lyr→r （地面lyr=0→底部r=2）
+// 右視圖：row→c（前row=0→左c=0），2-lyr→r
+// 上視圖：col→c，2-row→r （前row=0→底部r=2，前方在下）
+function cv5CalcViews(bs){
+  const uniq=arr=>[...new Map(arr.map(x=>[x.c+','+x.r,x])).values()];
+  return {
+    front: uniq(bs.map(b=>({c:b.col, r:2-b.lyr}))),
+    right: uniq(bs.map(b=>({c:b.row, r:2-b.lyr}))),
+    top:   uniq(bs.map(b=>({c:b.col, r:2-b.row})))
+  };
+}
 function cv5Show(m){
   cv5Mode=m;
-  document.querySelectorAll('#sec5 .cv-btn').forEach((b,i)=>b.classList.toggle('active',['model1','model2','front','right','top'][i]===m));
+  document.querySelectorAll('#sec5 .cv-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['model1','model2','front','right','top'][i]===m);
+  });
   drawCv5();
 }
 function drawCv5(){
-  const c=document.getElementById('cv5');
-  const w=c.offsetWidth||600;c.width=w;c.height=260;
-  const ctx=c.getContext('2d');
-  ctx.clearRect(0,0,w,260);
-  ctx.fillStyle='#1a2a1a';ctx.fillRect(0,0,w,260);
+  const cvs=document.getElementById('cv5');
+  const W=cvs.offsetWidth||640;
+  cvs.width=W; cvs.height=300;
+  const ctx=cvs.getContext('2d');
+  ctx.clearRect(0,0,W,300);
+  ctx.fillStyle='#1a2a1a'; ctx.fillRect(0,0,W,300);
 
-  const cs=32; // cell size
+  const bs=models[cv5Mode==='model2'?'model2':'model1'];
+  const views=cv5CalcViews(bs);
 
-  function drawGrid(blocks,ox,oy,cols,rows,color='#81d4fa',filled=false){
-    for(let r=0;r<rows;r++){
-      for(let c=0;c<cols;c++){
-        const x=ox+c*cs, y=oy+r*cs;
-        if(filled){
-          ctx.fillStyle='rgba(129,212,250,0.15)';ctx.fillRect(x,y,cs,cs);
-        }
-        ctx.strokeStyle='rgba(255,255,255,0.15)';ctx.lineWidth=0.5;
-        ctx.strokeRect(x,y,cs,cs);
-      }
-    }
-    blocks.forEach(b=>{
-      const x=ox+b.c*cs,y=oy+b.r*cs;
-      ctx.fillStyle=color==='#ff8a80'?'rgba(255,138,128,0.35)':color==='#ffd54f'?'rgba(255,213,79,0.35)':'rgba(129,212,250,0.35)';
-      ctx.fillRect(x+1,y+1,cs-2,cs-2);
-      ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.strokeRect(x+1,y+1,cs-2,cs-2);
-    });
-  }
-
-  function gridLabel(txt,x,y,color){
-    ctx.fillStyle=color||'#ffd54f';ctx.font='bold 12px sans-serif';ctx.textAlign='center';ctx.fillText(txt,x,y);
-  }
-
-  if(cv5Mode==='model1'||cv5Mode==='model2'){
-    // 示意圖：等角投影積木堆
-    const mname=cv5Mode==='model1'?'model1':'model2';
-    const bs=models[mname];
-    // 簡化：畫等角投影
-    const iso=(c,r,l)=>({x:w/3+c*20-l*10,y:100+r*14+l*(-18)-c*6});
-    const colors=['#ef5350','#fdd835','#1e88e5'];
-    bs.forEach(b=>{
-      const C=[b.col,b.row,b.lyr];
-      const top=[iso(C[0],C[1],C[2]),iso(C[0]+1,C[1],C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0],C[1]+1,C[2])];
-      const right=[iso(C[0]+1,C[1],C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]-1),iso(C[0]+1,C[1],C[2]-1)];
-      const front=[iso(C[0],C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]),iso(C[0]+1,C[1]+1,C[2]-1),iso(C[0],C[1]+1,C[2]-1)];
-      [[front,colors[2]],[right,colors[1]],[top,colors[0]]].forEach(([pts,col])=>{
-        ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);pts.forEach(p=>ctx.lineTo(p.x,p.y));ctx.closePath();
-        ctx.fillStyle=col+'55';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=1.2;ctx.stroke();
+  // 等角投影：pt(col,row,lyr,iox,ioy)→畫布座標
+  const IX=20,IY=11,IZ=22;
+  function pt(c,r,l,iox,ioy){return {x:iox+c*IX-r*IX, y:ioy+c*IY+r*IY-l*IZ};}
+  function drawIso(bs,iox,ioy){
+    const sorted=[...bs].sort((a,b)=>b.row-a.row||a.col-b.col||a.lyr-b.lyr);
+    sorted.forEach(({col:c,row:r,lyr:l})=>{
+      const faces=[
+        // 頂面
+        {pts:[pt(c,r,l+1,iox,ioy),pt(c+1,r,l+1,iox,ioy),pt(c+1,r+1,l+1,iox,ioy),pt(c,r+1,l+1,iox,ioy)],
+         fill:'rgba(255,213,79,0.55)',stroke:'#fdd835'},
+        // 前面(row+1側)
+        {pts:[pt(c,r+1,l+1,iox,ioy),pt(c+1,r+1,l+1,iox,ioy),pt(c+1,r+1,l,iox,ioy),pt(c,r+1,l,iox,ioy)],
+         fill:'rgba(100,181,246,0.55)',stroke:'#64b5f6'},
+        // 右面(col+1側)
+        {pts:[pt(c+1,r,l+1,iox,ioy),pt(c+1,r+1,l+1,iox,ioy),pt(c+1,r+1,l,iox,ioy),pt(c+1,r,l,iox,ioy)],
+         fill:'rgba(255,138,128,0.45)',stroke:'#ff8a80'}
+      ];
+      faces.forEach(({pts,fill,stroke})=>{
+        ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p.x,p.y):ctx.moveTo(p.x,p.y)); ctx.closePath();
+        ctx.fillStyle=fill; ctx.fill(); ctx.strokeStyle=stroke; ctx.lineWidth=1.2; ctx.stroke();
       });
     });
-    gridLabel(`積木模型 (${cv5Mode==='model1'?8:9}塊) — 點選視圖按鈕觀察三視圖`,w/3,230,'rgba(255,255,255,0.4)');
+  }
 
-    // 三視圖縮略
-    const frontBlocks=bs.map(b=>({c:b.col,r:2-b.lyr}));
-    const rightBlocks=bs.map(b=>({c:b.row,r:2-b.lyr}));
-    const topBlocks=bs.map(b=>({c:b.col,r:b.row}));
-    const unique=(arr)=>[...new Map(arr.map(x=>[`${x.c},${x.r}`,x])).values()];
-    const ox2=w*0.62,oy2=30;
-    ctx.fillStyle='rgba(255,255,255,0.07)';ctx.fillRect(ox2-5,oy2-20,w-ox2,220);
-    gridLabel('前視圖',ox2+48,oy2-6,'#ff8a80');drawGrid(unique(frontBlocks),ox2,oy2,3,3,'#ff8a80');
-    gridLabel('右視圖',ox2+48,oy2+120,'#ffd54f');drawGrid(unique(rightBlocks),ox2,oy2+104,3,3,'#ffd54f');
+  // 網格視圖
+  function drawView(label,blocks,ox,oy,CS,color,frontArrow){
+    ctx.fillStyle='rgba(255,255,255,0.04)';
+    ctx.fillRect(ox-1,oy-18,3*CS+2,3*CS+22);
+    ctx.fillStyle=color; ctx.font='bold 11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(label, ox+3*CS/2, oy-5);
+    for(let r=0;r<3;r++) for(let c=0;c<3;c++){
+      ctx.strokeStyle='rgba(255,255,255,0.15)'; ctx.lineWidth=0.5;
+      ctx.strokeRect(ox+c*CS,oy+r*CS,CS,CS);
+    }
+    const rgb=color==='#ff8a80'?'255,138,128':color==='#ffd54f'?'255,213,79':'129,212,250';
+    blocks.forEach(({c,r})=>{
+      if(c<0||c>2||r<0||r>2) return;
+      ctx.fillStyle=`rgba(${rgb},0.4)`;
+      ctx.fillRect(ox+c*CS+1,oy+r*CS+1,CS-2,CS-2);
+      ctx.strokeStyle=color; ctx.lineWidth=1.5;
+      ctx.strokeRect(ox+c*CS+1,oy+r*CS+1,CS-2,CS-2);
+    });
+    if(frontArrow){
+      ctx.fillStyle='rgba(129,212,250,0.55)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+      ctx.fillText('↑ 前方', ox+3*CS/2, oy+3*CS+13);
+    }
+  }
+
+  const isoBig=(cv5Mode==='model1'||cv5Mode==='model2');
+  const CS=isoBig?28:38;
+
+  if(isoBig){
+    const isoW=Math.floor(W*0.38);
+    drawIso(bs, Math.floor(isoW*0.5), 190);
+    ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(cv5Mode==='model1'?'範例一（5塊）':'範例二（6塊）', Math.floor(isoW*0.5), 270);
+    const gap=Math.max(6,Math.floor((W-isoW-9*CS)/4));
+    const fx=isoW+gap, rx=fx+3*CS+gap, tx=rx+3*CS+gap;
+    drawView('前視圖',views.front,fx,28,CS,'#ff8a80',false);
+    drawView('右視圖',views.right,rx,28,CS,'#ffd54f',false);
+    drawView('上視圖',views.top,  tx,28,CS,'#81d4fa',true);
+    ctx.fillStyle='rgba(255,255,255,0.2)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('點選下方按鈕放大各視圖',W*0.7,288);
   }else{
-    const mBlocks=models['model1'];
-    const frontB=[...new Map(mBlocks.map(b=>({c:b.col,r:2-b.lyr})).map(x=>[`${x.c},${x.r}`,x])).values()];
-    const rightB=[...new Map(mBlocks.map(b=>({c:b.row,r:2-b.lyr})).map(x=>[`${x.c},${x.r}`,x])).values()];
-    const topB=[...new Map(mBlocks.map(b=>({c:b.col,r:b.row})).map(x=>[`${x.c},${x.r}`,x])).values()];
-
-    const configs={front:{blocks:frontB,label:'前視圖（從前方看）',color:'#ff8a80'},
-                   right:{blocks:rightB,label:'右視圖（從右方看）',color:'#ffd54f'},
-                   top:{blocks:topB,label:'上視圖（從前面俯視）',color:'#81d4fa'}};
-    const cfg=configs[cv5Mode];
-    const ox=(w-3*cs)/2,oy=60;
-    gridLabel(cfg.label,w/2,40,cfg.color);
-    drawGrid(cfg.blocks,ox,oy,3,3,cfg.color,true);
-
-    ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='12px sans-serif';ctx.textAlign='center';
-    ctx.fillText('（範例 model1，8 塊積木）',w/2,220);
+    drawIso(bs, 55, 200);
+    ctx.fillStyle='rgba(255,255,255,0.25)'; ctx.font='10px sans-serif'; ctx.textAlign='center';
+    ctx.fillText('積木模型',55,272);
+    const cfgs={
+      front:{data:views.front,label:'前視圖（從正前方看）',color:'#ff8a80',arrow:false,note:'左右=col方向，上下=高度'},
+      right:{data:views.right,label:'右視圖（從正右方看）',color:'#ffd54f',arrow:false,note:'左右=前後深度，上下=高度'},
+      top:  {data:views.top,  label:'上視圖（俯視，前方在下）',color:'#81d4fa',arrow:true, note:'左右=col方向，上下=前後深度'}
+    };
+    const cfg=cfgs[cv5Mode];
+    const ox=Math.floor((W+80-3*CS)/2), oy=60;
+    drawView(cfg.label,cfg.data,ox,oy,CS,cfg.color,cfg.arrow);
+    ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(cfg.note, W/2+40, 280);
   }
 }
 
