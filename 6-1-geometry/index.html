@@ -58,11 +58,10 @@ body{background:var(--bg);color:var(--chalk);font-family:'Noto Sans TC',sans-ser
 
 /* ===== 簡報翻頁器 ===== */
 .carousel-wrap{margin-bottom:20px;}
-.carousel-container{position:relative;background:#000;border-radius:10px;overflow:hidden;aspect-ratio:16/9;}
-.carousel-inner{width:100%;height:100%;position:relative;}
-.carousel-inner img{width:100%;height:100%;object-fit:contain;display:none;position:absolute;top:0;left:0;}
+.carousel-container{background:#000;border-radius:10px;overflow:hidden;min-height:60px;}
+.carousel-inner img{width:100%;height:auto;display:none;border-radius:10px;}
 .carousel-inner img.active{display:block;}
-.carousel-placeholder{width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.3);font-size:1rem;background:rgba(0,0,0,0.5);}
+.carousel-placeholder{padding:50px 20px;text-align:center;color:rgba(255,255,255,0.3);font-size:0.95rem;background:rgba(0,0,0,0.4);border-radius:10px;}
 .carousel-controls{display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;}
 .car-btn{background:var(--surface);border:1px solid var(--border);color:var(--chalk);width:36px;height:36px;border-radius:50%;cursor:pointer;font-size:1.1rem;transition:all 0.2s;display:flex;align-items:center;justify-content:center;}
 .car-btn:hover{background:rgba(255,213,79,0.2);border-color:var(--yellow);}
@@ -856,15 +855,17 @@ function setMode(m){
 // ===== 翻頁器 =====
 const carState = {};
 function carGo(id, delta){
-  const imgs = document.querySelectorAll(`#${id} img`);
+  const imgs = document.querySelectorAll('#'+id+' img');
   if(!imgs.length) return;
-  if(!carState[id]) carState[id] = 0;
+  if(carState[id]==null) carState[id] = 0;
   const n = imgs.length;
   carState[id] = (carState[id] + delta + n) % n;
-  imgs.forEach((img,i) => img.classList.toggle('active', i===carState[id]));
+  imgs.forEach(function(img,i){
+    img.style.display = (i===carState[id]) ? 'block' : 'none';
+  });
   const ccId = 'cc-' + id.replace('ci-','');
   const cc = document.getElementById(ccId);
-  if(cc) cc.textContent = `${carState[id]+1} / ${n}`;
+  if(cc) cc.textContent = (carState[id]+1) + ' / ' + n;
 }
 
 // ===== 形成性評量 =====
@@ -1342,32 +1343,39 @@ window.addEventListener('load',()=>{
 
 function autoLoadSlides(){
   const sections=[
-    {ciId:'ci-sec1',ccId:'cc-sec1',prefix:'slide_',from:1,to:3},
-    {ciId:'ci-sec2',ccId:'cc-sec2',prefix:'slide_',from:4,to:6},
-    {ciId:'ci-sec3',ccId:'cc-sec3',prefix:'slide_',from:7,to:9},
-    {ciId:'ci-sec4',ccId:'cc-sec4',prefix:'slide_',from:10,to:12},
-    {ciId:'ci-sec5',ccId:'cc-sec5',prefix:'slide_',from:13,to:15},
+    {ciId:'ci-sec1',ccId:'cc-sec1',from:1,to:3},
+    {ciId:'ci-sec2',ccId:'cc-sec2',from:4,to:6},
+    {ciId:'ci-sec3',ccId:'cc-sec3',from:7,to:9},
+    {ciId:'ci-sec4',ccId:'cc-sec4',from:10,to:12},
+    {ciId:'ci-sec5',ccId:'cc-sec5',from:13,to:15},
   ];
-  sections.forEach(s=>{
-    const ci=document.getElementById(s.ciId);
-    let loaded=0;
-    for(let i=s.from;i<=s.to;i++){
-      const img=new Image();
-      img.src=`assets/${s.prefix}${String(i).padStart(2,'0')}.jpg`;
-      img.loading='lazy';
-      img.onload=()=>{
-        if(loaded===0){
-          ci.innerHTML=''; // 清除 placeholder
-          carState[s.ciId]=0;
-        }
-        img.classList.toggle('active',loaded===0);
-        ci.appendChild(img);
-        loaded++;
-        const cc=document.getElementById(s.ccId);
-        if(cc) cc.textContent=`1 / ${loaded}`;
-      };
-      img.onerror=()=>{};
+  sections.forEach(function(s){
+    var ci=document.getElementById(s.ciId);
+    var cc=document.getElementById(s.ccId);
+    var slideImgs=[];
+    var loaded=0;
+    // 先把所有 img 元素放入 DOM（隱藏狀態）
+    for(var i=s.from;i<=s.to;i++){
+      var img=document.createElement('img');
+      img.src='assets/slide_'+String(i).padStart(2,'0')+'.jpg';
+      img.style.display='none';
+      img.style.width='100%';
+      img.style.height='auto';
+      slideImgs.push(img);
+      ci.appendChild(img);
     }
+    // 第一張圖載入後，移除 placeholder 並顯示
+    slideImgs[0].onload=function(){
+      var ph=ci.querySelector('.carousel-placeholder');
+      if(ph) ph.remove();
+      slideImgs[0].style.display='block';
+      carState[s.ciId]=0;
+      loaded=1;
+      if(cc) cc.textContent='1 / '+(s.to-s.from+1);
+    };
+    slideImgs[0].onerror=function(){
+      console.log('載入失敗：'+this.src);
+    };
   });
 }
 </script>
