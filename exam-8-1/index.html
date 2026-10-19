@@ -1,0 +1,686 @@
+<title>八年級段考數學</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@700;900&family=STIX+Two+Text:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+/* Layout: chalkboard teaching cockpit. Wood header, topic pills, sticky mode bar, question cards, floating lottery/timer panel, chalk pen overlay. Origin: exam-paper review. Hero with answer key, sticky mode bar, filterable question cards (red-pen answers, blue-pen working), comprehension solutions, formula sheet. */
+:root{
+  --bg:#1a2a1a;
+  --surface:#213624;
+  --ink:#e8e4d8;
+  --muted:#aab2a0;
+  --line:rgba(232,228,216,.22);
+  --grid:rgba(232,228,216,.06);
+  --red:#ff8a80;
+  --red-wash:rgba(255,138,128,.14);
+  --blue:#81d4fa;
+  --blue-wash:rgba(129,212,250,.12);
+  --yellow:#ffd54f;
+  --wood:#8d6e4a;
+  --wood-dk:#6d5336;
+  --font-display:'Noto Serif TC','Songti TC','PMingLiU',serif;
+  --font-body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  --font-math:'STIX Two Text','Times New Roman',serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink);
+  font-family:var(--font-body); font-size:16px; line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 64px;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.wrap{max-width:780px;margin:0 auto}
+h1,h2,h3{font-family:var(--font-display);text-wrap:balance;margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+
+/* math */
+.m{font-family:var(--font-math);font-size:1.08em;white-space:normal}
+.m{display:inline-block;max-width:100%;overflow-x:auto;overflow-y:hidden;vertical-align:middle;scrollbar-width:thin}
+.m i{font-style:italic}
+.m sup{font-size:.72em;line-height:0;vertical-align:.5em}
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .12em;font-size:.95em;line-height:1.2}
+.fr .n{border-bottom:1px solid currentColor;padding:0 .2em}
+.fr .d{padding:0 .2em}
+.rd{white-space:nowrap}
+.ov{display:inline-block;border-top:1.4px solid currentColor;padding:0 .12em;margin-left:.04em;line-height:1.1}
+
+math{font-family:'STIX Two Math','Cambria Math','Latin Modern Math',var(--font-math),math;font-size:1.12em}
+.m .katex{font-size:1em}
+.m.dm{display:block;margin:.35em 0;overflow-x:auto}
+.m.dm math{display:inline math}
+/* hero */
+.hero{
+  margin-top:20px;padding:24px 20px 20px;border:1px solid var(--line);border-radius:4px;
+  background-color:var(--surface);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px;
+}
+.eyebrow{margin:0;font-size:.8rem;letter-spacing:.12em;color:var(--muted)}
+.hero h1{font-size:clamp(1.7rem,6.4vw,2.5rem);line-height:1.3;font-weight:900;margin:.5rem 0 1rem}
+.circled{position:relative;display:inline-block;color:var(--red);padding:0 .3em}
+.circled::after{content:"";position:absolute;inset:-.1em -.08em;border:3px solid var(--red);border-radius:52% 48% 55% 45%/60% 55% 45% 40%;transform:rotate(-3deg);pointer-events:none}
+.lede{margin:0;max-width:34em;background:var(--surface)}
+.keybox{background:var(--surface);border:1px solid var(--line);padding:12px;margin-top:18px}
+.keybox h2{font-family:var(--font-body);font-size:.8rem;letter-spacing:.12em;color:var(--muted);font-weight:700;margin-bottom:8px}
+.key{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;list-style:none;padding:0;margin:0}
+.kc{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 8px;border:1px solid var(--line);color:var(--ink);text-decoration:none;font-variant-numeric:tabular-nums}
+.kc span{color:var(--muted);font-size:.8rem}
+.kc b{color:var(--red);font-family:var(--font-display);font-size:1.05rem}
+.kc:hover{border-color:var(--red)}
+.cnote{margin:10px 0 0;font-size:.9rem;line-height:1.6}
+.cnote b{color:var(--red)}
+.disclaimer{margin:12px 0 0;font-size:.82rem;color:var(--muted);background:var(--surface);line-height:1.6}
+
+/* toolbar */
+.bar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:5;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-top:20px;padding:10px 0;background:var(--bg);border-bottom:1px solid var(--line);
+}
+.seg{display:inline-flex;border:1px solid var(--ink);border-radius:4px;overflow:hidden;flex:none}
+.seg button{font-weight:700;font-size:.9rem;padding:5px 16px;background:transparent;border:0;cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.status{font-size:.85rem;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+.status b{color:var(--red)}
+
+/* sections + filters */
+.sec{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin:32px 0 6px}
+.sec h2{font-size:1.4rem;font-weight:900}
+.sec small{color:var(--muted);font-size:.85rem}
+.filters{display:grid;gap:8px;margin:10px 0 4px}
+.frow{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.flab{font-size:.78rem;color:var(--muted);letter-spacing:.1em;width:3em;flex:none}
+.chip{font-size:.85rem;padding:2px 12px;border:1px solid var(--line);background:var(--surface);border-radius:3px;cursor:pointer;line-height:1.7}
+.chip[aria-pressed="true"]{border-color:var(--blue);background:var(--blue-wash);color:var(--blue);font-weight:700}
+.chip em{font-style:normal;color:var(--muted);font-size:.78rem;margin-left:4px}
+.chip[aria-pressed="true"] em{color:inherit}
+.act{font-size:.85rem;padding:2px 12px;border:1px dashed var(--muted);background:transparent;border-radius:3px;cursor:pointer;line-height:1.7}
+.empty{margin:20px 0;color:var(--muted)}
+
+/* question cards */
+.list{display:grid;gap:12px;margin-top:8px}
+.q{
+  display:grid;grid-template-columns:2.2rem minmax(0,1fr);column-gap:12px;
+  background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px 16px 12px;
+  scroll-margin-top:calc(72px + env(safe-area-inset-top,0px));
+}
+.no{font-family:var(--font-display);font-weight:900;font-size:1.6rem;line-height:1.1;color:var(--blue);text-align:right;font-variant-numeric:tabular-nums}
+.body{min-width:0}
+.meta{display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:.78rem;letter-spacing:.06em;color:var(--muted)}
+.tag{color:var(--blue);border:1px solid var(--blue);padding:0 7px;line-height:1.55}
+.dots{letter-spacing:.1em;color:var(--blue)}
+.stem{margin:6px 0 10px;font-size:1.06rem;line-height:1.75;overflow-wrap:anywhere}
+.exprs{display:flex;flex-wrap:wrap;gap:4px 16px;list-style:none;padding:0;margin:0 0 12px}
+.exprs .idx{font-size:.78rem;color:var(--muted);margin-right:4px}
+.fig{display:block;width:100%;max-width:340px;margin:2px 0 12px}
+.fig .edge{fill:var(--blue-wash);stroke:var(--ink);stroke-width:1.5}
+.fig .aux{fill:none;stroke:var(--muted);stroke-width:1.2;stroke-dasharray:4 3}
+.fig text{fill:var(--ink);font-family:var(--font-math);font-size:14px}
+.fig .red{fill:var(--red)}
+.scroll{overflow-x:auto;max-width:100%}
+table.sub,table.div{border-collapse:collapse;font-family:var(--font-math);font-size:1.05rem;margin:4px 0 12px}
+table.sub td,table.div td{padding:2px 10px;text-align:right;white-space:nowrap}
+table.sub tr.minus td{border-bottom:1.5px solid var(--ink)}
+table.div td.dv{border-right:2px solid var(--ink);padding-right:10px}
+table.div td.c{border-top:1.5px solid var(--ink)}
+table.div tr.bar2 td.c{border-top:2px solid var(--ink)}
+table.div tr.sub1 td.c.ln{border-top:1.5px solid var(--ink)}
+table.div td.c.red,.red{color:var(--red)}
+.lab2{font-family:var(--font-body);font-size:.68rem;color:var(--blue);margin-left:2px;vertical-align:sub}
+
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.opts.long{grid-template-columns:minmax(0,1fr)}
+.opt{
+  display:flex;align-items:center;gap:8px;width:100%;text-align:left;
+  padding:7px 10px;background:transparent;border:1px solid var(--line);border-radius:4px;cursor:default;position:relative;
+}
+.opt .lt{flex:none;display:inline-grid;place-items:center;width:1.9rem;height:1.9rem;border-radius:50%;border:1.5px solid transparent;font-weight:700;font-size:.85rem;color:var(--muted)}
+.opt .tx{min-width:0;overflow-wrap:anywhere;flex:1}
+.opt::after{content:attr(data-mark);flex:none;font-weight:700;color:var(--red)}
+.test .opt:not([aria-disabled="true"]){cursor:pointer}
+.test .opt:not([aria-disabled="true"]):hover{border-color:var(--blue);background:var(--blue-wash)}
+.opt.ok{background:var(--red-wash);border-color:var(--red)}
+.opt.ok .lt{border-color:var(--red);color:var(--red)}
+.opt.bad{color:var(--muted)}
+.opt.bad .tx{text-decoration:line-through}
+.opt.bad::after{color:var(--muted)}
+.verdict{margin:10px 0 0;font-size:.95rem;color:var(--muted)}
+.verdict.good,.verdict.miss{font-weight:700}
+.verdict.good{color:var(--red)}
+.verdict.miss{color:var(--ink)}
+
+.sol{margin-top:10px;border-top:1px dashed var(--line);padding-top:6px}
+.sol summary{cursor:pointer;font-weight:700;color:var(--blue);list-style:none;display:inline-flex;align-items:center;gap:6px;padding:4px 0}
+.sol summary::-webkit-details-marker{display:none}
+.sol summary::before{content:"▸";display:inline-block;transition:transform .15s}
+.sol[open] summary::before{transform:rotate(90deg)}
+.steps{counter-reset:s;list-style:none;padding:0;margin:6px 0 8px;display:grid;gap:8px}
+.steps li{counter-increment:s;display:grid;grid-template-columns:1.5rem minmax(0,1fr);column-gap:8px;overflow-wrap:anywhere}
+.steps li::before{content:counter(s);font-family:var(--font-display);font-weight:900;color:var(--blue);text-align:right}
+.pt{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;margin:6px 0;font-size:.95rem;line-height:1.65}
+.lab{font-size:.72rem;font-weight:700;letter-spacing:.06em;padding:0 6px;line-height:1.55;margin-top:.2em;border:1px solid currentColor;white-space:nowrap}
+.lab.k{color:var(--blue)}
+.lab.t{color:var(--red)}
+
+/* comprehension */
+.cq{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px;margin-top:12px;scroll-margin-top:calc(72px + env(safe-area-inset-top,0px))}
+.cq h3{font-size:1.15rem;font-weight:900;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.cq h3 small{font-family:var(--font-body);font-size:.8rem;font-weight:400;color:var(--muted)}
+.ans{display:inline-block;margin:8px 0;padding:2px 12px;border:2px solid var(--red);border-radius:50% / 60%;color:var(--red);font-weight:700;font-family:var(--font-math);font-size:1.15rem}
+.vals{display:grid;grid-template-columns:repeat(auto-fill,minmax(86px,1fr));gap:6px;list-style:none;padding:0;margin:8px 0 12px}
+.vals li{border:1px solid var(--line);padding:2px 10px;font-family:var(--font-math);font-size:1.05rem;font-variant-numeric:tabular-nums}
+.vals li b{color:var(--red);font-weight:600}
+
+/* formulas */
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:12px;margin-top:10px}
+.fb{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:14px 16px}
+.fb h3{font-size:1.05rem;font-weight:900;margin-bottom:6px;color:var(--blue)}
+.fb ul{margin:0;padding:0;list-style:none;display:grid;gap:6px;font-size:.95rem;line-height:1.6}
+.foot{margin-top:32px;font-size:.8rem;color:var(--muted)}
+
+body{background-image:radial-gradient(ellipse at 20% 0%,rgba(255,255,255,.05),transparent 55%),radial-gradient(ellipse at 90% 100%,rgba(255,255,255,.035),transparent 50%)}
+body:not(.teacher) .t-only{display:none!important}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.no{color:var(--yellow)}
+.sec h2,.fb h3{color:var(--yellow)}
+.hero{border-color:var(--line)}
+.wood{margin-top:16px;display:flex;align-items:center;justify-content:space-between;gap:10px 16px;flex-wrap:wrap;padding:10px 16px;border-radius:6px;background:linear-gradient(180deg,var(--wood),var(--wood-dk));border:1px solid #b99a72;box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 2px 0 rgba(0,0,0,.35);color:#fff8e1}
+.wood-title{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;font-family:var(--font-display)}
+.wood-title b{font-size:1.15rem;font-weight:900}
+.wood-title span{font-size:.9rem;opacity:.9}
+.wm{display:flex;align-items:center;gap:10px}
+.who{font-size:.8rem;padding:1px 10px;border:1px solid rgba(255,255,255,.4);border-radius:20px}
+body.teacher .who{background:var(--yellow);color:#3a2d12;border-color:var(--yellow);font-weight:700}
+.woodbtn{font-size:.85rem;padding:5px 14px;border-radius:20px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.4);color:#fff8e1;cursor:pointer;min-height:36px}
+.woodbtn:hover{background:rgba(255,255,255,.25)}
+.pw{display:flex;align-items:center;gap:8px;flex-wrap:wrap;width:100%}
+.pw[hidden]{display:none}
+.pw input{font:inherit;font-size:.9rem;padding:5px 10px;border-radius:4px;border:1px solid rgba(255,255,255,.5);background:rgba(0,0,0,.25);color:#fff8e1;min-height:36px;width:11em}
+.pwe{font-size:.82rem;color:#ffd0cc}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pills button{font-size:.9rem;padding:4px 16px;border-radius:20px;background:transparent;border:1px solid var(--ink);color:var(--ink);cursor:pointer;min-height:36px}
+.pills button:hover{background:rgba(232,228,216,.12)}
+.hero .kc b{color:var(--red)}
+/* floating tools */
+.fab{position:fixed;z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:8px;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+.fab-btn{font-size:.9rem;font-weight:700;padding:8px 18px;border-radius:24px;background:var(--wood);border:1px solid #b99a72;color:#fff8e1;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.5);min-height:44px}
+.panel{width:min(300px,calc(100vw - 32px));background:#16231a;border:1px solid var(--line);border-radius:8px;padding:12px;box-shadow:0 6px 20px rgba(0,0,0,.55);display:grid;gap:14px}
+.panel[hidden]{display:none}
+.panel h3{font-family:var(--font-body);font-size:.85rem;color:var(--yellow);letter-spacing:.1em;margin-bottom:6px}
+.prow{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.prow label{font-size:.8rem;color:var(--muted)}
+.panel input[type=number]{font:inherit;width:4.2em;padding:3px 6px;background:rgba(0,0,0,.3);border:1px solid var(--line);color:var(--ink);border-radius:4px;min-height:36px}
+.pbtn{font-size:.85rem;padding:4px 14px;border-radius:4px;background:transparent;border:1px solid var(--ink);color:var(--ink);cursor:pointer;min-height:36px}
+.pbtn:hover{background:rgba(232,228,216,.12)}
+.big{font-family:var(--font-display);font-weight:900;font-size:2.6rem;line-height:1.2;text-align:center;color:var(--yellow);font-variant-numeric:tabular-nums;min-height:1.2em}
+.big.done{color:var(--red)}
+.drawn{font-size:.75rem;color:var(--muted);min-height:1.4em}
+/* pen */
+#chalk{position:fixed;inset:0;width:100%;height:100%;z-index:20;pointer-events:none;touch-action:none}
+body.penning #chalk{pointer-events:auto;cursor:crosshair}
+.pen{position:fixed;z-index:30;left:max(16px,env(safe-area-inset-left,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));display:flex;flex-direction:column;gap:8px;align-items:flex-start}
+.pen-tools{display:flex;flex-direction:column;gap:8px;padding:8px;background:#16231a;border:1px solid var(--line);border-radius:8px;box-shadow:0 6px 20px rgba(0,0,0,.55)}
+.pen-tools[hidden]{display:none}
+.sw{display:flex;gap:8px}
+.sw button{width:32px;height:32px;border-radius:50%;border:2px solid transparent;cursor:pointer}
+.sw button[aria-pressed="true"]{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.35)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+
+<div class="wrap" id="top">
+  <header class="wood">
+    <div class="wood-title"><b>八年級段考</b><span>數學科</span></div>
+    <div class="wm"><span id="who" class="who">學生模式</span><button type="button" id="lock" class="woodbtn">教師登入</button></div>
+    <form id="pw" class="pw" hidden>
+      <label for="pwi" class="sr">教師密碼</label>
+      <input id="pwi" type="password" autocomplete="off" placeholder="教師密碼">
+      <button type="submit" class="woodbtn">確定</button>
+      <span id="pwe" class="pwe" role="alert"></span>
+    </form>
+  </header>
+  <nav class="pills" aria-label="主題導覽">
+    <button type="button" data-unit="all">全部選擇題</button>
+    <button type="button" data-unit="多項式">多項式</button>
+    <button type="button" data-unit="乘法公式">乘法公式</button>
+    <button type="button" data-unit="平方根">平方根</button>
+    <button type="button" data-go="h-comp" class="t-only">綜合題</button>
+    <button type="button" data-go="h-formula">公式速查</button>
+  </nav>
+  <header class="hero">
+    <p class="eyebrow">臺北市立北政國中 · 115 學年度第 1 學期</p>
+    <h1>八年級第 1 次定期考查<br>數學科</h1>
+    <p class="lede">22 題選擇題和 2 題綜合題,可以直接在課堂上用。學生模式先作答、再看對錯與詳解;教師登入後可看完整解答、易錯提醒和綜合題。</p>
+    <section class="keybox t-only" aria-labelledby="keyh">
+      <h2 id="keyh">選擇題解答 · 點題號跳到該題</h2>
+      <ul class="key" id="key"></ul>
+      <p class="cnote"><b>綜合題 1</b> 各項係數和 −13 ・ <b>綜合題 2</b> a=21、b=−5、c=−51、d=7、e=10、f=21、g=30、h=−51</p>
+    </section>
+    <p class="disclaimer t-only">解答是依題目自行解出並用程式驗算的,不是校方公布的標準答案,請與老師的解答對照。</p>
+  </header>
+
+  <div class="bar" id="bar">
+    <div class="seg t-only" role="group" aria-label="瀏覽模式">
+      <button type="button" id="m-review" aria-pressed="true">解析</button>
+      <button type="button" id="m-test" aria-pressed="false">自測</button>
+    </div>
+    <div class="status" id="status" role="status" aria-live="polite"></div>
+  </div>
+
+  <section aria-labelledby="h-choice">
+    <div class="sec"><h2 id="h-choice">選擇題</h2><small>每題 4 分,共 88 分</small></div>
+    <div class="filters">
+      <div class="frow" id="f-unit"><span class="flab">單元</span></div>
+      <div class="frow" id="f-lv"><span class="flab">難度</span></div>
+      <div class="frow">
+        <button type="button" class="act" id="expand">展開全部詳解</button>
+        <button type="button" class="act" id="reset" hidden>重設作答</button>
+      </div>
+    </div>
+    <div class="list" id="list"></div>
+    <p class="empty" id="empty" hidden>這個條件下沒有題目,請換一個篩選。</p>
+  </section>
+
+  <section class="t-only" aria-labelledby="h-comp">
+    <div class="sec"><h2 id="h-comp">綜合題</h2><small>共 12 分,需寫出計算過程</small></div>
+    <div id="comp"></div>
+  </section>
+
+  <section aria-labelledby="h-formula">
+    <div class="sec"><h2 id="h-formula">公式速查</h2><small>這份考卷用到的觀念</small></div>
+    <div class="fgrid" id="formulas"></div>
+  </section>
+
+  <p class="foot">難度是依解題步驟與觀念整合程度做的參考分級,不是答對率統計。</p>
+  <p class="foot"><a href="../index.html" style="display:inline-block;padding:6px 18px;border:1px solid var(--ink);border-radius:20px;color:var(--ink);text-decoration:none">🏠 回首頁</a></p>
+</div>
+
+<canvas id="chalk" aria-hidden="true"></canvas>
+<div class="pen">
+  <div class="pen-tools" id="pentools" hidden>
+    <div class="sw" role="group" aria-label="粉筆顏色">
+      <button type="button" data-c="#f4f1e6" style="background:#f4f1e6" aria-label="白色" aria-pressed="true"></button>
+      <button type="button" data-c="#ffd54f" style="background:#ffd54f" aria-label="黃色" aria-pressed="false"></button>
+      <button type="button" data-c="#ff8a80" style="background:#ff8a80" aria-label="粉紅" aria-pressed="false"></button>
+      <button type="button" data-c="#81d4fa" style="background:#81d4fa" aria-label="淺藍" aria-pressed="false"></button>
+    </div>
+    <div class="prow"><button type="button" class="pbtn" id="eraser" aria-pressed="false">橡皮擦</button><button type="button" class="pbtn" id="clearpen">全部清除</button></div>
+  </div>
+  <button type="button" class="fab-btn" id="penbtn" aria-pressed="false">畫筆</button>
+</div>
+<div class="fab">
+  <section class="panel" id="panel" hidden aria-label="課堂工具">
+    <div>
+      <h3>抽籤</h3>
+      <div class="prow"><label for="smin">座號</label><input id="smin" type="number" min="1" max="99" value="1"><label for="smax">到</label><input id="smax" type="number" min="1" max="99" value="30"></div>
+      <div class="big" id="seat" aria-live="polite">—</div>
+      <div class="prow"><button type="button" class="pbtn" id="draw">抽一位</button><button type="button" class="pbtn" id="drawreset">重新開始</button></div>
+      <div class="drawn" id="drawn"></div>
+    </div>
+    <div>
+      <h3>計時</h3>
+      <div class="prow"><label for="tmin">分鐘</label><input id="tmin" type="number" min="1" max="99" value="3"></div>
+      <div class="big" id="clock" aria-live="off">03:00</div>
+      <div class="prow"><button type="button" class="pbtn" id="tgo">開始</button><button type="button" class="pbtn" id="treset">重設</button></div>
+    </div>
+  </section>
+  <button type="button" class="fab-btn" id="toolbtn" aria-expanded="false" aria-controls="panel">課堂工具</button>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i);};
+/* teacher login (client-side convenience only) */
+var teacher=false;
+$('lock').addEventListener('click',function(){
+  if(teacher){teacher=false;window.__setTeacher(false);$('who').textContent='學生模式';$('lock').textContent='教師登入';return;}
+  var f=$('pw');f.hidden=!f.hidden;if(!f.hidden)$('pwi').focus();
+});
+$('pw').addEventListener('submit',function(e){
+  e.preventDefault();
+  if($('pwi').value==='math2026'){teacher=true;window.__setTeacher(true);$('who').textContent='教師模式';$('lock').textContent='登出';$('pw').hidden=true;$('pwi').value='';$('pwe').textContent='';}
+  else{$('pwe').textContent='密碼不對,請再試一次。';}
+});
+/* tool panel */
+$('toolbtn').addEventListener('click',function(){var p=$('panel');p.hidden=!p.hidden;this.setAttribute('aria-expanded',String(!p.hidden));});
+/* lottery */
+var drawn=[],busy=false;
+function pool(){var a=+$('smin').value||1,b=+$('smax').value||30,r=[];for(var i=Math.min(a,b);i<=Math.max(a,b);i++)if(drawn.indexOf(i)<0)r.push(i);return r;}
+$('draw').addEventListener('click',function(){
+  if(busy)return;var p=pool();
+  if(!p.length){$('seat').textContent='抽完了';return;}
+  busy=true;var n=0,t=setInterval(function(){
+    $('seat').textContent=p[Math.floor(Math.random()*p.length)];
+    if(++n>=14){clearInterval(t);var pick=p[Math.floor(Math.random()*p.length)];drawn.push(pick);$('seat').textContent=pick;$('drawn').textContent='已抽過:'+drawn.join('、');busy=false;}
+  },70);
+});
+$('drawreset').addEventListener('click',function(){drawn=[];$('seat').textContent='—';$('drawn').textContent='';});
+/* timer */
+var left=180,tid=null,ac=null;
+function fmt(){var m=Math.floor(left/60),s=left%60;$('clock').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
+function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[0,.35,.7].forEach(function(d){var o=ac.createOscillator(),g=ac.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(ac.destination);o.start(ac.currentTime+d);o.stop(ac.currentTime+d+.2);});}catch(e){}}
+function stop(){clearInterval(tid);tid=null;$('tgo').textContent='開始';}
+$('tmin').addEventListener('change',function(){if(!tid){left=Math.max(1,Math.min(99,+this.value||3))*60;fmt();$('clock').classList.remove('done');}});
+$('tgo').addEventListener('click',function(){
+  if(tid){stop();return;}
+  if(left<=0)left=(+$('tmin').value||3)*60;
+  $('clock').classList.remove('done');$('tgo').textContent='暫停';
+  tid=setInterval(function(){left--;fmt();if(left<=0){stop();$('clock').classList.add('done');beep();}},1000);
+});
+$('treset').addEventListener('click',function(){stop();left=(+$('tmin').value||3)*60;fmt();$('clock').classList.remove('done');});
+/* chalk pen */
+var cv=$('chalk'),cx=cv.getContext('2d'),color='#f4f1e6',erase=false,down=false,lx=0,ly=0;
+function size(){var dpr=window.devicePixelRatio||1;cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;cx.setTransform(dpr,0,0,dpr,0,0);cx.lineCap='round';cx.lineJoin='round';}
+size();window.addEventListener('resize',size);
+$('penbtn').addEventListener('click',function(){
+  var on=!document.body.classList.contains('penning');
+  document.body.classList.toggle('penning',on);$('pentools').hidden=!on;this.setAttribute('aria-pressed',String(on));this.textContent=on?'收起畫筆':'畫筆';
+});
+[].forEach.call(document.querySelectorAll('.sw button'),function(b){b.addEventListener('click',function(){
+  color=b.dataset.c;erase=false;$('eraser').setAttribute('aria-pressed','false');
+  [].forEach.call(document.querySelectorAll('.sw button'),function(x){x.setAttribute('aria-pressed',String(x===b));});
+});});
+$('eraser').addEventListener('click',function(){erase=!erase;this.setAttribute('aria-pressed',String(erase));});
+$('clearpen').addEventListener('click',function(){cx.clearRect(0,0,innerWidth,innerHeight);});
+cv.addEventListener('pointerdown',function(e){down=true;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId);});
+cv.addEventListener('pointermove',function(e){
+  if(!down)return;
+  cx.globalCompositeOperation=erase?'destination-out':'source-over';
+  cx.strokeStyle=color;cx.lineWidth=erase?28:4;
+  cx.beginPath();cx.moveTo(lx,ly);cx.lineTo(e.clientX,e.clientY);cx.stroke();lx=e.clientX;ly=e.clientY;
+});
+['pointerup','pointercancel'].forEach(function(t){cv.addEventListener(t,function(){down=false;});});
+})();
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>
+<script>
+(function(){
+/* ---------- math markup: $...$ segments, ^, frac{}{}, sqrt{} ---------- */
+function esc(c){return c==='&'?'&amp;':c==='<'?'&lt;':c==='>'?'&gt;':c;}
+function mjOld(src){
+  var i=0;
+  function group(){i++;var o=seq('}');i++;return o;}
+  function seq(end){
+    var out='';
+    while(i<src.length&&src[i]!==end){
+      var c=src[i];
+      if(src.startsWith('frac',i)){i+=4;var a=group();var b=group();out+='<span class="fr"><span class="n">'+a+'</span><span class="d">'+b+'</span></span>';}
+      else if(src.startsWith('sqrt',i)){i+=4;var r=group();out+='<span class="rd">√<span class="ov">'+r+'</span></span>';}
+      else if(c==='^'){i++;var s;if(src[i]==='{'){s=group();}else{s=esc(src[i]);i++;}out+='<sup>'+s+'</sup>';}
+      else if(/[a-zA-Z]/.test(c)){out+='<i>'+c+'</i>';i++;}
+      else{out+=esc(c);i++;}
+    }
+    return out;
+  }
+  return seq(null);
+}
+
+function toTeX(t){
+  return t.replace(/frac\{/g,'\\frac{').replace(/sqrt\{/g,'\\sqrt{')
+    .replace(/±/g,'\\pm ').replace(/×/g,'\\times ').replace(/÷/g,'\\div ')
+    .replace(/−/g,'-').replace(/⋯/g,'\\cdots ').replace(/≈/g,'\\approx ');
+}
+function mj(src,disp){
+  if(window.katex){
+    try{return window.katex.renderToString(toTeX(src),{output:'mathml',displayMode:!!disp,throwOnError:true});}catch(e){}
+  }
+  return mjOld(src);
+}
+function T(s,disp){
+  var parts=s.split('$'),out='';
+  for(var k=0;k<parts.length;k++){
+    var p=parts[k];
+    if(k%2){
+      var d=disp&&p.indexOf('=')>-1;
+      out+=d?'<span class="m dm">'+mj(p,true)+'</span>':'<span class="m">'+mj(p)+'</span>';
+      if(d&&parts[k+1])parts[k+1]=parts[k+1].replace(/^[。;;,,、]\s*/,'');
+    }else out+=p;
+  }
+  return out;
+}
+
+/* ---------- data ---------- */
+var LV={1:'基礎',2:'中等',3:'挑戰'};
+var DOTS={1:'●○○',2:'●●○',3:'●●●'};
+var QS=[
+{n:1,unit:'多項式',lv:1,q:'化簡多項式 $3x^2−4x+5−2x+7x^2−9$ 的 $x^3$ 項係數為多少?',opts:['0','10','−6','−4'],ans:0,
+ steps:['合併同類項:$x^2$ 項 $3x^2+7x^2=10x^2$,$x$ 項 $−4x−2x=−6x$,常數項 $5−9=−4$。','化簡得 $10x^2−6x−4$,式中沒有 $x^3$ 項。','沒有這一項,係數就是 0,選 (A)。'],
+ key:'式子裡缺少的次方,係數記為 0。',
+ trap:'選項 10、−6、−4 剛好是 $x^2$、$x$、常數項的係數,看錯次方就會被引走。'},
+{n:2,unit:'乘法公式',lv:1,q:'下列等式何者錯誤?',opts:['$(11+0.3)^2=11^2+0.3^2$','$29^2−21^2=(29+21)(29−21)$','$103×298=(100+3)(300−2)$','$(a+0.5)^2=a^2+a+0.5^2$'],ans:0,
+ steps:['(A) 完全平方公式要有中間項:$(11+0.3)^2=11^2+2×11×0.3+0.3^2$,少了 $2×11×0.3$,所以錯誤。','(B) 平方差公式 $a^2−b^2=(a+b)(a−b)$,正確。','(C) $103=100+3$、$298=300−2$,只是把乘數拆開改寫,正確。','(D) $(a+0.5)^2=a^2+2×a×0.5+0.5^2=a^2+a+0.5^2$,正確。'],
+ key:'$(a±b)^2=a^2±2ab+b^2$,中間項不能漏。',
+ trap:'把 $(a+b)^2$ 當成 $a^2+b^2$,是最常見的錯誤。'},
+{n:3,unit:'多項式',lv:1,q:'計算 $(x^2−7)(3x+4)=ax^3+bx^2+cx+d$,下列選項何者正確?',opts:['$a+b+c=−15$','$b+c+d=−20$','$a+d+b=−21$','$a+c+d=−31$'],ans:2,
+ steps:['用分配律展開:$(x^2−7)(3x+4)=3x^3+4x^2−21x−28$。','對照係數:$a=3$、$b=4$、$c=−21$、$d=−28$。','逐項檢查:(A) $a+b+c=−14$;(B) $b+c+d=−45$;(C) $a+d+b=3−28+4=−21$ ✓;(D) $a+c+d=−46$。','只有 (C) 正確。'],
+ key:'展開後把係數與次方對齊,再代入檢查每個選項。',
+ trap:'$c$、$d$ 都是負數,加總時符號最容易抄錯。'},
+{n:4,unit:'平方根',lv:1,q:'下列敘述何者錯誤?',opts:['$sqrt{6^2}=6$','$sqrt{(frac{6}{19})^2}=frac{6}{19}$','3 為 9 的平方根','9 的平方根為 $±sqrt{81}$'],ans:3,
+ steps:['(A) $sqrt{6^2}=sqrt{36}=6$,正確。','(B) $sqrt{a^2}=|a|$,而 $frac{6}{19}$ 是正數,所以結果是 $frac{6}{19}$,正確。','(C) 9 的平方根有 +3 和 −3 兩個,3 是其中一個,正確。','(D) 9 的平方根是 ±3。$±sqrt{81}=±9$ 是 81 的平方根,所以 (D) 錯誤。'],
+ key:'正數 $a$ 的平方根有兩個,$±sqrt{a}$;$sqrt{a^2}=|a|$。',
+ trap:'「9 的平方根」是 $±sqrt{9}$,不是 $±sqrt{81}$。看到根號裡的數字要問:這是誰的平方根?'},
+{n:5,unit:'多項式',lv:1,q:'求 $(6x^2+19x+10)÷(5+2x)$ 的商式?',opts:['$2x+3$','$3x+2$','$2x+5$','$3x+5$'],ans:1,
+ steps:['先把除式依降冪排列成 $2x+5$。','$6x^2÷2x=3x$;$3x(2x+5)=6x^2+15x$,餘下 $4x+10$。','$4x÷2x=2$;$2(2x+5)=4x+10$,餘 0。','商式為 $3x+2$,選 (B)。','驗算:$(3x+2)(2x+5)=6x^2+15x+4x+10=6x^2+19x+10$ ✓。'],
+sfig:'<div class="scroll"><table class="div" aria-label="直式除法"><tbody><tr><td class="dv"></td><td></td><td class="red">'+T('$3x$')+'</td><td class="red">'+T('$+2$')+'</td></tr><tr><td class="dv">'+T('$2x+5$')+'</td><td class="c">'+T('$6x^2$')+'</td><td class="c">'+T('$+19x$')+'</td><td class="c">'+T('$+10$')+'</td></tr><tr><td class="dv"></td><td>'+T('$6x^2$')+'</td><td>'+T('$+15x$')+'</td><td></td></tr><tr><td class="dv"></td><td class="c ln"></td><td class="c ln">'+T('$4x$')+'</td><td class="c ln">'+T('$+10$')+'</td></tr><tr><td class="dv"></td><td></td><td>'+T('$4x$')+'</td><td>'+T('$+10$')+'</td></tr><tr><td class="dv"></td><td></td><td class="c ln"></td><td class="c ln">'+T('$0$')+'</td></tr></tbody></table></div>',
+ key:'除法與乘法互為逆運算,商式乘除式要還原成被除式。',
+ trap:'除式寫成 $5+2x$,要先改成 $2x+5$ 再做直式。'},
+{n:6,unit:'多項式',lv:2,q:'若 $ax^3−bx+6$ 與 $4x^3−4$ 相加後為常數多項式,則 $a+b=$',opts:['−3','−4','1','4'],ans:1,
+ steps:['相加得 $(a+4)x^3−bx+2$。','常數多項式代表含 $x$ 的項全部消失:$a+4=0$,所以 $a=−4$;$−b=0$,所以 $b=0$。','$a+b=−4$,選 (B)。'],
+ key:'「是常數多項式」等於每個含 $x$ 的項係數都為 0。',
+ trap:'容易只處理 $x^3$ 項,忘了 $−bx$ 也必須為 0。'},
+{n:7,unit:'乘法公式',lv:2,q:'計算 $123456^2−23456^2$ 的結果是幾位數?',opts:['8','9','10','11'],ans:3,
+ steps:['不用硬算平方,用平方差 $a^2−b^2=(a+b)(a−b)$。','$123456^2−23456^2=(123456+23456)(123456−23456)=146912×100000$。','$146912$ 是 6 位數,再乘 $10^5$(後面接 5 個 0),共 11 位數。(實際值 14,691,200,000)'],
+ key:'平方差公式把「兩個大平方相減」變成一次乘法。',
+ trap:'$10^5$ 是 5 個 0,不是 6 個。位數 = 6 + 5。'},
+{n:8,unit:'平方根',lv:1,q:'$sqrt{5678}$ 介於哪兩個整數之間?',opts:['73、74','74、75','75、76','76、77'],ans:2,
+ steps:['找接近 5678 的完全平方數:$75^2=5625$,$76^2=5776$。','$5625<5678<5776$,所以 $75<sqrt{5678}<76$,選 (C)。'],
+ key:'夾擊法:找前後兩個完全平方數,把根號夾在中間。',
+ trap:'$74^2=5476$,離 5678 太遠,不能只憑感覺選。'},
+{n:9,unit:'多項式',lv:1,q:'判斷下列為多項式有幾個?(題目未編號,這裡依序標示方便說明)',
+ extra:'<ul class="exprs">'+['$6x^2+19x+10$','$9x+|−1|$','$6x^2+frac{1}{2}x+10$','$|x|+10$','$frac{1}{2x+1}+10$'].map(function(e,i){return '<li><span class="idx">('+(i+1)+')</span>'+T(e)+'</li>';}).join('')+'</ul>',
+ opts:['2','3','4','5'],ans:1,
+ steps:['(1) 標準的多項式,是。','(2) $|−1|=1$ 是常數,所以 $9x+|−1|=9x+1$,是。','(3) 係數可以是分數,$frac{1}{2}x$ 仍是一次項,是。','(4) $|x|$ 含絕對值,不是多項式的項,不是。','(5) 分母含有 $x$,不是多項式,不是。','共 3 個,選 (B)。'],
+ key:'多項式的每一項都是「係數 × $x$ 的非負整數次方」。',
+ trap:'$|−1|$ 裡沒有 $x$,只是常數 1;反過來 $|x|$ 就不行。'},
+{n:10,unit:'多項式',lv:2,q:'計算 $(3x−1)(x+a)=3x^2+17x−a$,求 $a$ 的值。',opts:['5','6','9','10'],ans:1,
+ steps:['乘開:$(3x−1)(x+a)=3x^2+3ax−x−a=3x^2+(3a−1)x−a$。','對照 $x$ 項:$3a−1=17$,所以 $a=6$。','驗算常數項:兩邊都是 $−a$ ✓。選 (B)。'],
+ key:'兩個多項式相等,同次項的係數就要相等。',
+ trap:'$−1$ 乘 $x$ 與乘 $a$ 的符號別弄反,中間項是 $3a−1$,不是 $3a+1$。'},
+{n:11,unit:'乘法公式',lv:2,q:'$a^2+b^2=34$,$(a+b)^2=64$,則 $(a−b)^2=$ ?',opts:['4','9','16','無解'],ans:0,
+ steps:['$(a+b)^2=a^2+2ab+b^2$,所以 $64=34+2ab$,得 $2ab=30$。','$(a−b)^2=a^2−2ab+b^2=34−30=4$,選 (A)。','捷徑:$(a−b)^2=2(a^2+b^2)−(a+b)^2=68−64=4$。'],
+ key:'$(a+b)^2$、$(a−b)^2$、$a^2+b^2$、$ab$ 四者知二可求其餘。',
+ trap:'不要因為算不出 $a$、$b$ 就選「無解」。其實 $a=3$、$b=5$ 就符合條件。'},
+{n:12,unit:'平方根',lv:2,q:'已知 $sqrt{a}$ 介於 7 與 8 之間,$sqrt{b}$ 介於 13 與 14 之間,則 $sqrt{a+b}$ 的整數部分可能為何?',opts:['11','13','15','17'],ans:2,
+ steps:['$7<sqrt{a}<8$,平方得 $49<a<64$;$13<sqrt{b}<14$,平方得 $169<b<196$。','相加:$218<a+b<260$。','$14^2=196$、$15^2=225$、$16^2=256$、$17^2=289$。所以 $sqrt{a+b}$ 介於約 14.8 與 16.1 之間,整數部分可能是 14、15、16。','選項裡只有 15 符合,選 (C)。例如 $a=50$、$b=180$,$sqrt{230}≈15.2$。'],
+ key:'先把根號的範圍平方,還原成 $a$、$b$ 的範圍,再相加、再開根。',
+ trap:'不能把 $sqrt{a}+sqrt{b}$ 的範圍(20~22)當成 $sqrt{a+b}$ 的範圍。'},
+{n:13,unit:'多項式',lv:2,q:'如圖(一),已知梯形 ABDC 的上底 $AB=3x+2$,下底 $CD=5x+10$,面積 $8x^2+24x+18$,求高為何?',
+ extra:'<svg class="fig" viewBox="0 0 320 172" role="img" aria-label="梯形 ABDC,上底 AB,下底 CD,高 h"><polygon class="edge" points="90,26 230,26 292,134 30,134"/><line class="aux" x1="90" y1="26" x2="90" y2="134"/><path class="aux" d="M90,122 h12 v12"/><text x="76" y="22">A</text><text x="236" y="22">B</text><text x="14" y="150">C</text><text x="294" y="150">D</text><text x="100" y="86" class="red">h = ?</text><text x="104" y="16">AB = 3x+2</text><text x="96" y="162">CD = 5x+10</text><text x="150" y="92">面積 8x²+24x+18</text></svg>',
+ opts:['$2x+3$','$4x+6$','$3x+2$','$6x+4$'],ans:0,
+ steps:['梯形面積 = (上底 + 下底) × 高 ÷ 2。','上底加下底:$(3x+2)+(5x+10)=8x+12$,所以面積 $=(4x+6)×h$。','把面積因式分解:$8x^2+24x+18=2(4x^2+12x+9)=2(2x+3)^2=(4x+6)(2x+3)$。','所以 $(4x+6)h=(4x+6)(2x+3)$,高 $h=2x+3$,選 (A)。'],
+ key:'求高 = 面積 ÷ (底和 ÷ 2),用因式分解或多項式除法都可以。',
+ trap:'「÷ 2」別漏掉。漏掉的話用 $8x+12$ 去除,商式會出現分數,得不到整齊的答案。'},
+{n:14,unit:'多項式',lv:2,q:'如圖二,爺爺對阿信說「解開我的保險箱密碼,下禮拜連假就帶你去衝浪!」請幫忙求出密碼「$abcd$」四位數字。',
+ extra:'<div class="scroll"><table class="sub" aria-label="圖二:多項式減法"><tbody><tr><td></td><td>'+T('$5x^3$')+'</td><td>'+T('$−2x^2$')+'</td><td>'+T('$+4x$')+'</td><td>+2</td></tr><tr class="minus"><td>−)</td><td>'+T('$−3x^3$')+'</td><td>'+T('$+7x^2$')+'</td><td>'+T('$+2x$')+'</td><td>+5</td></tr><tr><td></td><td>'+T('$ax^3$')+'</td><td>'+T('$−bx^2$')+'</td><td>'+T('$+cx$')+'</td><td>'+T('$−d$')+'</td></tr></tbody></table></div>',
+ opts:['2527','8523','2923','8923'],ans:3,
+ steps:['圖二是減法,括號前面是負號,去括號要變號:$(5x^3−2x^2+4x+2)+(3x^3−7x^2−2x−5)$。','同次項相加:$x^3$:$5+3=8$;$x^2$:$−2−7=−9$;$x$:$4−2=2$;常數:$2−5=−3$。結果是 $8x^3−9x^2+2x−3$。','對照 $ax^3−bx^2+cx−d$:$a=8$;$−b=−9$ 所以 $b=9$;$c=2$;$−d=−3$ 所以 $d=3$。','密碼 $abcd=8923$,選 (D)。'],
+ key:'減一個多項式,等於加上它的每一項的相反數。',
+ trap:'答案列寫的是 $−bx^2$、$−d$,求出 $−9$、$−3$ 後,別直接把 $b$、$d$ 當成 −9、−3。'},
+{n:15,unit:'乘法公式',lv:3,q:'$2×4×(3^2+1)×(3^4+1)×(3^8+1)=81^n−1$,求 $n=$',opts:['2','4','8','16'],ans:1,
+ steps:['$2×4=8=3^2−1$,先把它換成 $(3^2−1)$。','連續用平方差:$(3^2−1)(3^2+1)=3^4−1$;$(3^4−1)(3^4+1)=3^8−1$;$(3^8−1)(3^8+1)=3^{16}−1$。','$81=3^4$,所以 $81^n=3^{4n}$。令 $4n=16$,$n=4$,選 (B)。'],
+ key:'看到 $(a+1)(a^2+1)(a^4+1)…$,想到前面補一個 $(a−1)$ 讓平方差連鎖展開。',
+ trap:'前面的 $2×4=8$ 看起來只是普通乘法,其實它就是要補的 $3^2−1$。'},
+{n:16,unit:'平方根',lv:2,q:'若 $x$、$y$ 為整數,$3x+1$ 的平方根是 ±5,$x+y$ 是 81 的正平方根,則 $2x+y=$',opts:['11','13','17','19'],ans:2,
+ steps:['「$3x+1$ 的平方根是 ±5」代表 $3x+1=5^2=25$,所以 $x=8$。','「$x+y$ 是 81 的正平方根」:正平方根只取 $sqrt{81}=9$,所以 $x+y=9$,$y=1$。','$2x+y=16+1=17$,選 (C)。'],
+ key:'「平方根是 ±5」要先還原成平方 25。',
+ trap:'81 的平方根有 ±9,但題目指定「正平方根」,只取 9。'},
+{n:17,unit:'平方根',lv:2,q:'判斷 $7−sqrt{67}$ 在哪兩個數之間?',opts:['1、0','0、−1','−1、−2','−3、−4'],ans:2,
+ steps:['$8^2=64<67<81=9^2$,所以 $8<sqrt{67}<9$。','兩邊乘 −1,不等號反向:$−9<−sqrt{67}<−8$。','同加 7:$−2<7−sqrt{67}<−1$,選 (C)。'],
+ key:'先夾出根號的範圍,再依序處理負號與加減。',
+ trap:'乘 −1 時不等號要反向。忘了反向,會寫出 $−8<7−sqrt{67}<−9$ 這種不可能的範圍。'},
+{n:18,unit:'乘法公式',lv:3,q:'有兩個質數 $x$、$y$ 相差 8,求 $xy+16=$',opts:['$63^2$','$64^2$','$65^2$','$66^2$'],ans:0,
+ steps:['兩質數相差 8(偶數),代表奇偶相同。若其中一個是 2,另一個會是 10,不是質數,所以兩個都是奇質數。','設較小的質數為 $y$,另一個為 $x=y+8$,則 $xy+16=y(y+8)+16=y^2+8y+16=(y+4)^2$。','選項是 $63^2$ 到 $66^2$,所以 $y+4$ 在 63~66,$y$ 只可能是 59、60、61、62。','60、62 不是質數;61 是質數,但 $61+8=69=3×23$ 不是;59 是質數,$59+8=67$ 也是質數。所以 $y=59$,答案是 $63^2$,選 (A)。'],
+ key:'$y(y+8)+16$ 剛好是完全平方式 $(y+4)^2$。',
+ trap:'題目沒說是哪兩個質數,3 和 11、5 和 13 也相差 8(得到 $7^2$、$9^2$),只是不在選項裡。要靠選項的範圍找出 59 和 67。'},
+{n:19,unit:'乘法公式',lv:3,q:'$(1−frac{1}{2^2})(1−frac{1}{3^2})(1−frac{1}{4^2})⋯(1−frac{1}{10^2})=frac{y}{x}$,求 $x+y=$',opts:['3','24','31','32'],ans:2,
+ steps:['每一項用平方差:$1−frac{1}{k^2}=frac{(k−1)(k+1)}{k^2}=frac{k−1}{k}×frac{k+1}{k}$。','$k=2$ 到 10 連乘。第一組:$frac{1}{2}×frac{2}{3}×⋯×frac{9}{10}=frac{1}{10}$(中間全部約分)。','第二組:$frac{3}{2}×frac{4}{3}×⋯×frac{11}{10}=frac{11}{2}$。','相乘:$frac{1}{10}×frac{11}{2}=frac{11}{20}$,所以 $y=11$、$x=20$,$x+y=31$,選 (C)。'],
+ key:'平方差把每一項拆成兩個分數,連乘時前後相消。',
+ trap:'$frac{11}{20}$ 已經是最簡分數才能讀出 $x$、$y$,算完要確認有沒有可以約分。'},
+{n:20,unit:'乘法公式',lv:3,q:'$32x^3−ax+b=16(x−frac{1}{4})(x+frac{1}{4})(cx+d)$,求 $a+b+c+d=$',opts:['−4','4','−8','8'],ans:1,
+ steps:['先用平方差:$16(x−frac{1}{4})(x+frac{1}{4})=16(x^2−frac{1}{16})=16x^2−1$。','右邊 $=(16x^2−1)(cx+d)=16cx^3+16dx^2−cx−d$。','對照左邊 $32x^3+0x^2−ax+b$:$16c=32$ 得 $c=2$;$16d=0$ 得 $d=0$;$−c=−a$ 得 $a=2$;$−d=b$ 得 $b=0$。','$a+b+c+d=2+0+2+0=4$,選 (B)。'],
+ key:'左邊沒有 $x^2$ 項,所以 $x^2$ 的係數 $16d$ 必須是 0。',
+ trap:'左邊的「$+b$」是常數項,要和右邊的 $−d$ 對照,不是和 $c$ 對照。'},
+{n:21,unit:'乘法公式',lv:2,q:'已知 $(200−a)(198−a)=199$,求 $(200−a)^2+(198−a)^2=$',opts:['396','398','400','402'],ans:3,
+ steps:['令 $u=200−a$、$v=198−a$,則 $u−v=2$,$uv=199$。','$u^2+v^2=(u−v)^2+2uv=4+398=402$,選 (D)。'],
+ key:'整體代換:把重複出現的式子當成一個字母。',
+ trap:'不需要解出 $a$(那是一個二次方程式)。找出「差」與「積」,就能直接求平方和。'},
+{n:22,unit:'平方根',lv:3,q:'若 $n$ 是一個二位數,$sqrt{960n}$ 也是正整數,求可能的 $n$ 加起來多少?',opts:['60','65','70','75'],ans:3,
+ steps:['質因數分解:$960=2^6×3×5=8^2×15$。','$sqrt{960n}=8sqrt{15n}$,要是整數,$15n$ 必須是完全平方數。','$15=3×5$ 的質因數次方都是 1,$n$ 必須補上 $3×5$,並且再乘平方數:$n=15k^2$。','$k=1$:$n=15$;$k=2$:$n=60$;$k=3$:$n=135$ 是三位數,不合。','$n=15$ 或 $60$,和為 $75$,選 (D)。'],
+ key:'開根號要得整數,根號裡每個質因數的次方都要是偶數。',
+ trap:'很容易只找到 15,漏掉 $k=2$ 的 60。'}
+];
+
+var STATE={mode:'review',unit:'all',lv:'all',picked:{},expand:false};
+try{var sv=JSON.parse(localStorage.getItem('exam8a1')||'null');if(sv){if(sv.mode==='test')STATE.mode='test';if(sv.picked&&typeof sv.picked==='object')STATE.picked=sv.picked;}}catch(e){}
+function save(){try{localStorage.setItem('exam8a1',JSON.stringify({mode:STATE.mode,picked:STATE.picked}));}catch(e){}}
+
+/* ---------- build ---------- */
+var $=function(id){return document.getElementById(id);};
+$('key').innerHTML=QS.map(function(q){return '<li><a class="kc" href="#q'+q.n+'" data-go="q'+q.n+'"><span>'+q.n+'</span><b>'+'ABCD'[q.ans]+'</b></a></li>';}).join('');
+
+function solHtml(q){
+  return '<ol class="steps">'+q.steps.map(function(s){return '<li><span>'+T(s,true)+'</span></li>';}).join('')+'</ol>'+(q.sfig||'')+
+    '<p class="pt"><span class="lab k">觀念</span><span>'+T(q.key)+'</span></p>'+
+    '<p class="pt t-only"><span class="lab t">易錯</span><span>'+T(q.trap)+'</span></p>';
+}
+function card(q){
+  var long=q.opts.some(function(o){return o.replace(/\$/g,'').length>14;});
+  return '<article class="q" id="q'+q.n+'" data-n="'+q.n+'">'+
+    '<div class="no">'+q.n+'</div><div class="body">'+
+    '<div class="meta"><span class="tag">'+q.unit+'</span><span><span class="dots" aria-hidden="true">'+DOTS[q.lv]+'</span> '+LV[q.lv]+'</span></div>'+
+    '<p class="stem">'+T(q.q)+'</p>'+(q.extra||'')+
+    '<div class="opts'+(long?' long':'')+'" role="group" aria-label="第 '+q.n+' 題選項">'+
+    q.opts.map(function(o,i){return '<button type="button" class="opt" data-i="'+i+'"><span class="lt">'+'ABCD'[i]+'</span><span class="tx">'+T(o)+'</span></button>';}).join('')+
+    '</div><p class="verdict" role="status"></p>'+
+    '<details class="sol"><summary>詳解</summary>'+solHtml(q)+'</details></div></article>';
+}
+$('list').innerHTML=QS.map(card).join('');
+var cards=[].slice.call(document.querySelectorAll('.q'));
+
+/* filters */
+function chips(host,key,items){
+  var h=host;
+  items.forEach(function(it){
+    var b=document.createElement('button');b.type='button';b.className='chip';b.dataset.v=it.v;
+    b.innerHTML=it.t+'<em>'+it.c+'</em>';
+    b.addEventListener('click',function(){STATE[key]=it.v;applyState();});
+    h.appendChild(b);
+  });
+}
+var units=['多項式','乘法公式','平方根'];
+chips($('f-unit'),'unit',[{v:'all',t:'全部',c:QS.length}].concat(units.map(function(u){return {v:u,t:u,c:QS.filter(function(q){return q.unit===u;}).length};})));
+chips($('f-lv'),'lv',[{v:'all',t:'全部',c:QS.length}].concat([1,2,3].map(function(l){return {v:String(l),t:LV[l],c:QS.filter(function(q){return q.lv===l;}).length};})));
+
+/* comprehension */
+function v(txt,lab){return T(txt)+(lab?'<span class="lab2">'+lab+'</span>':'');}
+var divFig='<div class="scroll"><table class="div" aria-label="多項式除法填入答案後的直式">'+
+  '<tr><td class="dv"></td><td></td><td>'+T('$3x$')+'</td><td>'+T('$−5$')+'</td></tr>'+
+  '<tr class="bar2"><td class="dv">'+v('$7x+10$','d、e')+'</td><td class="c red">'+v('$21x^2$','a')+'</td><td class="c red">'+v('$−5x$','b')+'</td><td class="c red">'+v('$−51$','c')+'</td></tr>'+
+  '<tr><td class="dv"></td><td class="red">'+v('$21x^2$','f')+'</td><td class="red">'+v('$+30x$','g')+'</td><td></td></tr>'+
+  '<tr class="sub1"><td class="dv"></td><td></td><td class="c ln">'+T('$−35x$')+'</td><td class="c ln red">'+v('$−51$','h')+'</td></tr>'+
+  '<tr><td class="dv"></td><td></td><td>'+T('$−35x$')+'</td><td>'+T('$−50$')+'</td></tr>'+
+  '<tr class="sub1"><td class="dv"></td><td></td><td></td><td class="c ln">'+T('$−1$')+'</td></tr></table></div>';
+var vals=[['a','21'],['b','−5'],['c','−51'],['d','7'],['e','10'],['f','21'],['g','30'],['h','−51']];
+function sol(arr){return '<ol class="steps">'+arr.map(function(s){return '<li><span>'+T(s,true)+'</span></li>';}).join('')+'</ol>';}
+$('comp').innerHTML=
+ '<article class="cq" id="c1"><h3>綜合題 1 <small>4 分</small></h3>'+
+ '<p class="stem">'+T('已知 $a(x^4−4x^3+3x^2)+b(−2x^3+3x^2−4x)+x^4+x−9$ 為二次多項式,其中 $a$、$b$ 都是整數,請問各項係數和為多少?')+'</p>'+
+ '<span class="ans">−13</span>'+
+ sol(['依次方整理:$x^4$ 項 $(a+1)x^4$;$x^3$ 項 $(−4a−2b)x^3$;$x^2$ 項 $(3a+3b)x^2$;$x$ 項 $(−4b+1)x$;常數項 $−9$。','「二次多項式」要求 $x^4$、$x^3$ 的係數都是 0:$a+1=0$ 得 $a=−1$;$−4a−2b=0$ 得 $4−2b=0$,$b=2$。','代回:$x^2$ 項 $3(−1+2)=3$,$x$ 項 $−8+1=−7$,常數 $−9$。多項式為 $3x^2−7x−9$。','各項係數和 $=3−7−9=−13$。','快速驗算:各項係數和等於把 $x=1$ 代入。$a(1−4+3)+b(−2+3−4)+1+1−9=0−3b−7=−13$ ✓。'])+
+ '<p class="pt"><span class="lab k">觀念</span><span>'+T('次數降下來,就是把高次項的係數設為 0。')+'</span></p>'+
+ '<p class="pt t-only"><span class="lab t">易錯</span><span>'+T('題目要的是「各項係數和」,最後要把 $a$、$b$ 代回去算,而不是只求出 $a$、$b$。')+'</span></p></article>'+
+ '<article class="cq" id="c2"><h3>綜合題 2 <small>8 分,a~h 每格 1 分</small></h3>'+
+ '<p class="stem">'+T('有一個多項式除法運算如下圖,請求出 $a$、$b$、$c$、$d$、$e$、$f$、$g$、$h$。')+'</p>'+
+ divFig+
+ '<ul class="vals" aria-label="答案">'+vals.map(function(p){return '<li>'+T('$'+p[0]+'$')+' = <b>'+p[1]+'</b></li>';}).join('')+'</ul>'+
+ sol(['先看商的 $−5$ 這一步:$−5×(dx+e)=−35x−50$。所以 $−5d=−35$,$d=7$;$−5e=−50$,$e=10$。除式是 $7x+10$。','再看商的 $3x$ 這一步:$3x×(7x+10)=21x^2+30x$,對應 $fx^2+gx$,所以 $f=21$、$g=30$。','被除式減去 $21x^2+30x$ 後剩下 $−35x+h$。首項 $x^2$ 被消掉,所以 $a=f=21$;$x$ 項 $b−30=−35$,$b=−5$;常數項直接落下,$c=h$。','最後一行:$h−(−50)=−1$,所以 $h=−51$,$c=−51$。','驗算:被除式 $=$ 除式 × 商式 + 餘式 $=(7x+10)(3x−5)+(−1)=21x^2−5x−51$ ✓。'])+
+ '<p class="pt"><span class="lab k">觀念</span><span>'+T('被除式 = 除式 × 商式 + 餘式。直式裡每一行都是「商的一項 × 除式」。')+'</span></p>'+
+ '<p class="pt t-only"><span class="lab t">易錯</span><span>'+T('減法要整行變號:$−35x−(−35x−50)$ 的常數部分是 $h+50$,不是 $h−50$。')+'</span></p></article>';
+
+/* formulas */
+var FM=[
+ ['乘法公式',['$(a+b)^2=a^2+2ab+b^2$','$(a−b)^2=a^2−2ab+b^2$','$(a+b)(a−b)=a^2−b^2$','$(a+b)^2−(a−b)^2=4ab$','用在第 2、7、11、15、18、19、20、21 題']],
+ ['平方根',['正數 $a$ 的平方根有兩個:$±sqrt{a}$','$sqrt{a^2}=|a|$','夾擊估算:$n^2<a<(n+1)^2$ 則 $n<sqrt{a}<n+1$','根號內質因數的次方全是偶數,才開得出整數','用在第 4、8、12、16、17、22 題']],
+ ['多項式',['缺少的次方,係數是 0','相同次方才能合併同類項','被除式 = 除式 × 商式 + 餘式,先依降冪排列','各項係數和 = 把 $x=1$ 代入','用在第 1、3、5、6、9、10、13、14 題與綜合題']]
+];
+$('formulas').innerHTML=FM.map(function(f){return '<section class="fb"><h3>'+f[0]+'</h3><ul>'+f[1].map(function(s){return '<li>'+T(s)+'</li>';}).join('')+'</ul></section>';}).join('');
+
+/* ---------- state -> DOM ---------- */
+function applyState(){
+  if(!document.body.classList.contains('teacher'))STATE.mode='test';
+  var test=STATE.mode==='test',shown=0,answered=0,score=0;
+  $('m-review').setAttribute('aria-pressed',String(!test));
+  $('m-test').setAttribute('aria-pressed',String(test));
+  document.body.classList.toggle('test',test);
+  [].forEach.call(document.querySelectorAll('.chip'),function(c){
+    var key=c.parentNode.id==='f-unit'?'unit':'lv';
+    c.setAttribute('aria-pressed',String(STATE[key]===c.dataset.v));
+  });
+  cards.forEach(function(card){
+    var n=+card.dataset.n,q=QS[n-1];
+    var show=(STATE.unit==='all'||q.unit===STATE.unit)&&(STATE.lv==='all'||String(q.lv)===STATE.lv);
+    card.hidden=!show; if(show)shown++;
+    var p=STATE.picked[n],done=test&&typeof p==='number';
+    if(done){answered++;if(p===q.ans)score+=4;}
+    var reveal=!test||done;
+    [].forEach.call(card.querySelectorAll('.opt'),function(b,i){
+      var ok=reveal&&i===q.ans,bad=done&&i===p&&p!==q.ans;
+      b.classList.toggle('ok',ok);b.classList.toggle('bad',bad);
+      b.dataset.mark=ok?'✓':(bad?'×':'');
+      b.setAttribute('aria-disabled',(test&&!done)?'false':'true');
+    });
+    var vd=card.querySelector('.verdict');vd.className='verdict';
+    if(!test){vd.textContent='';vd.hidden=true;}
+    else{vd.hidden=false;
+      if(!done)vd.textContent='選一個答案,就會顯示對錯與詳解。';
+      else if(p===q.ans){vd.textContent='答對了,+4 分。';vd.classList.add('good');}
+      else{vd.textContent='答錯了,正確答案是 ('+'ABCD'[q.ans]+')。';vd.classList.add('miss');}
+    }
+    card.querySelector('.sol').hidden=!reveal;
+  });
+  $('empty').hidden=shown>0;
+  $('reset').hidden=!test;
+  $('expand').textContent=STATE.expand?'收合全部詳解':'展開全部詳解';
+  $('status').innerHTML=test?('已作答 '+answered+' / '+QS.length+' 題 · 得分 <b>'+score+'</b> / 88'):('顯示 '+shown+' / '+QS.length+' 題');
+}
+
+/* ---------- events ---------- */
+$('m-review').addEventListener('click',function(){STATE.mode='review';save();applyState();});
+$('m-test').addEventListener('click',function(){STATE.mode='test';save();applyState();});
+$('reset').addEventListener('click',function(){STATE.picked={};save();applyState();});
+$('expand').addEventListener('click',function(){STATE.expand=!STATE.expand;[].forEach.call(document.querySelectorAll('.q .sol'),function(d){d.open=STATE.expand;});applyState();});
+$('list').addEventListener('click',function(e){
+  var b=e.target.closest('.opt');if(!b||STATE.mode!=='test')return;
+  var n=+b.closest('.q').dataset.n;if(typeof STATE.picked[n]==='number')return;
+  STATE.picked[n]=+b.dataset.i;save();applyState();
+});
+$('key').addEventListener('click',function(e){
+  var a=e.target.closest('[data-go]');if(!a)return;e.preventDefault();
+  var el=$(a.dataset.go);
+  if(el.hidden){STATE.unit='all';STATE.lv='all';applyState();}
+  var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  el.scrollIntoView({behavior:rm?'auto':'smooth',block:'start'});
+});
+window.__setTeacher=function(v){document.body.classList.toggle('teacher',v);STATE.mode=v?'review':'test';applyState();};
+document.querySelector('.pills').addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;
+  var rm=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(b.dataset.unit){STATE.unit=b.dataset.unit;applyState();$('h-choice').scrollIntoView({behavior:rm?'auto':'smooth',block:'start'});}
+  else if(b.dataset.go){$(b.dataset.go).scrollIntoView({behavior:rm?'auto':'smooth',block:'start'});}
+});
+applyState();
+})();
+</script>
