@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2-1 點、直線與圓之間的位置關係｜教學駕駛艙</title>
+<style>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#1a2a1a;color:#e8e4d8;font-family:"Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.65;background-image:radial-gradient(rgba(255,255,255,0.03) 1px,transparent 1px);background-size:22px 22px}
+.hdr{position:sticky;top:0;z-index:50;background:linear-gradient(#a07d55,#8d6e4a 60%,#765a3b);border-bottom:4px solid #5d4630;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;box-shadow:0 3px 8px rgba(0,0,0,.5)}
+.hdr h1{margin:0;font-size:1.25rem;color:#fff8e1;letter-spacing:1px}
+.hdr small{display:block;color:#f0dfc0;font-size:.78rem}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25)}
+.modebar{display:flex;gap:10px;align-items:center;justify-content:center;padding:10px;background:rgba(0,0,0,.25);flex-wrap:wrap}
+.modebar button,.btn{background:#2e7d32;color:#fff;border:0;border-radius:18px;padding:7px 18px;font-size:.9rem;cursor:pointer;font-family:inherit}
+.modebar button.on{background:#ffd54f;color:#222;font-weight:700}
+.btn:hover,.modebar button:hover{filter:brightness(1.15)}
+.wrap{max-width:1000px;margin:0 auto;padding:0 16px 120px}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 6px}
+.goals span{background:rgba(129,212,250,.14);border:1px solid rgba(129,212,250,.5);color:#81d4fa;border-radius:16px;padding:3px 12px;font-size:.85rem}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 22px}
+.pills a{background:rgba(255,255,255,.07);border:1px dashed rgba(255,255,255,.35);color:#ffd54f;text-decoration:none;border-radius:18px;padding:5px 14px;font-size:.88rem}
+.pills a:hover{background:rgba(255,213,79,.18)}
+section{margin:34px 0;scroll-margin-top:90px;border-top:2px dashed rgba(255,255,255,.2);padding-top:18px}
+section>h2{margin:0 0 4px;color:#ffd54f;font-size:1.5rem}
+.sub{color:#a5d6a7;font-size:.88rem;margin-bottom:12px}
+.intro{background:rgba(255,255,255,.05);border-left:5px solid #ff8a80;border-radius:8px;padding:14px 18px;margin:10px 0}
+.intro b{color:#ff8a80}
+.concept-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:12px;padding:20px;margin:16px 0}
+.concept-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:10px}
+.concept-icon{font-size:1.4rem}
+.concept-card-title{color:#ffd54f;font-size:1.15rem;margin:0}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.concept-def,.concept-formula,.concept-keypoints,.concept-example{background:rgba(0,0,0,0.2);border-radius:8px;padding:12px}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.concept-card p{margin:4px 0}
+.formula-text{color:#81d4fa;font-family:"Courier New",monospace;font-size:1.02rem;text-align:center;padding:4px 0}
+.concept-card-body ul{margin:4px 0 0 16px;padding:0}
+.concept-card-body li{color:#e8e4d8;font-size:0.9rem;margin-bottom:4px}
+.lab{background:#12200f;border:3px solid #6d5538;border-radius:10px;padding:10px;margin:14px 0;box-shadow:inset 0 0 25px rgba(0,0,0,.5)}
+.lab-title{color:#81d4fa;font-size:.92rem;margin:0 0 6px}
+canvas.cv{display:block;width:100%;touch-action:none;background:#16261a;border-radius:6px}
+.ctrl{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin:8px 0;font-size:.9rem}
+.ctrl label{display:flex;gap:8px;align-items:center}
+.ctrl input[type=range]{accent-color:#ffd54f;min-width:140px}
+.ctrl b{color:#ffd54f;min-width:34px;display:inline-block}
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.tabs button{background:rgba(255,255,255,.08);color:#e8e4d8;border:1px solid rgba(255,255,255,.3);border-radius:14px;padding:5px 14px;cursor:pointer;font-family:inherit;font-size:.88rem}
+.tabs button.on{background:#ffd54f;color:#222;font-weight:700}
+.readout{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 14px;margin-top:8px;font-size:.95rem;min-height:3.2em}
+.readout .hl{color:#ffd54f;font-weight:700}.readout .pk{color:#ff8a80;font-weight:700}.readout .bl{color:#81d4fa;font-weight:700}.readout .gn{color:#a5d6a7;font-weight:700}
+.quiz{background:rgba(255,213,79,.06);border:1px solid rgba(255,213,79,.35);border-radius:10px;padding:12px 16px;margin:14px 0}
+.quiz h4{margin:0 0 8px;color:#ffd54f}
+.q{margin:12px 0;padding-bottom:10px;border-bottom:1px dotted rgba(255,255,255,.2)}
+.q:last-child{border-bottom:0}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}
+.opts button{background:rgba(255,255,255,.08);color:#e8e4d8;border:1px solid rgba(255,255,255,.3);border-radius:8px;padding:8px 10px;cursor:pointer;text-align:left;font-family:inherit;font-size:.92rem}
+.opts button:hover{background:rgba(255,255,255,.16)}
+.opts button.ok{background:#2e7d32;border-color:#a5d6a7}.opts button.no{background:#8e2b2b;border-color:#ff8a80}
+.fb{margin-top:6px;font-size:.88rem;color:#a5d6a7;min-height:1.2em}.fb.bad{color:#ff8a80}
+.teacher-only{display:none;background:rgba(255,138,128,.08);border:1px solid rgba(255,138,128,.5);border-radius:10px;padding:10px 16px;margin:12px 0}
+body.teacher .teacher-only{display:block}
+.teacher-only h4{margin:0 0 4px;color:#ff8a80}
+.teacher-only li{font-size:.9rem}
+table.cheat{width:100%;border-collapse:collapse;margin:10px 0;font-size:.92rem}
+table.cheat th,table.cheat td{border:1px solid rgba(255,255,255,.3);padding:8px 10px;text-align:left;vertical-align:top}
+table.cheat th{background:rgba(255,213,79,.18);color:#ffd54f}
+.video-box{background:rgba(0,0,0,.35);border:2px dashed rgba(255,255,255,.3);border-radius:10px;padding:24px;text-align:center;color:#a5d6a7}
+.video-box iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px}
+svg text{fill:#e8e4d8;font-family:inherit}
+/* floating tools */
+#tools{position:fixed;right:12px;top:110px;z-index:60;width:230px;background:#241a10;border:3px solid #8d6e4a;border-radius:12px;padding:10px 12px;font-size:.85rem;box-shadow:0 4px 14px rgba(0,0,0,.6)}
+#tools.min{width:auto;padding:6px 10px}#tools.min .tb{display:none}
+#tools h5{margin:0 0 6px;color:#ffd54f;display:flex;justify-content:space-between;align-items:center;font-size:.9rem}
+#tools h5 button{background:none;border:0;color:#fff8e1;font-size:1rem;cursor:pointer}
+#tools .row{display:flex;gap:6px;align-items:center;margin:6px 0;flex-wrap:wrap}
+#tools input[type=number]{width:60px;background:#12200f;color:#e8e4d8;border:1px solid #6d5538;border-radius:6px;padding:3px 6px}
+#pickRes,#timeDisp{font-size:2rem;color:#ffd54f;text-align:center;font-weight:700;min-height:2.6rem}
+#tools .btn{padding:4px 12px;font-size:.8rem}
+#penBtn{position:fixed;left:12px;bottom:14px;z-index:61;width:48px;height:48px;border-radius:50%;border:3px solid #8d6e4a;background:#2e7d32;font-size:1.3rem;cursor:pointer;color:#fff}
+#penBar{position:fixed;left:12px;top:50%;transform:translateY(-50%);z-index:61;display:none;flex-direction:column;gap:8px;background:#241a10;border:3px solid #8d6e4a;border-radius:12px;padding:8px}
+#penBar.show{display:flex}
+#penBar button{width:34px;height:34px;border-radius:50%;border:2px solid #fff;cursor:pointer;font-size:.9rem;background:#444;color:#fff}
+#penBar button.sel{outline:3px solid #ffd54f}
+#pen{position:fixed;inset:0;z-index:55;pointer-events:none;touch-action:none}
+#pen.on{pointer-events:auto;cursor:crosshair}
+.foot{text-align:center;color:#9aa89a;font-size:.8rem;margin-top:40px}
+@media(max-width:1024px){#tools{top:auto;bottom:70px;right:8px}}
+@media(max-width:768px){.concept-card-body{grid-template-columns:1fr}.opts{grid-template-columns:1fr}.hdr h1{font-size:1rem}#tools{width:200px}section>h2{font-size:1.25rem}}
+@media(pointer:coarse){.modebar button,.btn,.tabs button,.opts button,.pills a,.btn-home-nav{min-height:44px;display:inline-flex;align-items:center}.opts button{display:flex}.ctrl input[type=range]{min-height:44px}#penBar button{width:44px;height:44px}#tools .btn{min-height:44px}}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div><h1>⭕ 2-1 點、直線與圓之間的位置關係<small>國中數學 九年級上｜第 2 章 圓｜S-9-5、S-9-7</small></h1></div>
+  <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+</header>
+
+<div class="modebar">
+  <span>模式：</span>
+  <button id="bStu" class="on">🎒 學生模式</button>
+  <button id="bTea">🔒 教師模式</button>
+</div>
+
+<main class="wrap">
+
+<div class="goals">
+  <span>認識圓、弦、弧、弓形、圓心角、扇形</span>
+  <span>計算弧長與扇形面積</span>
+  <span>判斷點與圓的位置關係</span>
+  <span>判斷直線與圓的位置關係、切線性質</span>
+  <span>求切線段長並應用其性質</span>
+  <span>運用弦心距與弦的性質</span>
+</div>
+<nav class="pills">
+  <a href="#intro">🚌 情境導入</a><a href="#sec1">① 圓的名詞</a><a href="#sec2">② 弧長與扇形面積</a><a href="#sec3">③ 點與圓</a><a href="#sec4">④ 直線與圓</a><a href="#sec5">⑤ 切線段</a><a href="#sec6">⑥ 弦與弦心距</a><a href="#summary">📋 總結</a><a href="#video">🎬 影片</a>
+</nav>
+
+<section id="intro">
+  <h2>🚌 情境導入：大型車轉彎的危險區域</h2>
+  <div class="sub">課本 P.84（素養：P.126）</div>
+  <div class="intro">
+    <p>近年臺灣大型車交通事故呈上升趨勢，平均每年超過 <b>9,000</b> 件，主因是<b>視野死角</b>與<b>內輪差</b>。內輪差是車輛轉彎時，前後車輪行經軌跡的差距，車身愈長，內輪差愈大：大貨車約 3.5～4.5 公尺，聯結車可達 6～7.5 公尺。</p>
+    <p>👉 <b>想一想：</b>轉彎的軌跡是「圓弧」，前輪和後輪走的是同心圓上不同半徑的弧。學完本節，我們就能用圓的性質來判斷安全距離！</p>
+  </div>
+  <div class="lab">
+    <p class="lab-title">示意：前輪與後輪軌跡是同心圓的兩段弧</p>
+    <svg viewBox="0 0 600 230" width="100%" role="img" aria-label="內輪差示意圖">
+      <circle cx="120" cy="215" r="3" fill="#ffd54f"/>
+      <text x="100" y="212" font-size="13">O</text>
+      <path d="M120 35 A180 180 0 0 1 300 215" fill="none" stroke="#81d4fa" stroke-width="3"/>
+      <path d="M120 95 A120 120 0 0 1 240 215" fill="none" stroke="#ff8a80" stroke-width="3"/>
+      <text x="300" y="150" font-size="14" fill="#81d4fa" style="fill:#81d4fa">前輪軌跡（半徑較大）</text>
+      <text x="250" y="190" font-size="14" style="fill:#ff8a80">後輪軌跡（半徑較小）</text>
+      <line x1="120" y1="215" x2="300" y2="215" stroke="#ffd54f" stroke-dasharray="4 4"/>
+      <line x1="240" y1="222" x2="300" y2="222" stroke="#a5d6a7" stroke-width="3"/>
+      <text x="245" y="240" font-size="13" style="fill:#a5d6a7">內輪差＝兩半徑之差</text>
+    </svg>
+  </div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul><li>先以情境提問引起動機：「走在路上，如何知道離轉彎的大型車多遠才安全？」學完 2-1 與 2-2 後回扣，對應 P.126 素養題。</li></ul></div>
+</section>
+
+<!-- ============ sec1 ============ -->
+<section id="sec1">
+  <h2>① 圓與相關名詞</h2>
+  <div class="sub">主題 1｜課本 P.86–87｜S-9-5</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">⭕</span><h3 class="concept-card-title">圓、弦、弧、弓形、圓心角、扇形</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p>在平面上，與一個固定點距離相等的所有點組成的圖形稱為<b>圓</b>；固定點為<b>圓心</b>，圓心到圓上任一點的距離為<b>半徑</b>。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">直徑＝通過圓心的弦<br>直徑是該圓最長的弦</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒</span>
+        <ul>
+          <li><b>弦</b>：圓上相異兩點的連線段；<b>弧</b>：弦把圓分成的兩部分。</li>
+          <li>直徑分成兩個相等的弧＝<b>半圓</b>；其餘分成<b>優弧</b>（大）與<b>劣弧</b>（小），通常 ⌒AB 指劣弧，優弧用 ⌒ACB 表示。</li>
+          <li><b>弓形</b>：弦與任一弧所圍成的圖形；<b>圓心角</b>：頂點在圓心、兩半徑為邊的角；<b>扇形</b>：兩半徑與一弧所圍成的圖形。</li>
+        </ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>圓 O 中，OA 是半徑；AB、CD 是弦，其中 CD 通過圓心，是直徑。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：點選名詞，看看它在圖上是哪一部分</p>
+    <div class="tabs" id="tabs1"></div>
+    <canvas class="cv" id="cv1"></canvas>
+    <div class="readout" id="ro1"></div>
+  </div>
+  <div class="quiz" id="quiz1"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul>
+    <li>圓的定義（所有與圓心距離相等的點）對學生較抽象，請適時引導學生建立概念。</li>
+    <li>學生第一次接觸弦、弧、弓形、圓心角、扇形等名詞，請確認每位學生都了解定義。</li>
+    <li>隨堂練習 1(3) 若學生回答 A、O 都在圓內，可告知「圓 O」中的 O 點是為了標示圓心位置。</li></ul></div>
+</section>
+
+<!-- ============ sec2 ============ -->
+<section id="sec2">
+  <h2>② 弧長與扇形面積</h2>
+  <div class="sub">課本 P.88–91｜S-9-5（由八年級移至九年級）</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">🥧</span><h3 class="concept-card-title">弧長與扇形面積</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p><b>圓周率 π</b> 是「圓周長與直徑的比值」，約為 3.14，無法以有限小數或分數表示。圓周長＝2πr；圓面積＝πr²。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">弧長＝2πr × x／360<br>扇形面積＝πr² × x／360</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒</span>
+        <ul>
+          <li>圓心角 x° 是周角 360° 的 x／360 倍，所以弧長與扇形面積都是整圓的 x／360 倍。</li>
+          <li>扇形周長＝弧長＋2 個半徑。</li>
+          <li>弓形面積＝扇形面積－三角形面積（圓心角 90° 或 60° 時三角形較好算）。</li>
+          <li>已知弧長或面積可反求圓心角：先求占整圓的幾分之幾。</li>
+        </ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>半徑 10、圓心角 60°：弧長＝10π／3；周長＝10π／3＋20；面積＝50π／3。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：調整半徑 r 與圓心角 x°，觀察弧長與面積</p>
+    <div class="ctrl">
+      <label>半徑 r <input type="range" id="r2" min="1" max="12" step="1" value="6"><b id="r2v">6</b></label>
+      <label>圓心角 x° <input type="range" id="x2" min="0" max="360" step="1" value="90"><b id="x2v">90</b></label>
+    </div>
+    <canvas class="cv" id="cv2"></canvas>
+    <div class="readout" id="ro2"></div>
+  </div>
+  <div class="quiz" id="quiz2"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul>
+    <li>可視教學時間介紹圓周率 π 的由來（數學家真人版：阿基米德）。</li>
+    <li>例 2(1) 由面積反求圓心角，學生一開始可能不知如何下手，請仔細引導；例 2(2) 需求出弧長占圓周長的幾分之幾，請逐步引導。</li>
+    <li>計算機有 π 鍵，可用來求近似值（書末 [6]）；可搭配「π 謎阿」填字遊戲（書末 [9]）。</li></ul></div>
+</section>
+
+<!-- ============ sec3 ============ -->
+<section id="sec3">
+  <h2>③ 點與圓的位置關係</h2>
+  <div class="sub">主題 2｜課本 P.92</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">📍</span><h3 class="concept-card-title">點在圓內、圓上、圓外</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p>圓把平面分成三部分：<b>圓的內部</b>（包含圓心）、<b>圓周</b>、<b>圓的外部</b>。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">OP ＜ r　點在圓內<br>OP ＝ r　點在圓上<br>OP ＞ r　點在圓外</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒</span>
+        <ul><li>比較「點到圓心的距離」與「半徑」的大小。</li><li>反過來也成立：知道位置關係就能判斷 OP 與 r 的大小。</li><li>圓心 O 本身也在圓內部。</li></ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>圓 O 半徑 r＝5：若 OP＝3，P 在圓內；OP＝5，P 在圓上；OP＝7，P 在圓外。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：拖曳點 P（圓半徑 r＝5），看 OP 與 r 的比較</p>
+    <canvas class="cv" id="cv3"></canvas>
+    <div class="readout" id="ro3"></div>
+  </div>
+  <div class="quiz" id="quiz3"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul><li>讓學生知道可用「點與圓心的距離」判斷點與圓的位置關係，反之亦然。</li><li>搭配習作 P.28 第 3 題。</li></ul></div>
+</section>
+
+<!-- ============ sec4 ============ -->
+<section id="sec4">
+  <h2>④ 直線與圓的位置關係與切線性質</h2>
+  <div class="sub">主題 3｜課本 P.93–96｜S-9-7</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">📏</span><h3 class="concept-card-title">不相交、相切、割線</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p>圓心 O 到直線 L 的距離＝垂足 P 到 O 的線段 OP。交於兩點的直線稱<b>割線</b>；只交於一點的直線稱<b>切線</b>，交點為<b>切點</b>。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">d ＞ r：不相交（0 個交點）<br>d ＝ r：切線（1 個交點）<br>d ＜ r：割線（2 個交點）</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒（切線性質）</span>
+        <ul><li>圓心與切點的連線必垂直此切線（OP⊥L，且 OP＝r）。</li><li>反之，過圓上一點且垂直於該點半徑的直線，是圓的切線。</li><li>切線上除切點外的點都在圓外。</li></ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>直徑 15（r＝7.5），圓心到 L、M、N、H 的距離 15、10、7.5、5：L、M 不相交；N 是切線；H 是割線。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：調整距離 d 與直線傾斜角（圓半徑 r＝5）</p>
+    <div class="ctrl">
+      <label>圓心到直線的距離 d <input type="range" id="d4" min="0" max="8" step="0.1" value="3"><b id="d4v">3.0</b></label>
+      <label>直線傾斜 <input type="range" id="t4" min="0" max="180" step="1" value="35"><b id="t4v">35°</b></label>
+    </div>
+    <canvas class="cv" id="cv4"></canvas>
+    <div class="readout" id="ro4"></div>
+  </div>
+  <div class="quiz" id="quiz4"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul>
+    <li>割線與圓相交很容易從圖看出，切線則無法直接看出。可用活動：讓割線離圓心愈來愈遠，兩交點愈來愈靠近，推論出不相交前只有一個交點。</li>
+    <li>板書畫切線時，建議先在圓內畫一條半徑，再在半徑端點上畫切線，最後加上垂直符號，更有助於學生記憶連結。</li>
+    <li>尺規作圖：過圓上一點 A 作切線＝連接 OA，再過 A 作 OA 的垂線（可搭配尺規影片）。</li></ul></div>
+</section>
+
+<!-- ============ sec5 ============ -->
+<section id="sec5">
+  <h2>⑤ 切線段與切線段性質</h2>
+  <div class="sub">主題 4｜課本 P.97–99｜S-9-7</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">📐</span><h3 class="concept-card-title">切線段長</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p>P 為圓 O 外一點，直線 AP 切圓 O 於 A，則線段 <b>AP 稱為切線段</b>（圓外一點到切點的線段）。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">PA ＝ √(OP² － r²)<br>PA ＝ PB<br>PO 平分 ∠APB；PO 垂直平分 AB</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒</span>
+        <ul><li>「切線」是直線，不可測量長度；「切線段長」是線段，可測量。</li><li>△OAP≅△OBP（RHS）⇒ PA＝PB，∠APO＝∠BPO。</li><li>四邊形 OBPA 是箏形，可用箏形性質幫助記憶。</li></ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>r＝5、OB＝13：△OAB 為直角三角形，切線段 AB＝√(13²－5²)＝12。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：拖曳圓外一點 P（圓半徑 r＝3），觀察兩條切線段</p>
+    <canvas class="cv" id="cv5"></canvas>
+    <div class="readout" id="ro5"></div>
+  </div>
+  <div class="quiz" id="quiz5"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul>
+    <li>強調「切線」與「切線段長」是兩個不同的概念。</li>
+    <li>例 6(2) 以 △OMP 的兩種面積算法求 MR（面積法），再由 MN＝2MR 得弦長。</li>
+    <li>搭配習作 P.28 第 4 題、P.29 第 5、6 題；可搭配附件 5。</li></ul></div>
+</section>
+
+<!-- ============ sec6 ============ -->
+<section id="sec6">
+  <h2>⑥ 弦與弦心距</h2>
+  <div class="sub">主題 5｜課本 P.100–105｜S-9-7</div>
+  <div class="concept-card">
+    <div class="concept-card-header"><span class="concept-icon">🎯</span><h3 class="concept-card-title">弦的性質與弦心距</h3></div>
+    <div class="concept-card-body">
+      <div class="concept-def"><span class="card-label">定義</span>
+        <p><b>弦心距</b>：圓心到弦的距離（垂線段）。圓 O 上弦 AB，OM⊥AB 於 M，則 OM 是 AB 的弦心距。</p></div>
+      <div class="concept-formula"><span class="card-label">公式 / 性質</span>
+        <p class="formula-text">一弦的中垂線必過圓心<br>過圓心且垂直弦 ⇒ 平分此弦<br>(AB／2)² ＋ OM² ＝ r²</p></div>
+      <div class="concept-keypoints"><span class="card-label">重要提醒</span>
+        <ul><li>若弦不是直徑，過圓心且平分弦的直線必垂直此弦。</li><li>同圓中：兩弦等長 ⇔ 弦心距相等；弦愈長，弦心距愈小。</li><li>半徑相等的兩圓（等圓）中，上述性質仍成立。</li></ul></div>
+      <div class="concept-example"><span class="card-label">例</span>
+        <p>弦心距 OC＝3、弦 AB＝8：AC＝4，r＝√(3²＋4²)＝5。</p></div>
+    </div>
+  </div>
+  <div class="lab">
+    <p class="lab-title">🔍 互動：調整弦心距 d（圓半徑 r＝5），觀察弦長 AB 的變化（也可在圖上上下拖曳）</p>
+    <div class="ctrl"><label>弦心距 d <input type="range" id="d6" min="0" max="4.9" step="0.1" value="3"><b id="d6v">3.0</b></label></div>
+    <canvas class="cv" id="cv6"></canvas>
+    <div class="readout" id="ro6"></div>
+  </div>
+  <div class="quiz" id="quiz6"><h4>✏️ 形成性評量</h4></div>
+  <div class="teacher-only"><h4>👩‍🏫 教學提示</h4><ul>
+    <li>「弦心距」對學生是較新的名詞，可讓學生透過文字意義認識；垂直平分的概念，除等腰三角形對稱軸外，也可用全等性質說明。</li>
+    <li>動動腦：等圓中弦心距與弦長的性質是否成立？——成立，等圓可視為同一圓上討論（半徑相等）。</li>
+    <li>弦心距應用的核心：作 OA 連半徑，用直角三角形與畢氏定理（例 7～9，如隧道、水管屋）。</li></ul></div>
+</section>
+
+<!-- ============ summary ============ -->
+<section id="summary">
+  <h2>📋 總結 Cheat Sheet</h2>
+  <table class="cheat">
+    <tr><th>主題</th><th>重點</th></tr>
+    <tr><td>弧長與扇形面積</td><td>弧長＝2πr×x／360；扇形面積＝πr²×x／360</td></tr>
+    <tr><td>點與圓</td><td>OP＜r 圓內；OP＝r 圓上；OP＞r 圓外</td></tr>
+    <tr><td>直線與圓</td><td>d＞r 不相交（0 點）；d＝r 切線（1 點）；d＜r 割線（2 點）</td></tr>
+    <tr><td>切線性質</td><td>切線⊥過切點的半徑；過半徑外端且垂直半徑的直線為切線</td></tr>
+    <tr><td>切線段性質</td><td>PA＝PB；PO 平分 ∠APB；PO 垂直平分 AB；PA＝√(OP²－r²)</td></tr>
+    <tr><td>弦的性質</td><td>弦的中垂線過圓心；過圓心垂直弦必平分弦；非直徑時過圓心平分弦必垂直弦</td></tr>
+    <tr><td>弦心距</td><td>(AB／2)²＋d²＝r²；同圓中弦愈長，弦心距愈小</td></tr>
+  </table>
+  <div class="teacher-only"><h4>⚠️ 常見錯誤（教師備課）</h4><ul>
+    <li>混淆「切線」（直線）與「切線段長」（線段）。</li>
+    <li>比較弦心距與弦長時忘了前提：要在<b>同一圓（或等圓）</b>中才成立（自我檢核第 5 題）。</li>
+    <li>扇形周長漏加兩條半徑；弓形面積忘記扣掉三角形。</li>
+    <li>把「弧長」寫成圓周長×x（漏除 360）；或用 π≈3.14 代入卻要求以 π 表示。</li>
+    <li>判斷線與圓關係時，把「直線上某一點到圓心的距離」誤當成「圓心到直線的距離」（見重新布題：OA＝7、r＝5，無法確定關係）。</li></ul></div>
+</section>
+
+<section id="video">
+  <h2>🎬 影片資源</h2>
+  <div class="video-box" id="ytBox">📺 YouTube 教學影片（尚未提供網址）<br><small>取得網址後，把檔案中的 <code>YT_URL</code> 填入即可自動嵌入</small></div>
+  <div class="teacher-only"><h4>👩‍🏫 備課資源</h4><ul><li>課本配套：數位備課、尺規影片、90 秒學數學（圓的切線段長性質）、Wordwall、書末 [9] π 謎阿。</li></ul></div>
+</section>
+
+<div style="text-align:center;margin:36px 0 8px"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a></div>
+<div class="foot">依據《中數 3 上 備課用書 CH2》（P.84–109）製作</div>
+</main>
+
+<!-- floating tools -->
+<div id="tools">
+  <h5><span>🧰 教室工具</span><button id="tMin" title="收合">—</button></h5>
+  <div class="tb">
+    <div><b>🎲 抽籤</b>
+      <div class="row">座號 1～<input type="number" id="pickMax" value="30" min="2" max="60"><label><input type="checkbox" id="noRep" checked> 不重複</label></div>
+      <div id="pickRes">—</div>
+      <div class="row"><button class="btn" id="pickGo">抽！</button><button class="btn" id="pickReset">重置</button></div>
+    </div>
+    <hr style="border:0;border-top:1px dashed #6d5538">
+    <div><b>⏱ 計時器</b>
+      <div class="row"><input type="number" id="tMinIn" value="3" min="1" max="90"> 分鐘</div>
+      <div id="timeDisp">03:00</div>
+      <div class="row"><button class="btn" id="tGo">開始</button><button class="btn" id="tReset">重置</button></div>
+    </div>
+  </div>
+</div>
+
+<button id="penBtn" title="畫筆">🖍</button>
+<div id="penBar">
+  <button data-c="#ffffff" style="background:#fff"></button>
+  <button data-c="#ffd54f" style="background:#ffd54f"></button>
+  <button data-c="#ff8a80" style="background:#ff8a80"></button>
+  <button data-c="#81d4fa" style="background:#81d4fa"></button>
+  <button data-c="erase" title="橡皮擦">🧽</button>
+  <button id="penClear" title="全部清除">🗑</button>
+  <button id="penOff" title="關閉畫筆">✕</button>
+</div>
+<canvas id="pen"></canvas>
+
+<script>
+const YT_URL=''; // 例：'https://www.youtube.com/embed/xxxxxxxx'
+const TEACHER_PW='math2026';
+const C={bg:'#16261a',chalk:'#e8e4d8',y:'#ffd54f',p:'#ff8a80',b:'#81d4fa',g:'#a5d6a7'};
+const rad=a=>a*Math.PI/180;
+const $=s=>document.querySelector(s);
+
+/* ---------- 模式切換 ---------- */
+$('#bTea').onclick=()=>{
+  if(document.body.classList.contains('teacher'))return;
+  const pw=prompt('請輸入教師模式密碼：');
+  if(pw===TEACHER_PW){document.body.classList.add('teacher');$('#bTea').classList.add('on');$('#bStu').classList.remove('on');$('#bTea').textContent='🔓 教師模式';}
+  else if(pw!==null)alert('密碼錯誤');
+};
+$('#bStu').onclick=()=>{document.body.classList.remove('teacher');$('#bStu').classList.add('on');$('#bTea').classList.remove('on');$('#bTea').textContent='🔒 教師模式';};
+
+/* ---------- YouTube ---------- */
+if(YT_URL){$('#ytBox').innerHTML='<iframe src="'+YT_URL+'" allowfullscreen loading="lazy"></iframe>';}
+
+/* ---------- Canvas helpers ---------- */
+const cvs={};
+function fitFontSize(ctx,text,style,init,maxW,min=9){let s=init;ctx.font=`${style} ${s}px sans-serif`;while(ctx.measureText(text).width>maxW&&s>min){s-=0.5;ctx.font=`${style} ${s}px sans-serif`;}return s;}
+function txt(ctx,t,x,y,color,size,style='',align='center',maxW=220){ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';fitFontSize(ctx,t,style,size,maxW);ctx.fillText(t,x,y);}
+function ln(ctx,a,b,color,w=2,dash=null){ctx.beginPath();ctx.setLineDash(dash||[]);ctx.strokeStyle=color;ctx.lineWidth=w;ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();ctx.setLineDash([]);}
+function dot(ctx,p,color,r=4){ctx.beginPath();ctx.fillStyle=color;ctx.arc(p.x,p.y,r,0,7);ctx.fill();}
+function rightAngle(ctx,V,u,v,s,color=C.chalk){ctx.beginPath();ctx.setLineDash([]);ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.moveTo(V.x+u.x*s,V.y+u.y*s);ctx.lineTo(V.x+(u.x+v.x)*s,V.y+(u.y+v.y)*s);ctx.lineTo(V.x+v.x*s,V.y+v.y*s);ctx.stroke();}
+function unit(a,b){const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;return{x:dx/d,y:dy/d};}
+function setupCanvas(id,draw,ptr){
+  const c=$('#'+id),ctx=c.getContext('2d');
+  const o={c,ctx,W:0,H:0,draw,ptr};
+  cvs[id]=o;
+  if(ptr){
+    let down=false;
+    const pos=e=>{const r=c.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top};};
+    c.addEventListener('pointerdown',e=>{down=true;c.setPointerCapture(e.pointerId);ptr(pos(e),o);o.render();});
+    c.addEventListener('pointermove',e=>{if(down){ptr(pos(e),o);o.render();}});
+    const up=()=>{down=false;};
+    c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
+  }
+  o.render=()=>{const dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,o.W,o.H);draw(ctx,o.W,o.H,o);};
+  o.resize=()=>{const dpr=window.devicePixelRatio||1;o.W=c.clientWidth||600;o.H=o.W<520?300:360;c.style.height=o.H+'px';c.width=Math.round(o.W*dpr);c.height=Math.round(o.H*dpr);o.render();};
+  return o;
+}
+function resizeCanvases(){Object.values(cvs).forEach(o=>o.resize());}
+window.addEventListener('resize',resizeCanvases);
+
+/* ---------- 1. 名詞 ---------- */
+const m1Modes=[
+ ['radius','半徑','圓心到圓上任一點的線段（圖中 OA）。半徑長都相等。'],
+ ['chord','弦','連接圓上相異兩點的線段（圖中 AB）。'],
+ ['diameter','直徑','通過圓心的弦（圖中 CD），是圓中最長的弦，長度＝2 倍半徑。'],
+ ['arc','弧','弦把圓分成兩段弧。較小的是<span class="hl">劣弧</span>（記作 ⌒AB），較大的是<span class="bl">優弧</span>（另取一點 C，記作 ⌒ACB）。直徑分成的兩弧相等，稱<span class="gn">半圓</span>。'],
+ ['segment','弓形','弦與任一弧所圍成的圖形。弦 AB 把圓分成兩個弓形（綠色、藍色）。'],
+ ['angle','圓心角','以圓心為頂點，兩半徑為邊所夾的角（∠AOB）。'],
+ ['sector','扇形','兩半徑與一弧所圍成的圖形。一般 扇形 AOB 指圓心角較小的那個。']
+];
+let m1='radius';
+const tabs1=$('#tabs1');
+m1Modes.forEach(m=>{const b=document.createElement('button');b.textContent=m[1];b.dataset.k=m[0];if(m[0]===m1)b.classList.add('on');b.onclick=()=>{m1=m[0];[...tabs1.children].forEach(x=>x.classList.toggle('on',x===b));cvs.cv1.render();};tabs1.appendChild(b);});
+function draw1(ctx,W,H){
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.38,O={x:cx,y:cy};
+  const P=(a,k=1)=>({x:cx+R*k*Math.cos(rad(a)),y:cy+R*k*Math.sin(rad(a))});
+  const A=P(-40),B=P(110),Cc=P(200),D=P(20);
+  if(m1==='segment'){
+    ctx.beginPath();ctx.arc(cx,cy,R,rad(-40),rad(110),false);ctx.closePath();ctx.fillStyle='rgba(165,214,167,.45)';ctx.fill();
+    ctx.beginPath();ctx.arc(cx,cy,R,rad(110),rad(320),false);ctx.closePath();ctx.fillStyle='rgba(129,212,250,.3)';ctx.fill();
+  }
+  if(m1==='sector'){ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,rad(-40),rad(110),false);ctx.closePath();ctx.fillStyle='rgba(255,138,128,.45)';ctx.fill();}
+  ctx.beginPath();ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.arc(cx,cy,R,0,7);ctx.stroke();
+  if(m1==='arc'){
+    ctx.beginPath();ctx.strokeStyle=C.y;ctx.lineWidth=6;ctx.arc(cx,cy,R,rad(-40),rad(110),false);ctx.stroke();
+    ctx.beginPath();ctx.strokeStyle=C.b;ctx.lineWidth=3;ctx.setLineDash([8,6]);ctx.arc(cx,cy,R,rad(110),rad(320),false);ctx.stroke();ctx.setLineDash([]);
+    const m=P(35,1.18);txt(ctx,'劣弧 AB',m.x,m.y,C.y,15,'bold');
+    const n=P(215,1.18);txt(ctx,'優弧 ACB',n.x,n.y,C.b,15,'bold');
+    const Cp=P(215);dot(ctx,Cp,C.b);txt(ctx,'C',Cp.x-12,Cp.y-10,C.b,14);
+  }
+  if(m1==='radius'){ln(ctx,O,A,C.y,4);const mid=P(-40,.5);txt(ctx,'半徑 r',mid.x+22,mid.y-14,C.y,15,'bold');}
+  if(m1==='chord'||m1==='segment'||m1==='sector'){if(m1==='chord')ln(ctx,A,B,C.p,4);else ln(ctx,A,B,C.chalk,2);}
+  if(m1==='diameter'){ln(ctx,Cc,D,C.b,4);txt(ctx,'直徑 CD',cx+8,cy-18,C.b,15,'bold');}
+  if(m1==='angle'||m1==='sector'){
+    ln(ctx,O,A,C.y,m1==='angle'?3:2);ln(ctx,O,B,C.y,m1==='angle'?3:2);
+    if(m1==='angle'){ctx.beginPath();ctx.strokeStyle=C.p;ctx.lineWidth=3;ctx.arc(cx,cy,R*0.25,rad(-40),rad(110),false);ctx.stroke();const m=P(35,.42);txt(ctx,'圓心角',m.x,m.y,C.p,14,'bold');}
+    else{const m=P(35,.5);txt(ctx,'扇形 AOB',m.x,m.y,C.chalk,15,'bold');}
+  }
+  if(m1==='segment'){const a=P(35,.82);txt(ctx,'弓形',a.x,a.y+(-0),C.chalk,15,'bold');const b=P(215,.5);txt(ctx,'弓形',b.x,b.y,C.chalk,15,'bold');}
+  dot(ctx,O,C.chalk);txt(ctx,'O',cx-12,cy+14,C.chalk,15,'italic');
+  [['A',A],['B',B],['D',D],['C',Cc]].forEach(([n,p])=>{if(n==='C'&&m1==='arc')return;if((n==='C'||n==='D')&&m1!=='diameter')return;dot(ctx,p,C.chalk,3);const u=unit(O,p);txt(ctx,n,p.x+u.x*14,p.y+u.y*14,C.chalk,15,'italic');});
+  const m=m1Modes.find(x=>x[0]===m1);$('#ro1').innerHTML='<span class="hl">'+m[1]+'</span>：'+m[2];
+}
+setupCanvas('cv1',draw1);
+
+/* ---------- 2. 弧長與扇形面積 ---------- */
+function gcd(a,b){return b?gcd(b,a%b):Math.abs(a);}
+function frac(n,d){if(n===0)return '0';const g=gcd(n,d);n/=g;d/=g;const c=n===1?'':n;return d===1?(c+'π'):(c+'π／'+d);}
+function draw2(ctx,W,H){
+  const r=+$('#r2').value,x=+$('#x2').value;
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.42*(0.4+0.6*r/12);
+  ctx.beginPath();ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.arc(cx,cy,R,0,7);ctx.stroke();
+  if(x>0){
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,0,-rad(x),true);ctx.closePath();ctx.fillStyle='rgba(255,138,128,.45)';ctx.fill();
+    ctx.beginPath();ctx.strokeStyle=C.y;ctx.lineWidth=5;ctx.arc(cx,cy,R,0,-rad(x),true);ctx.stroke();
+    ctx.beginPath();ctx.strokeStyle=C.b;ctx.lineWidth=2;ctx.arc(cx,cy,Math.min(26,R*0.3),0,-rad(x),true);ctx.stroke();
+    if(x<360){ln(ctx,{x:cx,y:cy},{x:cx+R,y:cy},C.y,2);ln(ctx,{x:cx,y:cy},{x:cx+R*Math.cos(-rad(x)),y:cy+R*Math.sin(-rad(x))},C.y,2);}
+  }
+  dot(ctx,{x:cx,y:cy},C.chalk);txt(ctx,'O',cx-12,cy+13,C.chalk,14,'italic');
+  txt(ctx,`r = ${r}`,cx+R/2,cy+15,C.y,14,'bold');
+  txt(ctx,`${x}°`,cx-R-6>18?cx-R+4:cx,cy-R-10<12?12:cy-R-10,C.b,15,'bold');
+  const arc=r*x/180,per=arc+2*r;
+  $('#ro2').innerHTML=
+   `弧長 ＝ 2π×${r}×${x}／360 ＝ <span class="hl">${frac(r*x,180)}</span>　(≈ ${(arc*Math.PI).toFixed(2)})<br>`+
+   `扇形面積 ＝ π×${r}²×${x}／360 ＝ <span class="pk">${frac(r*r*x,360)}</span>　(≈ ${(r*r*x/360*Math.PI).toFixed(2)})<br>`+
+   `扇形周長 ＝ 弧長＋2×${r} ＝ <span class="bl">${x===0?'—':frac(r*x,180)+' ＋ '+2*r}</span>　｜　圓心角占整圓的 <span class="gn">${(function(){const g=gcd(x,360)||1;return x===0?'0':(x/g)+'／'+(360/g);})()}</span>`;
+}
+setupCanvas('cv2',draw2);
+['r2','x2'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#r2v').textContent=$('#r2').value;$('#x2v').textContent=$('#x2').value;cvs.cv2.render();}));
+
+/* ---------- 3. 點與圓 ---------- */
+const p3={x:2.2,y:-2.6}; // 以單位長表示，r=5
+function draw3(ctx,W,H){
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.3,s=R/5,O={x:cx,y:cy},P={x:cx+p3.x*s,y:cy+p3.y*s};
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.fillStyle='rgba(165,214,167,.13)';ctx.fill();
+  ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.stroke();
+  ln(ctx,O,{x:cx+R,y:cy},C.y,2);txt(ctx,'r = 5',cx+R/2,cy+14,C.y,13,'bold');
+  const d=Math.hypot(p3.x,p3.y),on=Math.abs(d-5)<0.15;
+  const col=on?C.y:d<5?C.g:C.p;
+  ln(ctx,O,P,col,2,[6,4]);dot(ctx,O,C.chalk);txt(ctx,'O',cx-12,cy+14,C.chalk,14,'italic');
+  dot(ctx,P,col,7);txt(ctx,'P',P.x+14,P.y-12,col,16,'bold italic');
+  txt(ctx,'內部',cx,cy-R*0.55,C.g,13);txt(ctx,'外部',cx-R-30<20?20:cx-R-30,cy-R-12<12?14:cy-R-12,C.p,13);
+  const lab=on?'圓上（OP＝r）':d<5?'圓內（OP＜r）':'圓外（OP＞r）';
+  $('#ro3').innerHTML=`OP ≈ <span class="hl">${(on?5:d).toFixed(1)}</span>　r ＝ 5　⇒　P 在<span class="${on?'hl':d<5?'gn':'pk'}"> ${lab}</span>`;
+}
+setupCanvas('cv3',draw3,(p,o)=>{const R=Math.min(o.W,o.H)*0.3,s=R/5;p3.x=Math.max(-(o.W/2-12),Math.min(o.W/2-12,p.x-o.W/2))/s;p3.y=Math.max(-(o.H/2-12),Math.min(o.H/2-12,p.y-o.H/2))/s;});
+
+/* ---------- 4. 直線與圓 ---------- */
+function draw4(ctx,W,H){
+  const d=+$('#d4').value,th=+$('#t4').value;
+  const cx=W/2,cy=H/2,R=Math.min(W,H)*0.3,s=R/5,O={x:cx,y:cy};
+  const n={x:Math.cos(rad(th)),y:-Math.sin(rad(th))},t={x:-n.y,y:n.x};
+  const F={x:cx+n.x*d*s,y:cy+n.y*d*s};
+  const rel=Math.abs(d-5)<0.001?'tan':d<5?'sec':'none';
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.stroke();
+  const L=W+H;
+  ln(ctx,{x:F.x-t.x*L,y:F.y-t.y*L},{x:F.x+t.x*L,y:F.y+t.y*L},rel==='tan'?C.y:rel==='sec'?C.p:C.b,3);
+  txt(ctx,'L',Math.min(W-14,Math.max(14,F.x+t.x*Math.min(W,H)*0.46)),Math.min(H-12,Math.max(12,F.y+t.y*Math.min(W,H)*0.46)),C.chalk,16,'italic bold');
+  if(d>0.05){ln(ctx,O,F,C.g,2,[5,4]);rightAngle(ctx,F,{x:-n.x,y:-n.y},t,9);dot(ctx,F,C.g,4);txt(ctx,'P',F.x+n.x*14+t.x*10,F.y+n.y*14+t.y*10,C.g,15,'bold italic');}
+  dot(ctx,O,C.chalk);txt(ctx,'O',cx-12,cy+14,C.chalk,14,'italic');
+  if(rel==='sec'){const h=Math.sqrt(25-d*d)*s;[1,-1].forEach(k=>dot(ctx,{x:F.x+t.x*h*k,y:F.y+t.y*h*k},C.y,6));}
+  if(rel==='tan')dot(ctx,F,C.y,7);
+  const m={tan:['切線','1','d ＝ r'],sec:['割線','2','d ＜ r'],none:['與圓不相交','0','d ＞ r']}[rel];
+  $('#ro4').innerHTML=`圓心到直線距離 d ＝ <span class="hl">${d.toFixed(1)}</span>，半徑 r ＝ 5（${m[2]}）　⇒　直線 L 是<span class="pk"> ${m[0]}</span>，交點數 <span class="bl">${m[1]}</span> 個`+(rel==='tan'?'<br>👉 此時 OP⊥L，且 OP＝r（切線性質）':'');
+}
+setupCanvas('cv4',draw4);
+['d4','t4'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#d4v').textContent=(+$('#d4').value).toFixed(1);$('#t4v').textContent=$('#t4').value+'°';cvs.cv4.render();}));
+
+/* ---------- 5. 切線段 ---------- */
+const p5={x:6,y:-2};
+function draw5(ctx,W,H){
+  const R=Math.min(W,H)*0.2,s=R/3,O={x:W*0.35,y:H/2};
+  const P={x:O.x+p5.x*s,y:O.y+p5.y*s};
+  const D=Math.hypot(p5.x,p5.y),phi=Math.atan2(p5.y,p5.x),al=Math.acos(3/D);
+  const A={x:O.x+R*Math.cos(phi+al),y:O.y+R*Math.sin(phi+al)},B={x:O.x+R*Math.cos(phi-al),y:O.y+R*Math.sin(phi-al)};
+  const M={x:O.x+R*(3/D)*Math.cos(phi)*1,y:O.y+R*(3/D)*Math.sin(phi)*1}; // OM = r²/OP
+  ctx.beginPath();ctx.arc(O.x,O.y,R,0,7);ctx.fillStyle='rgba(129,212,250,.12)';ctx.fill();ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.stroke();
+  ln(ctx,P,A,C.y,3);ln(ctx,P,B,C.y,3);
+  ln(ctx,O,A,C.g,2,[5,4]);ln(ctx,O,B,C.g,2,[5,4]);ln(ctx,O,P,C.b,2,[5,4]);ln(ctx,A,B,C.p,2);
+  const ua=unit(A,O),ub=unit(B,O);
+  const upa=unit(A,P),upb=unit(B,P);
+  rightAngle(ctx,A,ua,upa,9);rightAngle(ctx,B,ub,upb,9);
+  const uOP=unit(O,P),perp={x:-uOP.y,y:uOP.x};
+  rightAngle(ctx,M,{x:-uOP.x,y:-uOP.y},perp,7,C.p);
+  dot(ctx,O,C.chalk);dot(ctx,P,C.y,7);dot(ctx,A,C.chalk,4);dot(ctx,B,C.chalk,4);dot(ctx,M,C.p,3);
+  txt(ctx,'O',O.x-12,O.y+14,C.chalk,15,'italic');
+  txt(ctx,'P',P.x+14,P.y-12,C.y,16,'bold italic');
+  [['A',A],['B',B]].forEach(([n,p])=>{const u=unit(O,p);txt(ctx,n,p.x+u.x*15,p.y+u.y*15,C.chalk,15,'italic');});
+  txt(ctx,'M',M.x+4,M.y-13,C.p,13,'italic');
+  const pa=Math.sqrt(D*D-9),ang=2*Math.asin(3/D)*180/Math.PI;
+  $('#ro5').innerHTML=`OP ≈ <span class="bl">${D.toFixed(2)}</span>，r＝3　⇒　PA ＝ √(OP²－r²) ≈ <span class="hl">${pa.toFixed(2)}</span>，PB ≈ <span class="hl">${pa.toFixed(2)}</span>（<span class="gn">PA＝PB</span>）<br>∠APB ≈ ${ang.toFixed(1)}°，∠APO＝∠BPO ≈ ${(ang/2).toFixed(1)}°（PO 平分 ∠APB）；PO 垂直平分 AB（<span class="pk">紅色線</span>）`;
+}
+setupCanvas('cv5',draw5,(p,o)=>{const R=Math.min(o.W,o.H)*0.2,s=R/3;let x=(p.x-o.W*0.35)/s,y=(p.y-o.H/2)/s;const d=Math.hypot(x,y);if(d<3.2){const k=3.2/(d||1);x*=k;y*=k||1;if(d===0){x=3.2;y=0;}}p5.x=x;p5.y=y;});
+
+/* ---------- 6. 弦心距 ---------- */
+function draw6(ctx,W,H){
+  const d=+$('#d6').value,cx=W/2,cy=H/2-8,R=Math.min(W,H)*0.36,s=R/5,O={x:cx,y:cy};
+  const h=Math.sqrt(25-d*d);
+  const M={x:cx,y:cy+d*s},A={x:cx-h*s,y:cy+d*s},B={x:cx+h*s,y:cy+d*s};
+  ctx.beginPath();ctx.arc(cx,cy,R,0,7);ctx.strokeStyle=C.chalk;ctx.lineWidth=2;ctx.stroke();
+  ctx.beginPath();ctx.moveTo(O.x,O.y);ctx.lineTo(A.x,A.y);ctx.lineTo(M.x,M.y);ctx.closePath();ctx.fillStyle='rgba(165,214,167,.3)';ctx.fill();
+  ln(ctx,A,B,C.p,4);ln(ctx,O,A,C.y,2);ln(ctx,O,B,C.y,2,[5,4]);
+  if(d>0.05){ln(ctx,O,M,C.b,3);rightAngle(ctx,M,{x:0,y:-1},{x:1,y:0},9);}
+  dot(ctx,O,C.chalk);dot(ctx,A,C.chalk,4);dot(ctx,B,C.chalk,4);if(d>0.05)dot(ctx,M,C.b,4);
+  txt(ctx,'O',cx-12,cy-12,C.chalk,15,'italic');
+  txt(ctx,'A',A.x-14,A.y+(d>4.5?-12:14),C.chalk,15,'italic');txt(ctx,'B',B.x+14,B.y+(d>4.5?-12:14),C.chalk,15,'italic');
+  if(d>0.05){txt(ctx,'M',M.x+13,M.y+13,C.b,14,'italic');txt(ctx,'弦心距 d',cx+34,(cy+M.y)/2,C.b,13,'bold','left');}
+  txt(ctx,'r',(O.x+A.x)/2-12,(O.y+A.y)/2-8,C.y,14,'italic bold');
+  const ab=2*h;
+  $('#ro6').innerHTML=`d ＝ <span class="bl">${d.toFixed(1)}</span>，r ＝ 5　⇒　AM ＝ √(r²－d²) ＝ √(25－${(d*d).toFixed(2)}) ≈ <span class="hl">${h.toFixed(2)}</span><br>弦 AB ＝ 2×AM ≈ <span class="pk">${ab.toFixed(2)}</span>（弦心距 d 愈小，弦愈長；d＝0 時 AB＝直徑＝10）`;
+}
+setupCanvas('cv6',draw6,(p,o)=>{const s=Math.min(o.W,o.H)*0.36/5;let d=(p.y-(o.H/2-8))/s;d=Math.max(0,Math.min(4.9,Math.round(d*10)/10));$('#d6').value=d;$('#d6v').textContent=d.toFixed(1);});
+$('#d6').addEventListener('input',()=>{$('#d6v').textContent=(+$('#d6').value).toFixed(1);cvs.cv6.render();});
+
+/* ---------- 形成性評量 ---------- */
+const QZ={
+ quiz1:[
+  {q:'通過圓心的弦稱為什麼？',o:['半徑','直徑','弓形','扇形'],a:1,e:'通過圓心的弦＝直徑，也是圓中最長的弦。'},
+  {q:'由兩條半徑與一段弧所圍成的圖形稱為？',o:['弓形','圓心角','扇形','優弧'],a:2,e:'兩半徑＋一弧＝扇形；弦＋一弧＝弓形。'},
+  {q:'關於一圓的弦與直徑，下列何者正確？',o:['直徑比任何弦都短','直徑是最長的弦','弦一定通過圓心','弦一定等於半徑'],a:1,e:'直徑是該圓最長的弦。'}],
+ quiz2:[
+  {q:'圓半徑 12、圓心角 90°，弧長為？',o:['3π','6π','12π','24π'],a:1,e:'2π×12×90/360＝6π。'},
+  {q:'圓半徑 10、圓心角 36°，扇形面積為？',o:['5π','10π','20π','36π'],a:1,e:'π×10²×36/360＝10π。'},
+  {q:'某弧長恰為圓周長的 1/4，其圓心角為幾度？',o:['45°','60°','90°','120°'],a:2,e:'占整圓 1/4，圓心角＝360°×1/4＝90°。'}],
+ quiz3:[
+  {q:'圓 O 半徑 7，若 OP＝7，則 P 點在？',o:['圓內','圓上','圓外','無法判斷'],a:1,e:'OP＝r，P 在圓上。'},
+  {q:'若 P 在圓 O 的內部，則下列何者正確？',o:['OP＞r','OP＝r','OP＜r','OP＝0'],a:2,e:'在圓內 ⇔ OP＜r。'},
+  {q:'圓 O 直徑 16，OP＝9，則 P 點在？',o:['圓內','圓上','圓外','圓心'],a:2,e:'半徑＝8，OP＝9＞8，在圓外。'}],
+ quiz4:[
+  {q:'圓半徑 4，圓心到直線 L 的距離為 4，則 L 與圓的關係？',o:['不相交','切線','割線','無法判斷'],a:1,e:'d＝r，L 是切線，只有 1 個交點。'},
+  {q:'切線與過切點的半徑，位置關係為？',o:['平行','相交但不垂直','互相垂直','重合'],a:2,e:'圓心與切點的連線必垂直切線。'},
+  {q:'圓半徑 5，圓心到直線 M 的距離為 2，則 M 與圓有幾個交點？',o:['0','1','2','3'],a:2,e:'d＝2＜5，M 是割線，交於 2 點。'}],
+ quiz5:[
+  {q:'圓半徑 7，圓外一點 P 到圓心的距離為 25，則切線段 PA 長為？',o:['18','24','25','32'],a:1,e:'PA＝√(25²－7²)＝√576＝24。'},
+  {q:'P 為圓外一點，PA、PB 為兩條切線段，則？',o:['PA＞PB','PA＜PB','PA＝PB','視位置而定'],a:2,e:'△OAP≅△OBP（RHS），所以 PA＝PB。'},
+  {q:'下列哪一項是圓的切線段性質？',o:['PO 平分 ∠APB','PO＝PA','PO＝r','AB 是直徑'],a:0,e:'PO 平分 ∠APB，且 PO 垂直平分 AB。'}],
+ quiz6:[
+  {q:'圓半徑 20，弦心距 12，則弦長為？',o:['16','24','32','40'],a:2,e:'半弦＝√(20²－12²)＝16，弦長＝2×16＝32。'},
+  {q:'在同一圓中，弦愈長，其弦心距？',o:['愈大','愈小','不變','不一定'],a:1,e:'弦愈長，弦心距愈小；直徑的弦心距為 0。'},
+  {q:'過圓心且垂直於一弦的直線，必定？',o:['平分此弦','與此弦平行','與此弦等長','切於圓'],a:0,e:'過圓心且與弦垂直的直線，必平分此弦。'}]
+};
+Object.keys(QZ).forEach(id=>{
+  const box=$('#'+id);
+  QZ[id].forEach((it,qi)=>{
+    const d=document.createElement('div');d.className='q';
+    d.innerHTML=`<div>${qi+1}. ${it.q}</div><div class="opts"></div><div class="fb"></div>`;
+    const opts=d.querySelector('.opts'),fb=d.querySelector('.fb');let done=false;
+    it.o.forEach((t,oi)=>{const b=document.createElement('button');b.textContent='（'+'ABCD'[oi]+'）'+t;
+      b.onclick=()=>{if(done)return;
+        if(oi===it.a){done=true;b.classList.add('ok');fb.className='fb';fb.textContent='✅ 答對了！'+it.e;}
+        else{b.classList.add('no');fb.className='fb bad';fb.textContent='❌ 再想想看，再試一次。';}};
+      opts.appendChild(b);});
+    box.appendChild(d);
+  });
+});
+
+/* ---------- 抽籤 / 計時 ---------- */
+let used=new Set();
+$('#pickGo').onclick=()=>{
+  const max=Math.max(2,+$('#pickMax').value||30),res=$('#pickRes');
+  if($('#noRep').checked&&used.size>=max){res.textContent='抽完了';return;}
+  let n,t=0;
+  const pick=()=>{let k;do{k=1+Math.floor(Math.random()*max);}while($('#noRep').checked&&used.has(k));return k;};
+  const timer=setInterval(()=>{n=1+Math.floor(Math.random()*max);res.textContent=n;if(++t>14){clearInterval(timer);n=pick();used.add(n);res.textContent=n;}},60);
+};
+$('#pickReset').onclick=()=>{used.clear();$('#pickRes').textContent='—';};
+let tLeft=180,tTimer=null;
+const fmt=s=>String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+function beep(){try{const a=new (window.AudioContext||window.webkitAudioContext)(),o=a.createOscillator(),g=a.createGain();o.connect(g);g.connect(a.destination);o.frequency.value=880;g.gain.value=.2;o.start();setTimeout(()=>{o.stop();a.close();},700);}catch(e){}}
+$('#tMinIn').addEventListener('input',()=>{if(!tTimer){tLeft=Math.max(1,+$('#tMinIn').value||1)*60;$('#timeDisp').textContent=fmt(tLeft);}});
+$('#tGo').onclick=()=>{
+  if(tTimer){clearInterval(tTimer);tTimer=null;$('#tGo').textContent='繼續';return;}
+  if(tLeft<=0)tLeft=Math.max(1,+$('#tMinIn').value||1)*60;
+  $('#tGo').textContent='暫停';
+  tTimer=setInterval(()=>{tLeft--;$('#timeDisp').textContent=fmt(Math.max(0,tLeft));if(tLeft<=0){clearInterval(tTimer);tTimer=null;$('#tGo').textContent='開始';beep();}},1000);
+};
+$('#tReset').onclick=()=>{clearInterval(tTimer);tTimer=null;tLeft=Math.max(1,+$('#tMinIn').value||1)*60;$('#timeDisp').textContent=fmt(tLeft);$('#tGo').textContent='開始';};
+$('#tMin').onclick=()=>{const t=$('#tools');t.classList.toggle('min');$('#tMin').textContent=t.classList.contains('min')?'🧰':'—';};
+
+/* ---------- 畫筆 ---------- */
+const pen=$('#pen'),pctx=pen.getContext('2d');let penColor='#ffffff',penOn=false,drawing=false,last=null;
+function sizePen(){const dpr=window.devicePixelRatio||1;const img=pen.width?pctx.getImageData(0,0,pen.width,pen.height):null;pen.width=innerWidth*dpr;pen.height=innerHeight*dpr;pctx.setTransform(dpr,0,0,dpr,0,0);if(img)pctx.putImageData(img,0,0);}
+sizePen();window.addEventListener('resize',sizePen);
+$('#penBtn').onclick=()=>{penOn=!penOn;pen.classList.toggle('on',penOn);$('#penBar').classList.toggle('show',penOn);};
+$('#penOff').onclick=()=>{penOn=false;pen.classList.remove('on');$('#penBar').classList.remove('show');};
+$('#penClear').onclick=()=>pctx.clearRect(0,0,innerWidth,innerHeight);
+document.querySelectorAll('#penBar button[data-c]').forEach(b=>b.onclick=()=>{penColor=b.dataset.c;document.querySelectorAll('#penBar button[data-c]').forEach(x=>x.classList.toggle('sel',x===b));});
+pen.addEventListener('pointerdown',e=>{drawing=true;last={x:e.clientX,y:e.clientY};pen.setPointerCapture(e.pointerId);});
+pen.addEventListener('pointermove',e=>{if(!drawing)return;pctx.beginPath();pctx.lineCap='round';pctx.lineJoin='round';
+  if(penColor==='erase'){pctx.globalCompositeOperation='destination-out';pctx.lineWidth=26;}else{pctx.globalCompositeOperation='source-over';pctx.strokeStyle=penColor;pctx.lineWidth=3.5;}
+  pctx.moveTo(last.x,last.y);pctx.lineTo(e.clientX,e.clientY);pctx.stroke();last={x:e.clientX,y:e.clientY};});
+['pointerup','pointercancel'].forEach(ev=>pen.addEventListener(ev,()=>{drawing=false;}));
+
+resizeCanvases();
+</script>
+</body>
+</html>
