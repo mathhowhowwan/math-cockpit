@@ -1,0 +1,505 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>畢氏定理互動版｜八上數學教學駕駛艙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sticky wood-frame header, pill nav, one blackboard panel per concept (card -> live tool -> quiz), floating chalk tools. Single dark chalkboard look by design. */
+:root{
+  --board:#1a2a1a; --board2:#223622; --chalk:#e8e4d8; --dim:#aeb8a6;
+  --yellow:#ffd54f; --pink:#ff8a80; --blue:#81d4fa; --green:#a5d6a7;
+  --wood:#8d6e4a; --wood2:#6d5233; --line:rgba(232,228,216,.22);
+  --ff-head:'Noto Serif TC','Songti TC',serif; --ff-body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--board);color:var(--chalk);font-family:var(--ff-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:22px 22px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--wood2)}
+.wrap{max-width:1000px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(#a3825a,var(--wood) 40%,var(--wood2));border-bottom:3px solid #4a371f;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font:700 1.25rem/1.2 var(--ff-head);margin:0;color:#fff8e1;text-wrap:balance}
+header small{display:block;font:400 .78rem var(--ff-body);color:#f1e2c4}
+.modebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;cursor:pointer;color:var(--chalk);background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:44px}
+button:hover{background:rgba(255,255,255,.16)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+button.on{background:var(--yellow);color:#2a2410;border-color:var(--yellow)}
+input[type=number],input[type=password]{font:inherit;color:var(--chalk);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:5.2em;min-height:44px}
+input[type=password]{width:7em}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.chip{background:rgba(129,212,250,.12);border:1px dashed var(--blue);color:var(--blue);border-radius:999px;padding:2px 14px;font-size:.88rem}
+nav.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+nav.pills a{color:var(--yellow);text-decoration:none;border:1px solid rgba(255,213,79,.5);border-radius:999px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:.92rem}
+nav.pills a:hover{background:rgba(255,213,79,.14)}
+section.pt{margin:34px 0;padding:22px;border:2px solid var(--line);border-radius:14px;background:var(--board2);scroll-margin-top:90px}
+section.pt>h2{font:700 1.5rem/1.3 var(--ff-head);color:var(--yellow);margin:0 0 4px;text-wrap:balance}
+.std{color:var(--dim);font-size:.85rem;margin:0 0 14px}
+h3{font:700 1.05rem var(--ff-head);color:var(--blue);margin:20px 0 8px}
+.concept-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px;margin:12px 0}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cb{background:rgba(0,0,0,.22);border-radius:8px;padding:12px;min-width:0}
+.cb p{margin:4px 0}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:.72rem;padding:2px 10px;border-radius:10px;margin-bottom:4px}
+.f{color:var(--blue);font-family:'Noto Serif TC',serif;font-size:1.08rem;text-align:center;padding:4px 0;overflow-wrap:anywhere}
+.cb ul{margin:4px 0 0 18px;padding:0}.cb li{margin-bottom:4px;font-size:.93rem}
+.lab{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.lab h3{margin-top:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:8px 0}
+.row label{display:flex;align-items:center;gap:6px;min-width:0}
+input[type=range]{accent-color:var(--yellow);width:min(220px,100%);min-height:44px}
+.out{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:1.02rem;overflow-wrap:anywhere}
+.out .step{display:block;padding:2px 0}
+.out .ans{color:var(--yellow);font-weight:700;font-size:1.15rem}
+.ok{color:var(--green)}.bad{color:var(--pink)}
+canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10px;border:1px solid var(--line)}
+.q{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.q p{margin:0 0 8px;font-weight:500}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts button{border-radius:10px;text-align:left;padding:8px 14px;overflow-wrap:anywhere}
+.opts button.right{background:rgba(165,214,167,.25);border-color:var(--green)}
+.opts button.wrong{background:rgba(255,138,128,.2);border-color:var(--pink)}
+.fb{margin-top:8px;font-size:.93rem;min-height:1.2em}
+.teacher{display:none;border:1px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:14px;background:rgba(255,138,128,.07)}
+body.tmode .teacher{display:block}
+.teacher b{color:var(--pink)}
+.cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.tools{display:none;width:min(280px,calc(100vw - 32px));background:#10190f;border:2px solid var(--wood);border-radius:12px;padding:12px}
+.tools.open{display:block}
+.tools h4{margin:8px 0 4px;color:var(--yellow);font-size:.95rem}
+.big{font:700 2rem var(--ff-head);color:var(--yellow);font-variant-numeric:tabular-nums}
+.penbar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100vw - 100px)}
+.penbar .sw{width:30px;height:30px;min-height:30px;padding:0;border-radius:50%}
+#pen{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
+#pen.active{pointer-events:auto;cursor:crosshair}
+#pw{display:none;align-items:center;gap:6px}
+#pw.show{display:flex}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;min-height:44px}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25)}
+@media(max-width:1024px){section.pt{padding:18px}}
+@media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+</head><body>
+
+<div class="wrap">
+<header>
+  <div><h1>畢氏定理駕駛艙</h1><small>第 2 章 平方根與畢氏定理 · 2-3 畢氏定理</small></div>
+  <div class="modebar">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <button id="modeBtn" type="button">教師模式</button>
+    <span id="pw"><input type="password" id="pwIn" placeholder="密碼" aria-label="教師密碼"><button type="button" id="pwGo">進入</button></span>
+  </div>
+</header>
+
+<div class="goals">
+  <span class="chip">說出畢氏定理並用面積說明</span><span class="chip">求直角三角形的邊長</span><span class="chip">求正三角形與斜邊上的高</span><span class="chip">在數線上找出 √a</span><span class="chip">解生活應用題</span><span class="chip">用距離公式求兩點距離</span>
+</div>
+<nav class="pills" aria-label="主題導覽">
+  <a href="#s1">① 畢氏定理</a><a href="#s2">② 求邊長</a><a href="#s3">③ 三角形的高</a><a href="#s4">④ 數線上的 √a</a><a href="#s5">⑤ 生活應用</a><a href="#s6">⑥ 距離公式</a><a href="#sum">總結</a>
+</nav>
+
+<section class="pt" id="s1">
+  <h2>① 畢氏定理</h2><p class="std">課本 P.95–98 · 探索活動、商高定理與《周髀算經》</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>直角三角形中，直角所對的邊稱為<b style="color:var(--yellow)">斜邊</b>，另外兩邊稱為<b style="color:var(--yellow)">股</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">∠C = 90° ⟹ a² + b² = c²<br>即 BC² + CA² = AB²</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證明：4 個全等直角三角形加一個小正方形，拼成邊長 c 的大正方形，c² = 4×½ab + (b−a)² = a²+b²。</li><li>中國稱為商高定理（勾股定理）：「勾廣三，股修四，徑隅五」。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>兩股長 5 和 12，斜邊 = √(5²+12²) = 13。<br>弦圖：3×4×2 + (4−3)² = 5²。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：三個正方形的面積</h3>
+    <div class="row"><label>股 a = <input type="range" id="s1a" min="1" max="12" value="3"><b id="s1av">3</b></label>
+    <label>股 b = <input type="range" id="s1b" min="1" max="12" value="4"><b id="s1bv">4</b></label>
+    <button type="button" data-a="3" data-b="4" class="pre1">3, 4</button><button type="button" data-a="5" data-b="12" class="pre1">5, 12</button><button type="button" data-a="1" data-b="1" class="pre1">1, 1</button></div>
+    <canvas class="viz" id="cv1"></canvas>
+    <div class="out" id="out1"></div>
+  </div>
+  <div id="q1"></div>
+  <div class="teacher"><b>教學提示：</b>先回到溫故啟思：方格紙上甲 = 8，乙＋丙 = 8。再用 1, 1 的預設看斜邊平方 = 2。拼圖證明可以請學生用四個全等直角三角形實際拼拼看。</div>
+</section>
+
+<section class="pt" id="s2">
+  <h2>② 利用畢氏定理求長度</h2><p class="std">課本 P.99、P.102 · 例 1、「斜邊是哪一邊？」</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>已知直角三角形的兩邊，可以用畢氏定理求第三邊。長度為正，所以平方後開根號要<b style="color:var(--pink)">取正值</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">斜邊² = 股² + 股²<br>一股² = 斜邊² − 另一股²</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>先找出斜邊（直角所對的邊），再列式。</li><li>3、4、x 的三角形，x 不一定是斜邊。</li><li>矩形、正方形的對角線可切出直角三角形。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>AB=6，BC=8，AC² = 36+64 = 100，AC = 10。<br>EG=10，EF=7，FG² = 100−49 = 51，FG = √51。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：求第三邊</h3>
+    <div class="row"><label>要求
+      <select id="s2m" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="h">斜邊</option><option value="l">一股</option></select></label>
+    <label id="s2l1">股 a<input type="number" id="s2a" value="6" min="1" style="margin-left:6px"></label>
+    <label id="s2l2">股 b<input type="number" id="s2b" value="8" min="1" style="margin-left:6px"></label></div>
+    <canvas class="viz" id="cv2"></canvas>
+    <div class="out" id="out2"></div>
+  </div>
+  <div id="q2"></div>
+  <div class="teacher"><b>教學提示：</b>依霖的錯誤：把 4²+3²=x² 當成 x 是斜邊，但圖中 4 才是直角對面的斜邊，正確是 3²+x²=4²，x=√7。要求學生每題先圈出斜邊。</div>
+</section>
+
+<section class="pt" id="s3">
+  <h2>③ 正三角形與斜邊上的高</h2><p class="std">課本 P.100–101 · 例 2、例 3</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>等腰三角形（含正三角形）是線對稱圖形，底邊上的高會平分底邊，形成兩個直角三角形。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">正三角形邊長 a：<br>高 = (√3/2)a，面積 = (√3/4)a²<br>斜邊上的高：½×股×股 = ½×斜邊×高</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>高 AD = √(AB² − BD²)，BD 是底邊的一半。</li><li>斜邊上的高用「面積算兩次」求出。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>AB=AC=10，BC=12：高 = √(100−36) = 8，面積 = 48。<br>兩股 10、24：BC = 26，AD = 120/13。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：三種三角形的高</h3>
+    <div class="row"><label>類型
+      <select id="s3m" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="i">等腰三角形（腰、底）</option><option value="e">正三角形（邊長）</option><option value="r">直角三角形（兩股，求斜邊上的高）</option></select></label>
+    <label id="s3l1">腰<input type="number" id="s3a" value="10" min="1" style="margin-left:6px"></label>
+    <label id="s3l2">底<input type="number" id="s3b" value="12" min="1" style="margin-left:6px"></label></div>
+    <canvas class="viz" id="cv3"></canvas>
+    <div class="out" id="out3"></div>
+  </div>
+  <div id="q3"></div>
+  <div class="teacher"><b>教學提示：</b>正三角形高的公式可以讓學生自己用邊長 a 推導，再背熟 √3/2 與 √3/4。斜邊上高的面積法：兩種方式算同一個三角形面積。</div>
+</section>
+
+<section class="pt" id="s4">
+  <h2>④ 數線上的 √a 與畢氏螺線</h2><p class="std">課本 P.102–103 · 例 4</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>在直角三角形上不斷以前一條斜邊為一股、另一股取固定長，就能依序畫出 √2、√3、√4⋯⋯，形成<b style="color:var(--yellow)">畢氏螺線</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">OB² = 2² + 1² = 5 ⟹ OB = √5<br>OC² = (√5)² + 1² = 6 ⟹ OC = √6</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>以 O 為圓心、OC 為半徑畫弧，交數線於一點，該點坐標就是 √6（左邊則為 −√6）。</li><li>調整兩股長，可以畫出特定的方根。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>OA=AB=BC=CD=3：<br>OB=3√2，OC=3√3，OD=6，E 點坐標為 6。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：畢氏螺線</h3>
+    <div class="row"><label>固定一股 L = <input type="range" id="s4l" min="1" max="4" value="1"><b id="s4lv">1</b></label>
+    <label>畫到第 N 個點 = <input type="range" id="s4n" min="2" max="12" value="6"><b id="s4nv">6</b></label></div>
+    <canvas class="viz" id="cv4"></canvas>
+    <div class="out" id="out4"></div>
+  </div>
+  <div id="q4"></div>
+  <div class="teacher"><b>教學提示：</b>課本附錄二與附件 7 可以摺出畢氏螺線。可讓學生把 L 調成 3，N 調成 4，對照隨堂練習的答案 OB=3√2、OC=3√3、OD=6。</div>
+</section>
+
+<section class="pt" id="s5">
+  <h2>⑤ 畢氏定理的生活應用</h2><p class="std">課本 P.104–105 · 例 5、例 6</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>螢幕尺寸是對角線長度，長寬比設為 10r : 7r，用畢氏定理解出 r。梯子、竹竿靠牆也形成直角三角形。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">(10r)² + (7r)² = 11²<br>梯長² = 梯腳到牆² + 梯頂高度²</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>設比例的係數 r，r 為正數。</li><li>計算機可求近似值：110√149/149 ≒ 9.01 吋。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>梯長 250，梯腳離樹 150，梯頂高 200；<br>往前移 80 後，梯腳離樹 70，梯頂高 240。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：梯子靠牆</h3>
+    <div class="row"><label>梯長 = <input type="range" id="s5l" min="100" max="300" step="10" value="250"><b id="s5lv">250</b></label>
+    <label>原來梯腳離牆 = <input type="range" id="s5x1" min="10" max="240" step="10" value="150"><b id="s5x1v">150</b></label>
+    <label>前移後梯腳離牆 = <input type="range" id="s5x2" min="10" max="240" step="10" value="70"><b id="s5x2v">70</b></label></div>
+    <canvas class="viz" id="cv5"></canvas>
+    <div class="out" id="out5"></div>
+  </div>
+  <div class="lab"><h3>互動：螢幕長寬</h3>
+    <div class="row"><label>長：寬 = <input type="number" id="s5p" value="10" min="1" max="30"> ： <input type="number" id="s5q" value="7" min="1" max="30"></label>
+    <label>對角線 <input type="number" id="s5d" value="11" min="1" max="100"> 吋</label></div>
+    <canvas class="viz" id="cv5b"></canvas>
+    <div class="out" id="out5b"></div>
+  </div>
+  <div id="q5"></div>
+  <div class="teacher"><b>教學提示：</b>把比例設成 4:3、對角線 20，會得到整數 16 與 12（課本隨堂練習）。10:7 的比例則需要化簡根式，正好複習有理化分母。</div>
+</section>
+
+<section class="pt" id="s6">
+  <h2>⑥ 距離公式</h2><p class="std">課本 P.106–109 · 例 7、例 8</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>坐標平面上兩點 A(x₁, y₁)、B(x₂, y₂)，過 A 作水平線、過 B 作鉛垂線交於 C(x₂, y₁)，△ABC 為直角三角形。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">AB = √[(x₂−x₁)² + (y₂−y₁)²]<br>同一水平線：AB = |x₂−x₁|<br>同一鉛垂線：CD = |y₂−y₁|</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>x 坐標的差、y 坐標的差，先平方再相加。</li><li>地圖要乘上比例尺，例如每格 100 公尺。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>A(2,3)、B(5,7)：AB = √(3²+4²) = 5。<br>C(−3,7)、D(3,5)：CD = √40，約 632 公尺。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：任意兩點的距離</h3>
+    <div class="row"><label>A 的 x<input type="range" id="s6x1" min="-8" max="8" value="2"><b id="s6x1v">2</b></label>
+    <label>A 的 y<input type="range" id="s6y1" min="-8" max="8" value="3"><b id="s6y1v">3</b></label>
+    <label>B 的 x<input type="range" id="s6x2" min="-8" max="8" value="5"><b id="s6x2v">5</b></label>
+    <label>B 的 y<input type="range" id="s6y2" min="-8" max="8" value="7"><b id="s6y2v">7</b></label></div>
+    <canvas class="viz" id="cv6"></canvas>
+    <div class="out" id="out6"></div>
+  </div>
+  <div id="q6"></div>
+  <div class="teacher"><b>教學提示：</b>讓學生調出 A 與 B 同 y 值，驗證公式退化為 |x₂−x₁|。例 8 周長題：A(4,−2)、B(2,4)、C(−3,−1)，周長 = 2√10 + 10√2。</div>
+</section>
+
+<section class="pt" id="sum">
+  <h2>總結 Cheat Sheet</h2><p class="std">課本 P.109 重點整理</p>
+  <div class="cheat">
+    <div class="cb"><span class="card-label">畢氏定理</span><p class="f">AC² + BC² = AB²<br>（∠C = 90°）</p></div>
+    <div class="cb"><span class="card-label">距離公式</span><p class="f">AB = √[(x₂−x₁)² + (y₂−y₁)²]</p></div>
+    <div class="cb"><span class="card-label">正三角形</span><p class="f">高 = (√3/2)a<br>面積 = (√3/4)a²</p></div>
+    <div class="cb"><span class="card-label">斜邊上的高</span><p class="f">高 = 股×股 ÷ 斜邊</p></div>
+    <div class="cb"><span class="card-label">常見畢氏三元數</span><p class="f">3-4-5　5-12-13<br>8-15-17　7-24-25</p></div>
+    <div class="cb"><span class="card-label">數線上的 √a</span><p class="f">OB² = OA² + AB²<br>以 O 為圓心畫弧</p></div>
+  </div>
+  <div class="teacher"><b>常見錯誤與挑錯題（P.112）：</b>(1) 把非斜邊的邊當成斜邊（依霖）；(2) 小明：面積 x = 7，不是 x = 5（x 是面積，不是邊長）；小英「面積和相等」正確；小美「周長和相等」錯誤，兩個正方形周長和 = 8+4√3，大正方形周長 = 4√7；(3) 距離公式漏掉平方或忘了開根號。</div>
+</section>
+<div style="text-align:center;margin:36px 0 8px"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a></div>
+</div>
+
+<div class="panel">
+  <div class="tools" id="tools">
+    <h4>抽籤器</h4>
+    <div class="row"><label>座號 1～<input type="number" id="lotN" value="30" min="2" max="99"></label><button type="button" id="lotGo">抽！</button></div>
+    <div class="big" id="lotOut" aria-live="polite">—</div>
+    <h4>計時器</h4>
+    <div class="row"><label><input type="number" id="tmMin" value="3" min="1" max="60"> 分</label><button type="button" id="tmGo">開始</button><button type="button" id="tmReset">重設</button></div>
+    <div class="big" id="tmOut" aria-live="off">03:00</div>
+  </div>
+  <button type="button" id="toolBtn">🧰 工具</button>
+</div>
+<div class="penbar">
+  <button type="button" id="penBtn" aria-pressed="false">✏️ 畫筆</button>
+  <span id="penTools" style="display:none;gap:6px;align-items:center;flex-wrap:wrap">
+    <button class="sw" data-c="#ffffff" style="background:#fff" aria-label="白色"></button>
+    <button class="sw" data-c="#ffd54f" style="background:#ffd54f" aria-label="黃色"></button>
+    <button class="sw" data-c="#ff8a80" style="background:#ff8a80" aria-label="粉紅"></button>
+    <button class="sw" data-c="#81d4fa" style="background:#81d4fa" aria-label="淺藍"></button>
+    <button type="button" id="penClr">清除</button>
+  </span>
+</div>
+<canvas id="pen"></canvas>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+var $=function(id){return document.getElementById(id)};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=a%b;a=b;b=t}return a||1}
+function clampInt(el,lo,hi){var v=Math.round(parseFloat(el.value));if(isNaN(v))v=lo;return Math.max(lo,Math.min(hi,v))}
+function r3(x){return Math.round(x*1000)/1000}
+function r1(x){return Math.round(x*10)/10}
+var D=Math.PI/180;
+function simp(n){var k=1,m=n,f=2;while(f*f<=m){while(m%(f*f)===0){m/=f*f;k*=f}f++}return [k,m]}
+function fmt(p,q,m){
+  if(p===0)return "0";
+  var g=gcd(p,q);p/=g;q/=g;
+  var sg=p<0?"−":"",ap=Math.abs(p);
+  if(m===1)return sg+ap+(q===1?"":"/"+q);
+  var num=(ap===1?"":ap)+"√"+m;
+  return sg+(q===1?num:num+"/"+q);
+}
+function ap(v){return Math.abs(v-Math.round(v))<1e-9?"":" ≒ "+r3(v)}
+function sqrtS(n){var s=simp(n);return fmt(s[0],1,s[1])}
+function setupCv(cv,ratio,maxH){var d=window.devicePixelRatio||1,w=cv.clientWidth,h=Math.round(Math.min(w*ratio,maxH||380));cv.style.height=h+"px";cv.width=w*d;cv.height=h*d;var c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return {c:c,w:w,h:h}}
+function mapper(w,h,pts,pad){
+  var xs=pts.map(function(p){return p[0]}),ys=pts.map(function(p){return p[1]});
+  var minx=Math.min.apply(0,xs),maxx=Math.max.apply(0,xs),miny=Math.min.apply(0,ys),maxy=Math.max.apply(0,ys);
+  var W=maxx-minx||1,H=maxy-miny||1,s=Math.min((w-2*pad)/W,(h-2*pad)/H);
+  var ox=(w-W*s)/2-minx*s,oy=(h+H*s)/2+miny*s;
+  return {s:s,T:function(p){return [ox+p[0]*s,oy-p[1]*s]}};
+}
+function seg(c,p,q,col,lw,dash){c.beginPath();c.setLineDash(dash||[]);c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.strokeStyle=col||"#e8e4d8";c.lineWidth=lw||2;c.stroke();c.setLineDash([])}
+function poly(c,P,fill,stroke,lw){c.beginPath();c.moveTo(P[0][0],P[0][1]);for(var i=1;i<P.length;i++)c.lineTo(P[i][0],P[i][1]);c.closePath();if(fill){c.fillStyle=fill;c.fill()}if(stroke){c.strokeStyle=stroke;c.lineWidth=lw||2;c.stroke()}}
+function txt(c,t,x,y,col,sz){c.fillStyle=col||"#e8e4d8";c.font="bold "+(sz||14)+"px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y)}
+function dotL(c,p,lab,away,col){col=col||"#ffd54f";c.beginPath();c.arc(p[0],p[1],4,0,7);c.fillStyle=col;c.fill();var dx=p[0]-away[0],dy=p[1]-away[1],L=Math.hypot(dx,dy)||1;txt(c,lab,p[0]+dx/L*15,p[1]+dy/L*15,col,15)}
+function rightMark(c,V,P1,P2,sz){var u=[P1[0]-V[0],P1[1]-V[1]],v=[P2[0]-V[0],P2[1]-V[1]],lu=Math.hypot(u[0],u[1]),lv=Math.hypot(v[0],v[1]);u=[u[0]/lu*sz,u[1]/lu*sz];v=[v[0]/lv*sz,v[1]/lv*sz];c.beginPath();c.moveTo(V[0]+u[0],V[1]+u[1]);c.lineTo(V[0]+u[0]+v[0],V[1]+u[1]+v[1]);c.lineTo(V[0]+v[0],V[1]+v[1]);c.strokeStyle="#e8e4d8";c.lineWidth=1.5;c.stroke()}
+function ctr(P){var x=0,y=0;P.forEach(function(p){x+=p[0];y+=p[1]});return [x/P.length,y/P.length]}
+
+/* ---------- section 1 ---------- */
+function s1(){
+  var a=+$("s1a").value,b=+$("s1b").value;$("s1av").textContent=a;$("s1bv").textContent=b;
+  var c2=a*a+b*b,o=setupCv($("cv1"),.72,430),g=o.c,mp=mapper(o.w,o.h,[[-b,-a],[a+b,a+b]],10),T=mp.T,s=mp.s;
+  var A=[0,b],B=[a,0],C=[0,0],sqBC=[[0,0],[a,0],[a,-a],[0,-a]],sqCA=[[0,0],[0,b],[-b,b],[-b,0]],sqAB=[A,B,[a+b,a],[b,a+b]];
+  poly(g,sqBC.map(T),"rgba(255,213,79,.28)","#ffd54f");poly(g,sqCA.map(T),"rgba(129,212,250,.28)","#81d4fa");poly(g,sqAB.map(T),"rgba(255,138,128,.28)","#ff8a80");
+  poly(g,[A,B,C].map(T),"rgba(232,228,216,.15)","#e8e4d8",2.5);
+  rightMark(g,T(C),T(A),T(B),Math.min(14,Math.min(a,b)*s*.4));
+  var sz=function(side){return Math.max(10,Math.min(20,side*s*.45))};
+  var cc=ctr(sqBC);txt(g,"a² = "+a*a,T(cc)[0],T(cc)[1],"#ffd54f",sz(a));
+  cc=ctr(sqCA);txt(g,"b² = "+b*b,T(cc)[0],T(cc)[1],"#81d4fa",sz(b));
+  cc=ctr(sqAB);txt(g,"c² = "+c2,T(cc)[0],T(cc)[1],"#ff8a80",sz(Math.sqrt(c2)));
+  dotL(g,T(A),"A",T(C));dotL(g,T(B),"B",T(C));dotL(g,T(C),"C",T([a/2,b/2]),"#e8e4d8");
+  var cs=simp(c2),isInt=cs[1]===1;
+  $("out1").innerHTML="<span class='step'>兩股的正方形面積和：a²+b² = "+a*a+" + "+b*b+" = <b class='ans'>"+c2+"</b></span><span class='step'>斜邊的正方形面積：c² = "+c2+" <span class='ok'>✔ 相等</span></span><span class='step'>斜邊 AB = √"+c2+" = <b class='ans'>"+sqrtS(c2)+"</b>"+(isInt?"（三邊都是整數，稱為畢氏三元數）":"")+"</span><span class='step'>弦圖驗算：2ab + (b−a)² = "+2*a*b+" + "+(b-a)*(b-a)+" = "+(2*a*b+(b-a)*(b-a))+" = c²</span>";
+}
+["s1a","s1b"].forEach(function(i){$(i).addEventListener("input",s1)});
+document.querySelectorAll(".pre1").forEach(function(b){b.addEventListener("click",function(){$("s1a").value=b.dataset.a;$("s1b").value=b.dataset.b;s1()})});
+
+/* ---------- section 2 ---------- */
+function s2(){
+  var m=$("s2m").value,a=clampInt($("s2a"),1,999),b=clampInt($("s2b"),1,999),h="",L1,L2,pa,pb;
+  $("s2l1").firstChild.nodeValue=m==="h"?"股 a":"一股 a";$("s2l2").firstChild.nodeValue=m==="h"?"股 b":"斜邊 c";
+  var da,db,dc;
+  if(m==="h"){
+    var c2=a*a+b*b;da=a;db=b;dc=null;
+    h="<span class='step'>斜邊 AC² = AB² + BC² = "+a+"² + "+b+"² = "+a*a+" + "+b*b+" = "+c2+"</span><span class='step'>AC = ±√"+c2+" = ±"+sqrtS(c2)+"，邊長為正，故 AC = <b class='ans'>"+sqrtS(c2)+"</b></span>";
+  }else{
+    if(b<=a){$("out2").innerHTML="<span class='bad'>斜邊一定比股長，請讓斜邊 c 大於股 a。</span>";var oo=setupCv($("cv2"),.5,300);return}
+    var d2=b*b-a*a;da=a;db=Math.sqrt(d2);dc=b;
+    h="<span class='step'>斜邊² = 股² + 股²：<br>"+b+"² = "+a+"² + x²，"+b*b+" = "+a*a+" + x²</span><span class='step'>x² = "+b*b+" − "+a*a+" = "+d2+"，x = ±"+sqrtS(d2)+"，取正：x = <b class='ans'>"+sqrtS(d2)+"</b></span>";
+  }
+  var o=setupCv($("cv2"),.5,300),g=o.c,mp=mapper(o.w,o.h,[[0,0],[da,db]],36),T=mp.T;
+  var C=[0,0],B=[da,0],A=[0,db];
+  poly(g,[A,B,C].map(T),"rgba(165,214,167,.2)","#e8e4d8",2.5);rightMark(g,T(C),T(A),T(B),12);
+  var lab=function(p,q,t,col,off){var P=T(p),Q=T(q);txt(g,t,(P[0]+Q[0])/2+off[0],(P[1]+Q[1])/2+off[1],col,15)};
+  lab(C,B,m==="h"?String(da):String(da),"#ffd54f",[0,16]);
+  lab(C,A,m==="h"?String(db):"x","#81d4fa",[-16,0]);
+  lab(A,B,m==="h"?"c = ?":String(dc),"#ff8a80",[16,-12]);
+  dotL(g,T(A),"A",T(C));dotL(g,T(B),"B",T(C));dotL(g,T(C),"C",T([da/2,db/2]),"#e8e4d8");
+  $("out2").innerHTML=h;
+}
+["s2m","s2a","s2b"].forEach(function(i){$(i).addEventListener("input",s2)});
+
+/* ---------- section 3 ---------- */
+function s3(){
+  var m=$("s3m").value,a=clampInt($("s3a"),1,999),b=clampInt($("s3b"),1,999),h="";
+  $("s3l1").firstChild.nodeValue=m==="i"?"腰":m==="e"?"邊長":"股 AB";$("s3l2").firstChild.nodeValue=m==="i"?"底":m==="e"?"（不用填）":"股 AC";
+  var o=setupCv($("cv3"),.55,320),g=o.c,P,hv;
+  if(m==="i"){
+    if(2*a<=b){$("out3").innerHTML="<span class='bad'>兩腰之和要大於底邊，才能構成三角形。</span>";return}
+    var q=4*a*a-b*b,s=simp(q);hv=Math.sqrt(q)/2;
+    h="<span class='step'>垂足 D 為 BC 中點，BD = "+b+"/2 = "+(b/2)+"</span><span class='step'>AD² = AB² − BD² = "+a+"² − "+(b/2)+"² = "+(a*a-b*b/4)+"，AD = <b class='ans'>"+fmt(s[0],2,s[1])+"</b>"+ap(hv)+"</span><span class='step'>面積 = ½×BC×AD = ½×"+b+"×"+fmt(s[0],2,s[1])+" = <b class='ans'>"+fmt(b*s[0],4,s[1])+"</b>"+ap(.5*b*hv)+"</span>";
+    P={A:[0,hv],B:[-b/2,0],C:[b/2,0],D:[0,0]};
+  }else if(m==="e"){
+    hv=Math.sqrt(3)/2*a;
+    h="<span class='step'>BD = "+a+"/2，AD = √("+a+"² − ("+a+"/2)²) = (√3/2)×"+a+" = <b class='ans'>"+fmt(a,2,3)+"</b> ≒ "+r3(hv)+"</span><span class='step'>面積 = (√3/4)×"+a+"² = <b class='ans'>"+fmt(a*a,4,3)+"</b> ≒ "+r3(Math.sqrt(3)/4*a*a)+"</span>";
+    P={A:[0,hv],B:[-a/2,0],C:[a/2,0],D:[0,0]};
+  }else{
+    var c2=a*a+b*b,cs=simp(c2),c=Math.sqrt(c2);hv=a*b/c;
+    h="<span class='step'>斜邊 BC² = "+a+"² + "+b+"² = "+c2+"，BC = <b class='ans'>"+sqrtS(c2)+"</b></span><span class='step'>面積算兩次：½×"+a+"×"+b+" = ½×BC×AD</span><span class='step'>AD = "+a*b+" ÷ ("+sqrtS(c2)+") = <b class='ans'>"+fmt(a*b,cs[0]*cs[1],cs[1])+"</b>"+ap(hv)+"</span>";
+    // A right angle at origin
+    var Bp=[a,0],Cp=[0,b],t=((-Bp[0])*(Cp[0]-Bp[0])+(-Bp[1])*(Cp[1]-Bp[1]))/c2,Dp=[Bp[0]+t*(Cp[0]-Bp[0]),Bp[1]+t*(Cp[1]-Bp[1])];
+    P={A:[0,0],B:Bp,C:Cp,D:Dp};
+  }
+  var mp=mapper(o.w,o.h,[P.A,P.B,P.C,P.D],40),T=mp.T;
+  poly(g,[P.A,P.B,P.C].map(T),"rgba(255,213,79,.18)","#e8e4d8",2.5);seg(g,T(P.A),T(P.D),"#ff8a80",2.5,[6,4]);
+  if(m==="r"){rightMark(g,T(P.A),T(P.B),T(P.C),12)}
+  rightMark(g,T(P.D),T(P.A),m==="r"?T(P.B):T(P.B),9);
+  var away=T([ (P.B[0]+P.C[0])/2, (P.A[1]+P.B[1])/2 ]);
+  dotL(g,T(P.A),"A",T(ctr([P.B,P.C,P.D])));dotL(g,T(P.B),"B",T(ctr([P.A,P.C])));dotL(g,T(P.C),"C",T(ctr([P.A,P.B])));dotL(g,T(P.D),"D",T(P.A),"#ff8a80");
+  $("out3").innerHTML=h;
+}
+["s3m","s3a","s3b"].forEach(function(i){$(i).addEventListener("input",s3)});
+
+/* ---------- section 4 ---------- */
+function s4(){
+  var L=+$("s4l").value,N=+$("s4n").value;$("s4lv").textContent=L;$("s4nv").textContent=N;
+  var o=setupCv($("cv4"),.7,440),g=o.c,cx=o.w/2,cy=o.h/2,rN=L*Math.sqrt(N),R=Math.min(o.w,o.h)/2-26,s=R/rN;
+  var th=[0],i,P=[];for(i=1;i<N;i++)th.push(th[i-1]+Math.atan(1/Math.sqrt(i)));
+  for(i=1;i<=N;i++){var r=L*Math.sqrt(i);P.push([cx+r*s*Math.cos(th[i-1]),cy-r*s*Math.sin(th[i-1])])}
+  var O=[cx,cy];
+  seg(g,[cx-R-14,cy],[cx+R+14,cy],"#aeb8a6",1.2);
+  g.beginPath();g.arc(cx,cy,rN*s,-th[N-1],0,false);g.strokeStyle="#81d4fa";g.lineWidth=1.5;g.setLineDash([5,5]);g.stroke();g.setLineDash([]);
+  for(i=0;i<N;i++){seg(g,O,P[i],i===N-1?"#ff8a80":"#e8e4d8",i===N-1?3:1.4);if(i<N-1)seg(g,P[i],P[i+1],"#ffd54f",2)}
+  var E=[cx+rN*s,cy];g.beginPath();g.arc(E[0],E[1],5,0,7);g.fillStyle="#81d4fa";g.fill();txt(g,"E",E[0],E[1]+18,"#81d4fa",15);txt(g,"O",cx-12,cy+14,"#e8e4d8",14);
+  for(i=0;i<N;i++){g.beginPath();g.arc(P[i][0],P[i][1],3.5,0,7);g.fillStyle="#ffd54f";g.fill()}
+  var list=[];for(i=1;i<=N;i++)list.push("r"+i+" = "+(L===1?sqrtS(i):L+"√"+i+(simp(i)[0]>1||simp(i)[1]===1?" = "+fmt(L*simp(i)[0],1,simp(i)[1]):"")));
+  $("out4").innerHTML="<span class='step'>每一個直角三角形都有一股固定為 "+L+"，斜邊² = 前一條斜邊² + "+L+"²。</span><span class='step'>第 "+N+" 條斜邊 OP"+N+" = "+L+"√"+N+" = <b class='ans'>"+fmt(L*simp(N)[0],1,simp(N)[1])+"</b> ≒ "+r3(rN)+"</span><span class='step'>以 O 為圓心、OP"+N+" 為半徑畫弧交數線於 E，E 的坐標為 <b class='ans'>"+fmt(L*simp(N)[0],1,simp(N)[1])+"</b>（左邊對稱點為 −"+fmt(L*simp(N)[0],1,simp(N)[1])+"）。</span><span class='step' style='color:var(--dim);font-size:.9rem'>"+list.join("；")+"</span>";
+}
+["s4l","s4n"].forEach(function(i){$(i).addEventListener("input",s4)});
+
+/* ---------- section 5 ---------- */
+function s5(){
+  var Ls=+$("s5l").value,x1=+$("s5x1").value,x2=+$("s5x2").value;
+  $("s5x1").max=Ls-10;$("s5x2").max=Ls-10;if(x1>Ls-10){x1=Ls-10;$("s5x1").value=x1}if(x2>Ls-10){x2=Ls-10;$("s5x2").value=x2}
+  $("s5lv").textContent=Ls;$("s5x1v").textContent=x1;$("s5x2v").textContent=x2;
+  var h1=Math.sqrt(Ls*Ls-x1*x1),h2=Math.sqrt(Ls*Ls-x2*x2);
+  var o=setupCv($("cv5"),.62,380),g=o.c,mp=mapper(o.w,o.h,[[0,0],[Ls,Ls]],28),T=mp.T;
+  seg(g,T([-Ls*.05,0]),T([Ls*1.02,0]),"#a5d6a7",3);seg(g,T([0,0]),T([0,Ls*1.02]),"#8d6e4a",6);
+  seg(g,T([x1,0]),T([0,h1]),"#81d4fa",4);seg(g,T([x2,0]),T([0,h2]),"#ffd54f",4);
+  seg(g,T([0,h1]),T([x1,h1]),"#81d4fa",1,[4,4]);
+  [[x1,h1,"#81d4fa"],[x2,h2,"#ffd54f"]].forEach(function(p){var P=T([0,p[1]]);g.beginPath();g.arc(P[0],P[1],4,0,7);g.fillStyle=p[2];g.fill()});
+  txt(g,"h₁ = "+r3(h1),T([0,h1])[0]+52,T([0,h1])[1]-12,"#81d4fa",14);txt(g,"h₂ = "+r3(h2),T([0,h2])[0]+52,T([0,h2])[1]-12,"#ffd54f",14);
+  txt(g,"x₁",T([x1,0])[0],T([x1,0])[1]+14,"#81d4fa",13);txt(g,"x₂",T([x2,0])[0],T([x2,0])[1]+14,"#ffd54f",13);
+  $("out5").innerHTML="<span class='step'>原來："+Ls+"² = h₁² + "+x1+"²，h₁² = "+(Ls*Ls-x1*x1)+"，h₁ = <b class='ans'>"+sqrtS(Ls*Ls-x1*x1)+"</b> ≒ "+r3(h1)+"</span><span class='step'>前移後："+Ls+"² = h₂² + "+x2+"²，h₂² = "+(Ls*Ls-x2*x2)+"，h₂ = <b class='ans'>"+sqrtS(Ls*Ls-x2*x2)+"</b> ≒ "+r3(h2)+"</span><span class='step'>梯頂高度改變：|h₂ − h₁| ≒ "+r3(Math.abs(h2-h1))+(Ls===250&&x1===150&&x2===70?"（課本例 6：200 與 240，空拍機離地 240 公分）":"")+"</span>";
+}
+["s5l","s5x1","s5x2"].forEach(function(i){$(i).addEventListener("input",s5)});
+function s5b(){
+  var p=clampInt($("s5p"),1,30),q=clampInt($("s5q"),1,30),d=clampInt($("s5d"),1,100),N=p*p+q*q,s=simp(N);
+  var Lm=p*d/Math.sqrt(N),Wm=q*d/Math.sqrt(N);
+  var o=setupCv($("cv5b"),.4,240),g=o.c,mp=mapper(o.w,o.h,[[0,0],[Lm,Wm]],30),T=mp.T;
+  var R=[[0,0],[Lm,0],[Lm,Wm],[0,Wm]].map(T);poly(g,R,"rgba(129,212,250,.15)","#e8e4d8",3);seg(g,R[0],R[2],"#ff8a80",2.5,[6,4]);
+  txt(g,"長 = "+r3(Lm),(R[0][0]+R[1][0])/2,R[0][1]+16,"#ffd54f",14);txt(g,"寬 = "+r3(Wm),R[0][0]-4,(R[0][1]+R[3][1])/2,"#81d4fa",14);txt(g,d+" 吋",(R[0][0]+R[2][0])/2+6,(R[0][1]+R[2][1])/2-14,"#ff8a80",14);
+  $("out5b").innerHTML="<span class='step'>設長 = "+p+"r，寬 = "+q+"r（r＞0）：("+p+"r)² + ("+q+"r)² = "+d+"²，"+N+"r² = "+d*d+"</span><span class='step'>r = "+d+"/√"+N+"，長 = "+p+"r = <b class='ans'>"+fmt(p*d,s[0]*s[1],s[1])+"</b> ≒ "+r3(Lm)+" 吋；寬 = "+q+"r = <b class='ans'>"+fmt(q*d,s[0]*s[1],s[1])+"</b> ≒ "+r3(Wm)+" 吋</span>";
+}
+["s5p","s5q","s5d"].forEach(function(i){$(i).addEventListener("input",s5b)});
+
+/* ---------- section 6 ---------- */
+function s6(){
+  var x1=+$("s6x1").value,y1=+$("s6y1").value,x2=+$("s6x2").value,y2=+$("s6y2").value;
+  $("s6x1v").textContent=x1;$("s6y1v").textContent=y1;$("s6x2v").textContent=x2;$("s6y2v").textContent=y2;
+  var o=setupCv($("cv6"),.8,460),g=o.c,sc=(Math.min(o.w,o.h)-30)/18,cx=o.w/2,cy=o.h/2;
+  function T(p){return [cx+p[0]*sc,cy-p[1]*sc]}
+  g.strokeStyle="rgba(232,228,216,.12)";g.lineWidth=1;
+  for(var i=-9;i<=9;i++){seg(g,T([i,-9]),T([i,9]),"rgba(232,228,216,.12)",1);seg(g,T([-9,i]),T([9,i]),"rgba(232,228,216,.12)",1)}
+  seg(g,T([-9,0]),T([9,0]),"#aeb8a6",1.5);seg(g,T([0,-9]),T([0,9]),"#aeb8a6",1.5);txt(g,"x",T([9,0])[0]-6,T([9,0])[1]-10,"#aeb8a6",13);txt(g,"y",T([0,9])[0]+10,T([0,9])[1]+6,"#aeb8a6",13);
+  var A=[x1,y1],B=[x2,y2],C=[x2,y1],dx=Math.abs(x2-x1),dy=Math.abs(y2-y1);
+  seg(g,T(A),T(C),"#ffd54f",3);seg(g,T(C),T(B),"#81d4fa",3);seg(g,T(A),T(B),"#ff8a80",3.5);
+  if(dx&&dy)rightMark(g,T(C),T(A),T(B),10);
+  g.beginPath();g.arc(T(A)[0],T(A)[1],5,0,7);g.fillStyle="#ffd54f";g.fill();g.beginPath();g.arc(T(B)[0],T(B)[1],5,0,7);g.fillStyle="#81d4fa";g.fill();
+  txt(g,"A("+x1+","+y1+")",T(A)[0],T(A)[1]-16,"#ffd54f",13);txt(g,"B("+x2+","+y2+")",T(B)[0],T(B)[1]+(y2<=y1?18:-16),"#81d4fa",13);
+  var d2=dx*dx+dy*dy,h="";
+  if(d2===0){$("out6").innerHTML="<span class='step'>A、B 是同一個點，距離 0。</span>";return}
+  if(dy===0)h+="<span class='step'>A、B 在同一條水平線上：AB = |"+x2+" − "+x1+"| = <b class='ans'>"+dx+"</b></span>";
+  else if(dx===0)h+="<span class='step'>A、B 在同一條鉛垂線上：AB = |"+y2+" − "+y1+"| = <b class='ans'>"+dy+"</b></span>";
+  else h+="<span class='step'>AC = |"+x2+" − "+x1+"| = "+dx+"，BC = |"+y2+" − "+y1+"| = "+dy+"，△ABC 為直角三角形</span><span class='step'>AB = √[("+x2+" − "+x1+")² + ("+y2+" − "+y1+")²] = √("+dx*dx+" + "+dy*dy+") = √"+d2+" = <b class='ans'>"+sqrtS(d2)+"</b>"+ap(Math.sqrt(d2))+"</span>";
+  h+="<span class='step' style='color:var(--dim)'>若地圖每格 100 公尺，實際距離約 "+Math.round(Math.sqrt(d2)*100)+" 公尺。</span>";
+  $("out6").innerHTML=h;
+}
+["s6x1","s6y1","s6x2","s6y2"].forEach(function(i){$(i).addEventListener("input",s6)});
+
+/* ---------- quizzes ---------- */
+var QS={
+ q1:[{q:"直角三角形兩股長 5 和 12，斜邊長是？",o:["13","17","7","√119"],a:0,e:"√(5²+12²) = √169 = 13。"},{q:"△ABC 中 ∠C = 90°，下列何者正確？",o:["AC² + BC² = AB²","AB² + BC² = AC²","AC + BC = AB","AC² × BC² = AB²"],a:0,e:"斜邊是直角所對的 AB，兩股平方和等於斜邊平方。"}],
+ q2:[{q:"直角三角形斜邊 9，一股 5，另一股是？",o:["4","2√14","√106","14"],a:1,e:"9² − 5² = 56，√56 = 2√14。"},{q:"長方形對角線 10，一邊 7，另一邊 = ？",o:["3","√51","17","√149"],a:1,e:"10² − 7² = 51，所以是 √51。"}],
+ q3:[{q:"正三角形邊長 6，高是？",o:["3√3","6√3","3","3√2"],a:0,e:"高 = (√3/2)×6 = 3√3。"},{q:"直角三角形兩股 12、16，斜邊上的高是？",o:["48/5","20","9.6√2","10"],a:0,e:"斜邊 20，高 = 12×16÷20 = 48/5。"}],
+ q4:[{q:"數線上 OA = 1，AB = 1（AB ⊥ OA），OB = ？",o:["√2","2","1","√3"],a:0,e:"OB² = 1² + 1² = 2。"},{q:"OA = AB = BC = 3（逐步直角），OC = ？",o:["3√3","6","3√2","9"],a:0,e:"OB = 3√2，OC² = (3√2)² + 3² = 27，OC = 3√3。"}],
+ q5:[{q:"螢幕長寬比 4:3，對角線 20 吋，寬是？",o:["12 吋","16 吋","15 吋","10 吋"],a:0,e:"(4t)²+(3t)²=400，t=4，寬 = 12。"},{q:"梯長 250 公分，梯腳離樹 150 公分，梯頂離地？",o:["200 公分","100 公分","400 公分","√40000 − 150 公分"],a:0,e:"250² − 150² = 40000，√40000 = 200。"}],
+ q6:[{q:"A(2,3)、B(5,7)，AB = ？",o:["5","7","√7","25"],a:0,e:"√(3²+4²) = 5。"},{q:"A(2,8)、B(−5,7)，AB = ？",o:["5√2","√50 + 1","7","√48"],a:0,e:"√(49+1) = √50 = 5√2。"}]
+};
+Object.keys(QS).forEach(function(id){
+  var box=$(id),h="<h3>形成性評量</h3>";
+  QS[id].forEach(function(q,qi){h+="<div class='q' data-q='"+id+"' data-i='"+qi+"'><p>Q"+(qi+1)+"　"+q.q+"</p><div class='opts'>"+q.o.map(function(t,oi){return "<button type='button' data-o='"+oi+"'>"+String.fromCharCode(65+oi)+". "+t+"</button>"}).join("")+"</div><div class='fb'></div></div>"});
+  box.innerHTML=h;
+});
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest(".opts button");if(!b)return;
+  var qd=b.closest(".q"),q=QS[qd.dataset.q][+qd.dataset.i],o=+b.dataset.o,fb=qd.querySelector(".fb");
+  qd.querySelectorAll(".opts button").forEach(function(x){x.classList.remove("right","wrong")});
+  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e}
+  else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
+});
+
+/* ---------- teacher mode ---------- */
+var tm=false;
+function setT(v){tm=v;document.body.classList.toggle("tmode",v);$("modeBtn").classList.toggle("on",v);$("modeBtn").textContent=v?"教師模式（開）":"教師模式";$("pw").classList.remove("show")}
+$("modeBtn").addEventListener("click",function(){if(tm){setT(false)}else{$("pw").classList.toggle("show");$("pwIn").focus()}});
+function tryPw(){if($("pwIn").value==="math2026"){setT(true);$("pwIn").value=""}else{$("pwIn").value="";$("pwIn").placeholder="密碼錯誤"}}
+$("pwGo").addEventListener("click",tryPw);$("pwIn").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw()});
+
+/* ---------- tools ---------- */
+$("toolBtn").addEventListener("click",function(){$("tools").classList.toggle("open")});
+$("lotGo").addEventListener("click",function(){var n=clampInt($("lotN"),2,99);$("lotOut").textContent=Math.floor(Math.random()*n)+1+" 號"});
+var tid=null,left=180;
+function showT(){var m=Math.floor(left/60),s=left%60;$("tmOut").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s}
+$("tmGo").addEventListener("click",function(){
+  if(tid){clearInterval(tid);tid=null;$("tmGo").textContent="繼續";return}
+  if(left<=0)left=clampInt($("tmMin"),1,60)*60;
+  $("tmGo").textContent="暫停";showT();
+  tid=setInterval(function(){left--;showT();if(left<=0){clearInterval(tid);tid=null;$("tmGo").textContent="開始";$("tmOut").textContent="時間到！"}},1000)});
+$("tmReset").addEventListener("click",function(){clearInterval(tid);tid=null;left=clampInt($("tmMin"),1,60)*60;$("tmGo").textContent="開始";showT()});
+$("tmMin").addEventListener("input",function(){if(!tid){left=clampInt($("tmMin"),1,60)*60;showT()}});
+
+/* ---------- pen ---------- */
+var pc=$("pen"),px=pc.getContext("2d"),pcol="#ffffff",drawing=false,pa=false;
+function sizePen(){pc.width=window.innerWidth;pc.height=window.innerHeight}
+function ptr(e){return [e.clientX,e.clientY]}
+$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none"});
+document.querySelectorAll(".sw").forEach(function(s){s.addEventListener("click",function(){pcol=s.dataset.c})});
+$("penClr").addEventListener("click",function(){px.clearRect(0,0,pc.width,pc.height)});
+pc.addEventListener("pointerdown",function(e){drawing=true;var p=ptr(e);px.beginPath();px.moveTo(p[0],p[1]);pc.setPointerCapture(e.pointerId)});
+pc.addEventListener("pointermove",function(e){if(!drawing)return;var p=ptr(e);px.strokeStyle=pcol;px.lineWidth=3.5;px.lineCap="round";px.lineJoin="round";px.lineTo(p[0],p[1]);px.stroke()});
+["pointerup","pointercancel"].forEach(function(n){pc.addEventListener(n,function(){drawing=false})});
+
+/* ---------- init ---------- */
+function all(){s1();s2();s3();s4();s5();s5b();s6()}
+var rt;window.addEventListener("resize",function(){all();clearTimeout(rt);rt=setTimeout(function(){var img=px.getImageData(0,0,pc.width,pc.height);sizePen();px.putImageData(img,0,0)},150)});
+sizePen();all();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+</body></html>
