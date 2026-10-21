@@ -1,0 +1,514 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>3-1 提公因式法與乘法公式因式分解｜八上數學教學駕駛艙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sticky wood-frame header, pill nav, one blackboard panel per concept (card -> live tool -> quiz), floating chalk tools. Single dark chalkboard look by design. */
+:root{
+  --board:#1a2a1a; --board2:#223622; --chalk:#e8e4d8; --dim:#aeb8a6;
+  --yellow:#ffd54f; --pink:#ff8a80; --blue:#81d4fa; --green:#a5d6a7;
+  --wood:#8d6e4a; --wood2:#6d5233; --line:rgba(232,228,216,.22);
+  --ff-head:'Noto Serif TC','Songti TC',serif; --ff-body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--board);color:var(--chalk);font-family:var(--ff-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:22px 22px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--wood2)}
+.wrap{max-width:1000px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(#a3825a,var(--wood) 40%,var(--wood2));border-bottom:3px solid #4a371f;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font:700 1.25rem/1.2 var(--ff-head);margin:0;color:#fff8e1;text-wrap:balance}
+header small{display:block;font:400 .78rem var(--ff-body);color:#f1e2c4}
+.modebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;cursor:pointer;color:var(--chalk);background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:44px}
+button:hover{background:rgba(255,255,255,.16)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+button.on{background:var(--yellow);color:#2a2410;border-color:var(--yellow)}
+input[type=number],input[type=password]{font:inherit;color:var(--chalk);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:5.2em;min-height:44px}
+input[type=password]{width:7em}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.chip{background:rgba(129,212,250,.12);border:1px dashed var(--blue);color:var(--blue);border-radius:999px;padding:2px 14px;font-size:.88rem}
+nav.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+nav.pills a{color:var(--yellow);text-decoration:none;border:1px solid rgba(255,213,79,.5);border-radius:999px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:.92rem}
+nav.pills a:hover{background:rgba(255,213,79,.14)}
+section.pt{margin:34px 0;padding:22px;border:2px solid var(--line);border-radius:14px;background:var(--board2);scroll-margin-top:90px}
+section.pt>h2{font:700 1.5rem/1.3 var(--ff-head);color:var(--yellow);margin:0 0 4px;text-wrap:balance}
+.std{color:var(--dim);font-size:.85rem;margin:0 0 14px}
+h3{font:700 1.05rem var(--ff-head);color:var(--blue);margin:20px 0 8px}
+.concept-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px;margin:12px 0}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cb{background:rgba(0,0,0,.22);border-radius:8px;padding:12px;min-width:0}
+.cb p{margin:4px 0}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:.72rem;padding:2px 10px;border-radius:10px;margin-bottom:4px}
+.f{color:var(--blue);font-family:'Noto Serif TC',serif;font-size:1.08rem;text-align:center;padding:4px 0;overflow-wrap:anywhere}
+.cb ul{margin:4px 0 0 18px;padding:0}.cb li{margin-bottom:4px;font-size:.93rem}
+.lab{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.lab h3{margin-top:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:8px 0}
+.row label{display:flex;align-items:center;gap:6px;min-width:0}
+input[type=range]{accent-color:var(--yellow);width:min(220px,100%);min-height:44px}
+.out{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:1.02rem;overflow-wrap:anywhere}
+.out .step{display:block;padding:2px 0}
+.out .ans{color:var(--yellow);font-weight:700;font-size:1.15rem}
+.ok{color:var(--green)}.bad{color:var(--pink)}
+canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10px;border:1px solid var(--line)}
+.q{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.q p{margin:0 0 8px;font-weight:500}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts button{border-radius:10px;text-align:left;padding:8px 14px;overflow-wrap:anywhere}
+.opts button.right{background:rgba(165,214,167,.25);border-color:var(--green)}
+.opts button.wrong{background:rgba(255,138,128,.2);border-color:var(--pink)}
+.fb{margin-top:8px;font-size:.93rem;min-height:1.2em}
+.teacher{display:none;border:1px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:14px;background:rgba(255,138,128,.07)}
+body.tmode .teacher{display:block}
+.teacher b{color:var(--pink)}
+.cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.tools{display:none;width:min(280px,calc(100vw - 32px));background:#10190f;border:2px solid var(--wood);border-radius:12px;padding:12px}
+.tools.open{display:block}
+.tools h4{margin:8px 0 4px;color:var(--yellow);font-size:.95rem}
+.big{font:700 2rem var(--ff-head);color:var(--yellow);font-variant-numeric:tabular-nums}
+.penbar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100vw - 100px)}
+.penbar .sw{width:30px;height:30px;min-height:30px;padding:0;border-radius:50%}
+#pen{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
+#pen.active{pointer-events:auto;cursor:crosshair}
+#pw{display:none;align-items:center;gap:6px}
+#pw.show{display:flex}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;min-height:44px}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25)}
+@media(max-width:1024px){section.pt{padding:18px}}
+@media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+</head><body>
+
+<div class="wrap">
+<header>
+  <div><h1>因式分解駕駛艙</h1><small>第 3 章 因式分解 · 3-1 提公因式法與乘法公式因式分解</small></div>
+  <div class="modebar">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <button id="modeBtn" type="button">教師模式</button>
+    <span id="pw"><input type="password" id="pwIn" placeholder="密碼" aria-label="教師密碼"><button type="button" id="pwGo">進入</button></span>
+  </div>
+</header>
+
+<div class="goals">
+  <span class="chip">用除法判別因式與倍式</span><span class="chip">提出單項式或一次式公因式</span><span class="chip">用平方差公式分解</span><span class="chip">用和或差的平方公式分解</span><span class="chip">選對方法完成因式分解</span>
+</div>
+<nav class="pills" aria-label="主題導覽">
+  <a href="#s1">① 因式與倍式</a><a href="#s2">② 提單項式公因式</a><a href="#s3">③ 提一次式公因式</a><a href="#s4">④ 平方差公式</a><a href="#s5">⑤ 完全平方公式</a><a href="#s6">⑥ 綜合：選對方法</a><a href="#sum">總結</a>
+</nav>
+
+<section class="pt" id="s1">
+  <h2>① 因式、倍式與因式分解</h2><p class="std">課本 P.118–121 · 例 1</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>若 A、B 都不為 0，且 A 可以被 B 整除（餘式為 0），稱 <b style="color:var(--yellow)">B 是 A 的因式，A 是 B 的倍式</b>。把二次式寫成兩個一次式的乘積，稱為<b style="color:var(--yellow)">因式分解</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">A = B × C ⟹ B、C 都是 A 的因式<br>A 是 B、C 的倍式<br>因式分解 ⇄ 展開</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>用除法判別：餘式為 0 才是因式。</li><li>餘式不為 0，B 就不是 A 的因式，A 也不是 B 的倍式。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>(2x²+5x+2)÷(x+2) = 2x+1 餘 0，所以 2x²+5x+2 = (2x+1)(x+2)。<br>(2x²+5x+2)÷(x+3) = 2x−1 餘 5，不是因式。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：多項式除法判別器</h3>
+    <p style="margin:0 0 6px;color:var(--dim)">被除式 A = ax² + bx + c，除式 B = px + q（p ≠ 0）</p>
+    <div class="row"><label>a<input type="number" id="s1a" value="2"></label><label>b<input type="number" id="s1b" value="5"></label><label>c<input type="number" id="s1c" value="2"></label>
+    <label>p<input type="number" id="s1p" value="1"></label><label>q<input type="number" id="s1q" value="2"></label></div>
+    <div class="row"><button type="button" class="pre1" data-v="2,5,2,1,2">除以 x+2</button><button type="button" class="pre1" data-v="2,5,2,1,3">除以 x+3</button><button type="button" class="pre1" data-v="12,-1,-6,4,-3">12x²−x−6 ÷ (4x−3)</button><button type="button" class="pre1" data-v="10,13,-30,5,-6">10x²+13x−30 ÷ (5x−6)</button></div>
+    <div class="out" id="out1"></div>
+  </div>
+  <div id="q1"></div>
+  <div class="teacher"><b>教學提示：</b>例 1 的做法：已知一個一次因式，用除法求出另一個一次式，再比對 a、b。小練習 6x²−11x−7 = (3x−7)(2x+1)：3x−7 是因式、6x²−11x−7 是 3x−7 的倍式。學生常把「因式」和「倍式」說反，可用「小的是因式、大的是倍式」幫助記憶。</div>
+</section>
+
+<section class="pt" id="s2">
+  <h2>② 提公因式法（單項式）</h2><p class="std">課本 P.122–123 · 例 2</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>當多項式的每一項都有公因式時，可以把<b style="color:var(--yellow)">公因式提出</b>。x 是 x² 和 3x 的公因式。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">A×B + A×C = A×(B + C)<br>x² + 3x = x(x + 3)</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>係數的最大公因數和字母都要提乾淨，例如 4a+8a² = 4a(1+2a)。</li><li>x²+2x+3 不能因式分解：x(x+2)+3 是「乘積再加 3」，不是乘積。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>x²−3x = x(x−3)<br>x(2x−4) − x(x+3) = x[(2x−4)−(x+3)] = x(x−7)</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：x² + kx 的面積模型</h3>
+    <div class="row"><label>x 的長度 = <input type="range" id="s2x" min="2" max="8" value="4"><b id="s2xv">4</b></label>
+    <label>寬 1 的長條數 k = <input type="range" id="s2k" min="1" max="6" value="3"><b id="s2kv">3</b></label></div>
+    <canvas class="viz" id="cv2"></canvas>
+    <div class="out" id="out2"></div>
+  </div>
+  <div class="lab"><h3>互動：提出最大公因式</h3>
+    <div class="row"><label>ax² + bx：a = <input type="number" id="s2a" value="4"></label><label>b = <input type="number" id="s2b" value="8"></label></div>
+    <div class="out" id="out2b"></div>
+  </div>
+  <div id="q2"></div>
+  <div class="teacher"><b>教學提示：</b>浩南的錯誤：x²+2x+3 = x(x+2)+3。提公因式後如果後面還要「加上」一個數，就不是乘積，不算完成因式分解。</div>
+</section>
+
+<section class="pt" id="s3">
+  <h2>③ 提一次式公因式</h2><p class="std">課本 P.124–125 · 例 3、例 4</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>各項裡出現相同的括號，例如 (x−2)，就把整個括號當成公因式提出來。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">(x−5)(x−6) + (x+6)(x−5)<br>= (x−5)[(x−6)+(x+6)] = 2x(x−5)</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>括號相反時先變號：(4−3x) = −(3x−4)。</li><li>3x²−5x 和 6x−10 可分別提出 x 和 2，再得到公因式 (3x−5)。</li><li>結果出現單項式時，通常放在最前面。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>x(x−2)+(x−2) = (x−2)(x+1)<br>(3x−4)(3x+1)+(4−3x)(2x−1) = (3x−4)(x+2)</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：提出一次式公因式</h3>
+    <p style="margin:0 0 6px;color:var(--dim)">(px+q)(rx+s) ± (px+q)(tx+u)</p>
+    <div class="row"><label>p<input type="number" id="s3p" value="3"></label><label>q<input type="number" id="s3q" value="-4"></label>
+    <label>r<input type="number" id="s3r" value="3"></label><label>s<input type="number" id="s3s" value="1"></label>
+    <label>t<input type="number" id="s3t" value="2"></label><label>u<input type="number" id="s3u" value="-1"></label></div>
+    <div class="row"><label>中間符號
+      <select id="s3sg" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="1">＋</option><option value="-1">−</option></select></label>
+    <label><input type="checkbox" id="s3fl" style="width:22px;height:22px;accent-color:#ffd54f"> 第二項的公因式要變號（寫成 −px−q）</label></div>
+    <div class="row"><button type="button" class="pre3" data-v="1,-5,1,-6,1,6,1,0">例 3(2)</button><button type="button" class="pre3" data-v="3,-4,3,1,2,-1,1,1">例 4(1)</button><button type="button" class="pre3" data-v="2,1,0,1,1,0,1,0">練習 (2x+1)+x(1+2x)</button></div>
+    <div class="out" id="out3"></div>
+  </div>
+  <div id="q3"></div>
+  <div class="teacher"><b>教學提示：</b>「例 4(1)」按鈕會把第二項的公因式變號並選擇 ＋，示範 (4−3x) = −(3x−4)。學生最容易在變號後忘記改括號中間的符號。</div>
+</section>
+
+<section class="pt" id="s4">
+  <h2>④ 利用平方差公式因式分解</h2><p class="std">課本 P.126–128 · 例 5、例 6</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>型如 <b style="color:var(--yellow)">a² − b²</b> 的多項式，可以因式分解成 (a+b)(a−b)。a、b 可以是數字、文字或整個括號。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">a² − b² = (a + b)(a − b)<br>x² − 4 = x² − 2² = (x+2)(x−2)</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>先提公因式，再看是否為平方差：3x²−12 = 3(x²−4) = 3(x+2)(x−2)。</li><li>c² − (px+q)² 展開括號後可能出現負號，要提出 −1。</li><li>x²＋100 不是平方差，不能因式分解。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>4x²−9 = (2x)²−3² = (2x+3)(2x−3)<br>25−(x+7)² = −(x+12)(x+2)</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：平方差的面積搬移</h3>
+    <div class="row"><label>大正方形邊長 a = <input type="range" id="s4a" min="3" max="10" value="7"><b id="s4av">7</b></label>
+    <label>挖掉的邊長 b = <input type="range" id="s4b" min="1" max="9" value="3"><b id="s4bv">3</b></label></div>
+    <canvas class="viz" id="cv4"></canvas>
+    <div class="out" id="out4"></div>
+  </div>
+  <div class="lab"><h3>互動：平方差因式分解機</h3>
+    <div class="row"><label>型式
+      <select id="s4m" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="a">Ax² − B</option><option value="b">(px+q)² − c²</option><option value="c">c² − (px+q)²</option></select></label>
+    <label id="s4l1">A<input type="number" id="s4n1" value="3" style="margin-left:6px"></label>
+    <label id="s4l2">B<input type="number" id="s4n2" value="12" style="margin-left:6px"></label>
+    <label id="s4l3" style="display:none">c<input type="number" id="s4n3" value="3" style="margin-left:6px"></label></div>
+    <div class="out" id="out4b"></div>
+  </div>
+  <div id="q4"></div>
+  <div class="teacher"><b>教學提示：</b>小南的錯誤：4x²−1 寫成 (4x+1)(4x−1)，其實 4x² = (2x)²，正確是 (2x+1)(2x−1)。要求學生先把兩項都寫成平方的形式。</div>
+</section>
+
+<section class="pt" id="s5">
+  <h2>⑤ 利用和、差的平方公式因式分解</h2><p class="std">課本 P.129–131 · 例 7、例 8</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>型如 <b style="color:var(--yellow)">a² ± 2ab + b²</b> 的多項式，可以因式分解成 (a ± b)²。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">a² + 2ab + b² = (a + b)²<br>a² − 2ab + b² = (a − b)²</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>檢查：首尾兩項都是平方，中間項 = ±2×兩個底數的乘積。</li><li>先提公因式：4x²−16x+16 = 4(x²−4x+4) = 4(x−2)²。</li><li>中間項為正用和的平方，為負用差的平方。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>x²+6x+9 = (x+3)²<br>36x²+60x+25 = (6x+5)²<br>18x²−24x+8 = 2(3x−2)²</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：(x+k)² 的面積拆解</h3>
+    <div class="row"><label>x 的長度 = <input type="range" id="s5x" min="2" max="8" value="5"><b id="s5xv">5</b></label>
+    <label>k = <input type="range" id="s5k" min="1" max="4" value="2"><b id="s5kv">2</b></label></div>
+    <canvas class="viz" id="cv5"></canvas>
+    <div class="out" id="out5"></div>
+  </div>
+  <div class="lab"><h3>互動：是完全平方式嗎？</h3>
+    <div class="row"><label>ax² + bx + c：a<input type="number" id="s5a" value="18" style="margin-left:6px"></label><label>b<input type="number" id="s5b" value="-24"></label><label>c<input type="number" id="s5c" value="8"></label></div>
+    <div class="out" id="out5b"></div>
+  </div>
+  <div id="q5"></div>
+  <div class="teacher"><b>教學提示：</b>「到底該用和的平方還是差的平方？」看中間項的正負號。學生常漏掉先提公因式這一步，例如 18x²−24x+8 直接看不出來，提出 2 之後才是 9x²−12x+4。</div>
+</section>
+
+<section class="pt" id="s6">
+  <h2>⑥ 綜合：選對方法</h2><p class="std">課本 P.132–134 · 重點整理、自我評量與挑錯題</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">做法順序</span><ul><li>① 有沒有公因式？先提出來。</li><li>② 剩下的是兩項？看是否為平方差 a²−b²。</li><li>③ 剩下的是三項？看是否為完全平方式 a²±2ab+b²。</li></ul></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">a²−b² = (a+b)(a−b)<br>a²+2ab+b² = (a+b)²<br>a²−2ab+b² = (a−b)²</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>不是每個多項式都能因式分解，例如 x²+100。</li><li>做完用展開驗算。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>2x²−32x+128 = 2(x²−16x+64) = 2(x−8)²</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：因式分解判斷機</h3>
+    <div class="row"><label>ax² + bx + c：a<input type="number" id="s6a" value="2" style="margin-left:6px"></label><label>b<input type="number" id="s6b" value="-32"></label><label>c<input type="number" id="s6c" value="128"></label></div>
+    <div class="row"><button type="button" class="pre6" data-v="4,0,-1">小南：4x²−1</button><button type="button" class="pre6" data-v="1,0,100">小天：x²+100</button><button type="button" class="pre6" data-v="7,-1,0">7x²−x</button><button type="button" class="pre6" data-v="2,-32,128">2x²−32x+128</button><button type="button" class="pre6" data-v="1,2,3">x²+2x+3</button></div>
+    <div class="out" id="out6"></div>
+  </div>
+  <div id="q6"></div>
+  <div class="teacher"><b>挑錯題答案（P.134）：</b>小南：4x²−1 = (2x)²−1 = (2x+1)(2x−1)，他把 4x² 的底數寫成 4x，是錯的。小天：x²+100 不能因式分解，(x+10)(x+10) = x²+20x+100 ≠ x²+100。</div>
+</section>
+
+<section class="pt" id="sum">
+  <h2>總結 Cheat Sheet</h2><p class="std">課本 P.132 重點整理</p>
+  <div class="cheat">
+    <div class="cb"><span class="card-label">因式與倍式</span><p class="f">A = B×C<br>B、C 是 A 的因式</p></div>
+    <div class="cb"><span class="card-label">提公因式</span><p class="f">AB + AC = A(B + C)</p></div>
+    <div class="cb"><span class="card-label">平方差</span><p class="f">a²−b² = (a+b)(a−b)</p></div>
+    <div class="cb"><span class="card-label">和的平方</span><p class="f">a²+2ab+b² = (a+b)²</p></div>
+    <div class="cb"><span class="card-label">差的平方</span><p class="f">a²−2ab+b² = (a−b)²</p></div>
+    <div class="cb"><span class="card-label">做法順序</span><p class="f">先提公因式 → 看兩項 → 看三項</p></div>
+  </div>
+  <div class="teacher"><b>常見錯誤彙整：</b>(1) 因式與倍式說反；(2) 提公因式後還剩「＋常數」卻當作完成；(3) 括號相反時沒有變號；(4) 4x²−1 寫成 (4x+1)(4x−1)；(5) 把 x²+100 當成平方差或完全平方式；(6) 忘了先提公因式。</div>
+</section>
+<div style="text-align:center;margin:36px 0 8px"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a></div>
+</div>
+
+<div class="panel">
+  <div class="tools" id="tools">
+    <h4>抽籤器</h4>
+    <div class="row"><label>座號 1～<input type="number" id="lotN" value="30" min="2" max="99"></label><button type="button" id="lotGo">抽！</button></div>
+    <div class="big" id="lotOut" aria-live="polite">—</div>
+    <h4>計時器</h4>
+    <div class="row"><label><input type="number" id="tmMin" value="3" min="1" max="60"> 分</label><button type="button" id="tmGo">開始</button><button type="button" id="tmReset">重設</button></div>
+    <div class="big" id="tmOut" aria-live="off">03:00</div>
+  </div>
+  <button type="button" id="toolBtn">🧰 工具</button>
+</div>
+<div class="penbar">
+  <button type="button" id="penBtn" aria-pressed="false">✏️ 畫筆</button>
+  <span id="penTools" style="display:none;gap:6px;align-items:center;flex-wrap:wrap">
+    <button class="sw" data-c="#ffffff" style="background:#fff" aria-label="白色"></button>
+    <button class="sw" data-c="#ffd54f" style="background:#ffd54f" aria-label="黃色"></button>
+    <button class="sw" data-c="#ff8a80" style="background:#ff8a80" aria-label="粉紅"></button>
+    <button class="sw" data-c="#81d4fa" style="background:#81d4fa" aria-label="淺藍"></button>
+    <button type="button" id="penClr">清除</button>
+  </span>
+</div>
+<canvas id="pen"></canvas>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+var $=function(id){return document.getElementById(id)};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=a%b;a=b;b=t}return a||1}
+function gcd3(a,b,c){return gcd(gcd(a,b),c)}
+function iv(id){var v=Math.round(parseFloat($(id).value));return isNaN(v)?0:v}
+function mn(s){return String(s).replace(/-/g,"−")}
+function perfSq(n){if(n<0)return -1;var r=Math.round(Math.sqrt(n));return r*r===n?r:-1}
+function setupCv(cv,ratio,maxH){var d=window.devicePixelRatio||1,w=cv.clientWidth,h=Math.round(Math.min(w*ratio,maxH||380));cv.style.height=h+"px";cv.width=w*d;cv.height=h*d;var c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return {c:c,w:w,h:h}}
+function mapper(w,h,pts,pad){
+  var xs=pts.map(function(p){return p[0]}),ys=pts.map(function(p){return p[1]});
+  var minx=Math.min.apply(0,xs),maxx=Math.max.apply(0,xs),miny=Math.min.apply(0,ys),maxy=Math.max.apply(0,ys);
+  var W=maxx-minx||1,H=maxy-miny||1,s=Math.min((w-2*pad)/W,(h-2*pad)/H);
+  var ox=(w-W*s)/2-minx*s,oy=(h+H*s)/2+miny*s;
+  return {s:s,T:function(p){return [ox+p[0]*s,oy-p[1]*s]}};
+}
+function rect(c,T,x,y,w,h,fill,stroke,lw){var A=T([x,y]),B=T([x+w,y+h]);c.beginPath();c.rect(Math.min(A[0],B[0]),Math.min(A[1],B[1]),Math.abs(B[0]-A[0]),Math.abs(B[1]-A[1]));if(fill){c.fillStyle=fill;c.fill()}c.strokeStyle=stroke||"#e8e4d8";c.lineWidth=lw||2;c.stroke()}
+function txt(c,t,x,y,col,sz){c.fillStyle=col||"#e8e4d8";c.font="bold "+(sz||14)+"px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y)}
+function label(c,T,t,x,y,col,sz){var P=T([x,y]);txt(c,t,P[0],P[1],col,sz)}
+/* polynomial display */
+function lin(a,b){if(a===0)return mn(b);var s=(a===1?"":a===-1?"−":Math.abs(a)===a?a:"−"+Math.abs(a))+"x";if(b>0)s+="+"+b;else if(b<0)s+="−"+(-b);return s}
+function quad(a,b,c){var s="";[[a,"x²"],[b,"x"],[c,""]].forEach(function(p){var co=p[0];if(co===0)return;var ab=Math.abs(co),body=(ab===1&&p[1]!==""?"":ab)+p[1];s+=(s===""?(co<0?"−":""):(co<0?"−":"+"))+body});return s||"0"}
+function pr(a,b){return "("+lin(a,b)+")"}
+function pre(k){return k===1?"":k===-1?"−":(k<0?"−"+(-k):k)}
+/* fractions */
+function fr(n,d){if(d<0){n=-n;d=-d}var g=gcd(n,d);return [n/g,d/g]}
+function fcoef(f,v){var n=f[0],d=f[1];if(n===0)return "0";var sg=n<0?"−":"",an=Math.abs(n);if(d===1)return sg+(an===1&&v?"":an)+v;return sg+"("+an+"/"+d+")"+v}
+function fsum(parts){var s="";parts.forEach(function(p){if(p[0][0]===0)return;var t=fcoef([Math.abs(p[0][0]),p[0][1]],p[1]);s+=(s===""?(p[0][0]<0?"−":""):(p[0][0]<0?"−":"+"))+t});return s||"0"}
+
+/* ---------- section 1 ---------- */
+function s1(){
+  var a=iv("s1a"),b=iv("s1b"),c=iv("s1c"),p=iv("s1p"),q=iv("s1q");
+  if(p===0||a===0){$("out1").innerHTML="<span class='bad'>請讓 a ≠ 0 且 p ≠ 0。</span>";return}
+  var q1=fr(a,p),r1=[b*q1[1]-q*q1[0],q1[1]],q0=fr(r1[0],r1[1]*p),rem=fr(c*q0[1]-q*q0[0],q0[1]);
+  var Q=fsum([[q1,"x"],[q0,""]]),A=quad(a,b,c),B=lin(p,q);
+  var h="<span class='step'>("+A+") ÷ ("+B+")</span>";
+  h+="<span class='step'>① "+quad(a,0,0).replace(/x²$/,"x²")+" ÷ "+(p===1?"x":p===-1?"−x":mn(p)+"x")+" = "+fcoef(q1,"x")+"；"+fcoef(q1,"x")+"×("+B+") = "+fsum([[fr(q1[0]*p,q1[1]),"x²"],[fr(q1[0]*q,q1[1]),"x"]])+"</span>";
+  h+="<span class='step'>② 減掉後剩 "+fsum([[r1,"x"],[[c,1],""]])+"；"+fcoef(r1[0]===0?[0,1]:fr(r1[0],r1[1]*p),"")+" × ("+B+") = "+fsum([[q0[0]===0?[0,1]:fr(q0[0]*p,q0[1]),"x"],[fr(q0[0]*q,q0[1]),""]])+"</span>";
+  h+="<span class='step'>商式 = <b class='ans'>"+Q+"</b>，餘式 = <b class='ans'>"+mn(rem[1]===1?rem[0]:rem[0]+"/"+rem[1])+"</b></span>";
+  if(rem[0]===0)h+="<span class='step ok'>餘式為 0 ✔ "+pr(p,q)+" 是 "+A+" 的因式，"+A+" 是 "+pr(p,q)+" 的倍式。</span><span class='step'>因式分解："+A+" = <b class='ans'>("+B+")("+Q+")</b></span>";
+  else h+="<span class='step bad'>餘式不為 0，"+pr(p,q)+" 不是 "+A+" 的因式。</span>";
+  $("out1").innerHTML=h;
+}
+["s1a","s1b","s1c","s1p","s1q"].forEach(function(i){$(i).addEventListener("input",s1)});
+document.querySelectorAll(".pre1").forEach(function(b){b.addEventListener("click",function(){var v=b.dataset.v.split(",");["s1a","s1b","s1c","s1p","s1q"].forEach(function(id,i){$(id).value=v[i]});s1()})});
+
+/* ---------- section 2 ---------- */
+function s2(){
+  var x=+$("s2x").value,k=+$("s2k").value;$("s2xv").textContent=x;$("s2kv").textContent=k;
+  var o=setupCv($("cv2"),.42,260),g=o.c,mp=mapper(o.w,o.h,[[0,0],[x+k,x]],20),T=mp.T;
+  rect(g,T,0,0,x,x,"rgba(255,213,79,.3)","#ffd54f");label(g,T,"x²",x/2,x/2,"#ffd54f",18);
+  for(var i=0;i<k;i++){rect(g,T,x+i,0,1,x,"rgba(129,212,250,.3)","#81d4fa");label(g,T,"x",x+i+.5,x/2,"#81d4fa",15)}
+  label(g,T,"x + "+k,(x+k)/2,x+.45,"#e8e4d8",14);label(g,T,"x",-.4,x/2,"#e8e4d8",14);
+  $("out2").innerHTML="<span class='step'>面積 = x² + "+(k===1?"":k)+"x（1 個 x² 與 "+k+" 個 x）</span><span class='step'>長 × 寬 = (x + "+k+") × x，所以 x² + "+(k===1?"":k)+"x = <b class='ans'>x(x + "+k+")</b></span><span class='step'>x = "+x+" 時：面積 = "+x*x+" + "+k*x+" = "+(x*x+k*x)+" = "+x+" × "+(x+k)+" ✔</span>";
+}
+["s2x","s2k"].forEach(function(i){$(i).addEventListener("input",s2)});
+function s2b(){
+  var a=iv("s2a"),b=iv("s2b");
+  if(a===0&&b===0){$("out2b").innerHTML="a、b 不能同時為 0。";return}
+  var g=gcd(a,b),ra=a/g,rb=b/g,h="";
+  h+="<span class='step'>"+mn(quad(a,b,0))+"：係數的最大公因數 = "+g+"，字母的公因式 = x</span>";
+  h+="<span class='step'>= <b class='ans'>"+(g===1?"":g)+"x("+lin(ra,rb)+")</b></span>";
+  h+="<span class='step'>驗算：展開 "+(g===1?"":g)+"x("+lin(ra,rb)+") = "+quad(a,b,0)+" ✔</span>";
+  $("out2b").innerHTML=h;
+}
+["s2a","s2b"].forEach(function(i){$(i).addEventListener("input",s2b)});
+
+/* ---------- section 3 ---------- */
+function s3(){
+  var p=iv("s3p"),q=iv("s3q"),r=iv("s3r"),s=iv("s3s"),t=iv("s3t"),u=iv("s3u"),sg=+$("s3sg").value,fl=$("s3fl").checked;
+  if(p===0){$("out3").innerHTML="<span class='bad'>p 不能為 0。</span>";return}
+  var C=pr(p,q),C2=fl?pr(-p,-q):C,first="("+lin(p,q)+")("+lin(r,s)+")",second="("+(fl?lin(-p,-q):lin(p,q))+")("+lin(t,u)+")";
+  var expr=first+(sg===1?" + ":" − ")+second,eff=sg*(fl?-1:1);
+  var h="<span class='step'>"+expr+"</span>";
+  if(fl)h+="<span class='step'>變號：("+lin(-p,-q)+") = −("+lin(p,q)+")，所以第二項改寫為 "+(sg===1?"−":"+")+" ("+lin(p,q)+")("+lin(t,u)+")</span>";
+  var A=r+eff*t,B=s+eff*u;
+  h+="<span class='step'>提出公因式 "+C+"：<br>= "+C+"[("+lin(r,s)+") "+(eff===1?"+":"−")+" ("+lin(t,u)+")] = "+C+"("+lin(A,B)+")</span>";
+  var res;
+  if(A===0&&B===0)res="0";
+  else if(A===0)res=mn(B)+C;
+  else if(B===0)res=pre(A)+"x"+C;
+  else{var g=gcd(A,B);res=(g===1?"":g)+C+"("+lin(A/g,B/g)+")"}
+  h+="<span class='step'>最簡結果：<b class='ans'>"+res+"</b></span>";
+  var ok=true;[3,-2].forEach(function(xv){var l=(p*xv+q)*(r*xv+s)+sg*(fl?-1:1)*(p*xv+q)*(t*xv+u),rr=(p*xv+q)*(A*xv+B);if(l!==rr)ok=false});
+  h+="<span class='step'>代入 x = 3、x = −2 驗算："+(ok?"<span class='ok'>兩邊相等 ✔</span>":"<span class='bad'>不相等</span>")+"</span>";
+  $("out3").innerHTML=h;
+}
+["s3p","s3q","s3r","s3s","s3t","s3u","s3sg","s3fl"].forEach(function(i){$(i).addEventListener("input",s3);$(i).addEventListener("change",s3)});
+document.querySelectorAll(".pre3").forEach(function(b){b.addEventListener("click",function(){var v=b.dataset.v.split(",").map(Number);["s3p","s3q","s3r","s3s","s3t","s3u"].forEach(function(id,i){$(id).value=v[i]});$("s3sg").value=String(v[6]);$("s3fl").checked=v[7]===1;s3()})});
+
+/* ---------- section 4 ---------- */
+function s4(){
+  var a=+$("s4a").value,b=+$("s4b").value;if(b>=a){b=a-1;$("s4b").value=b}$("s4b").max=a-1;$("s4av").textContent=a;$("s4bv").textContent=b;
+  var o=setupCv($("cv4"),.42,300),g=o.c,mp=mapper(o.w,o.h,[[0,0],[2*a+b+2,a+1.4]],18),T=mp.T;
+  rect(g,T,0,0,a,a,"rgba(255,213,79,.28)","#ffd54f");
+  rect(g,T,a-b,a-b,b,b,"#1a2a1a","#ff8a80",2);label(g,T,"b²",a-b/2,a-b/2,"#ff8a80",15);
+  label(g,T,"a² − b²",(a-b)/2,(a-b)/2,"#ffd54f",16);
+  var ox=a+2;rect(g,T,ox,0,a+b,a-b,"rgba(165,214,167,.3)","#a5d6a7");label(g,T,"(a+b)(a−b)",ox+(a+b)/2,(a-b)/2,"#a5d6a7",15);
+  label(g,T,"a = "+a,a/2,a+.5,"#e8e4d8",13);label(g,T,"a+b = "+(a+b),ox+(a+b)/2,a-b+.5,"#e8e4d8",13);label(g,T,"→",a+1,a/2,"#e8e4d8",22);
+  $("out4").innerHTML="<span class='step'>左：大正方形 "+a+"×"+a+" 挖掉 "+b+"×"+b+"，面積 = a² − b² = "+a*a+" − "+b*b+" = <b class='ans'>"+(a*a-b*b)+"</b></span><span class='step'>右：重排成長 a+b = "+(a+b)+"、寬 a−b = "+(a-b)+" 的長方形，面積 = "+(a+b)*(a-b)+" ✔</span><span class='step'>所以 a² − b² = <b class='ans'>(a + b)(a − b)</b></span>";
+}
+["s4a","s4b"].forEach(function(i){$(i).addEventListener("input",s4)});
+function s4b(){
+  var m=$("s4m").value,n1=iv("s4n1"),n2=iv("s4n2"),n3=iv("s4n3"),h="";
+  $("s4l1").firstChild.nodeValue=m==="a"?"A":"p";$("s4l2").firstChild.nodeValue=m==="a"?"B":"q";$("s4l3").style.display=m==="a"?"none":"flex";
+  if(m==="a"){
+    var A=n1,B=n2;
+    if(A<=0||B<=0){$("out4b").innerHTML="<span class='bad'>請輸入 A、B 都為正整數（Ax² − B）。</span>";return}
+    var best=0;for(var k=gcd(A,B);k>=1;k--){if(A%k===0&&B%k===0&&perfSq(A/k)>0&&perfSq(B/k)>0){best=k;break}}
+    h="<span class='step'>"+quad(A,0,-B)+"</span>";
+    if(!best)h+="<span class='step bad'>提出公因數後，兩項都不是平方數，無法用平方差公式因式分解。</span>";
+    else{var pp=perfSq(A/best),qq=perfSq(B/best);
+      if(best>1)h+="<span class='step'>提出 "+best+"：= "+best+"("+quad(A/best,0,-B/best)+")</span>";
+      h+="<span class='step'>寫成平方差：= "+(best>1?best+"[":"")+"("+(pp===1?"":pp)+"x)² − "+qq+"²"+(best>1?"]":"")+"</span><span class='step'>= <b class='ans'>"+(best>1?best:"")+"("+lin(pp,qq)+")("+lin(pp,-qq)+")</b></span>";}
+  }else{
+    var pp2=n1,qq2=n2,c=n3;if(pp2===0||c===0){$("out4b").innerHTML="<span class='bad'>p、c 不能為 0。</span>";return}
+    var P1=lin(pp2,qq2+c),P2=lin(pp2,qq2-c);
+    if(m==="b")h="<span class='step'>("+lin(pp2,qq2)+")² − "+c*c+" = ["+lin(pp2,qq2)+"+"+(c)+"]["+lin(pp2,qq2)+"−"+(c)+"]</span><span class='step'>= <b class='ans'>("+P1+")("+P2+")</b></span>";
+    else h="<span class='step'>"+c*c+" − ("+lin(pp2,qq2)+")² = ["+c+"+("+lin(pp2,qq2)+")]["+c+"−("+lin(pp2,qq2)+")]</span><span class='step'>= ("+lin(pp2,qq2+c)+")("+lin(-pp2,-qq2+c)+")</span><span class='step'>= <b class='ans'>−("+P1+")("+P2+")</b>（把第二個括號提出 −1）</span>";
+  }
+  $("out4b").innerHTML=h;
+}
+["s4m","s4n1","s4n2","s4n3"].forEach(function(i){$(i).addEventListener("input",s4b);$(i).addEventListener("change",s4b)});
+
+/* ---------- section 5 ---------- */
+function s5(){
+  var x=+$("s5x").value,k=+$("s5k").value;$("s5xv").textContent=x;$("s5kv").textContent=k;
+  var o=setupCv($("cv5"),.7,380),g=o.c,mp=mapper(o.w,o.h,[[0,0],[x+k,x+k]],24),T=mp.T;
+  rect(g,T,0,0,x,x,"rgba(255,213,79,.3)","#ffd54f");label(g,T,"x²",x/2,x/2,"#ffd54f",18);
+  rect(g,T,x,0,k,x,"rgba(129,212,250,.3)","#81d4fa");label(g,T,"kx",x+k/2,x/2,"#81d4fa",15);
+  rect(g,T,0,x,x,k,"rgba(129,212,250,.3)","#81d4fa");label(g,T,"kx",x/2,x+k/2,"#81d4fa",15);
+  rect(g,T,x,x,k,k,"rgba(255,138,128,.35)","#ff8a80");label(g,T,"k²",x+k/2,x+k/2,"#ff8a80",15);
+  label(g,T,"x + k",(x+k)/2,-.5,"#e8e4d8",14);
+  $("out5").innerHTML="<span class='step'>面積 = x² + kx + kx + k² = x² + "+2*k+"x + "+k*k+"</span><span class='step'>邊長 = x + "+k+"，所以 x² + "+2*k+"x + "+k*k+" = <b class='ans'>(x + "+k+")²</b></span><span class='step'>x = "+x+"：面積 = "+(x*x+2*k*x+k*k)+" = "+(x+k)+"² ✔</span>";
+}
+["s5x","s5k"].forEach(function(i){$(i).addEventListener("input",s5)});
+function factorQuad(A,B,C){
+  var res={};
+  if(A===0){res.kind="notquad";return res}
+  if(C===0){var g0=gcd(A,B);if(A<0)g0=-g0;res.kind="gcd";res.text=(pre(g0))+"x("+lin(A/g0,B/g0)+")";res.method="提公因式：每一項都有 x"+(Math.abs(g0)>1||g0===-1?" 和係數的公因數 "+Math.abs(g0):"");return res}
+  var g=gcd3(A,B,C),sg=A<0?-1:1,k=g*sg,a=A/k,b=B/k,c=C/k,kp=pre(k),steps=[];
+  var base=quad(a,b,c);
+  if(k!==1)steps.push("提出公因數 "+(k<0?"−"+g:g)+"：= "+pre(k)+"("+base+")");
+  var pa=perfSq(a),pc=perfSq(c);
+  if(b===0&&c<0&&pa>0&&perfSq(-c)>0){var q=perfSq(-c);res.kind="diff";res.method="平方差公式 a²−b²=(a+b)(a−b)";steps.push("= "+kp+"[("+(pa===1?"":pa)+"x)² − "+q+"²]");res.text=kp+"("+lin(pa,q)+")("+lin(pa,-q)+")";res.steps=steps;return res}
+  if(pa>0&&pc>0&&Math.abs(b)===2*pa*pc){var sgn=b>0?1:-1;res.kind="square";res.method=(b>0?"和":"差")+"的平方公式 a²"+(b>0?"+":"−")+"2ab+b²=(a"+(b>0?"+":"−")+"b)²";steps.push("= "+kp+"[("+(pa===1?"":pa)+"x)² "+(b>0?"+":"−")+" 2·("+(pa===1?"":pa)+"x)·"+pc+" + "+pc+"²]");res.text=kp+"("+lin(pa,sgn*pc)+")²";res.steps=steps;return res}
+  res.kind=(k!==1)?"gcdonly":"none";res.steps=steps;res.text=k!==1?kp+"("+base+")":"";return res;
+}
+function s5b(){
+  var a=iv("s5a"),b=iv("s5b"),c=iv("s5c");
+  if(a===0){$("out5b").innerHTML="<span class='bad'>a 不能為 0。</span>";return}
+  var g=gcd3(a,b,c),sg=a<0?-1:1,k=g*sg,A=a/k,B=b/k,C=c/k,pa=perfSq(A),pc=perfSq(C),h="<span class='step'>"+quad(a,b,c)+"</span>";
+  if(k!==1)h+="<span class='step'>先提出公因數 "+pre(k)+"：= "+pre(k)+"("+quad(A,B,C)+")</span>";
+  h+="<span class='step'>首項 "+A+"x² "+(pa>0?"= ("+(pa===1?"":pa)+"x)² ✔":"不是完全平方 ✘")+"；末項 "+C+" "+(pc>0?"= "+pc+"² ✔":"不是完全平方 ✘")+"</span>";
+  if(pa>0&&pc>0){h+="<span class='step'>中間項要等於 ±2×"+pa+"×"+pc+" = ±"+2*pa*pc+"，實際是 "+mn(B)+" "+(Math.abs(B)===2*pa*pc?"✔":"✘")+"</span>"}
+  var f=factorQuad(a,b,c);
+  if(f.kind==="square")h+="<span class='step ok'>是完全平方式：<b class='ans'>"+f.text+"</b></span>";
+  else h+="<span class='step bad'>不是完全平方式。</span>";
+  $("out5b").innerHTML=h;
+}
+["s5a","s5b","s5c"].forEach(function(i){$(i).addEventListener("input",s5b)});
+
+/* ---------- section 6 ---------- */
+function s6(){
+  var a=iv("s6a"),b=iv("s6b"),c=iv("s6c");
+  if(a===0){$("out6").innerHTML="<span class='bad'>a 不能為 0。</span>";return}
+  var f=factorQuad(a,b,c),h="<span class='step'>"+quad(a,b,c)+"</span>";
+  if(f.kind==="gcd")h+="<span class='step'>方法：<b>"+f.method+"</b></span><span class='step'>= <b class='ans'>"+f.text+"</b></span>";
+  else if(f.kind==="diff"||f.kind==="square"){
+    var g=gcd3(a,b,c);if(g>1)h+="<span class='step'>① 先提公因式 "+g+"</span>";
+    h+="<span class='step'>"+(g>1?"②":"①")+" 方法：<b>"+f.method+"</b></span><span class='step'>"+f.steps.join("</span><span class='step'>")+"</span><span class='step'>= <b class='ans'>"+f.text+"</b></span>";
+  }else if(f.kind==="gcdonly")h+="<span class='step'>只能提出公因數：<b class='ans'>"+f.text+"</b>；括號內不是平方差也不是完全平方式（需要 3-2 的十字交乘法，或無法因式分解）。</span>";
+  else h+="<span class='step bad'>沒有公因式可提，也不是平方差或完全平方式。這一節的方法無法分解，可能要用十字交乘法（3-2），也可能根本不能因式分解。</span>";
+  $("out6").innerHTML=h;
+}
+["s6a","s6b","s6c"].forEach(function(i){$(i).addEventListener("input",s6)});
+document.querySelectorAll(".pre6").forEach(function(b){b.addEventListener("click",function(){var v=b.dataset.v.split(",");["s6a","s6b","s6c"].forEach(function(id,i){$(id).value=v[i]});s6()})});
+
+/* ---------- quizzes ---------- */
+var QS={
+ q1:[{q:"(2x²+5x+2) ÷ (x+2) = 2x+1 餘 0，下列何者正確？",o:["x+2 是 2x²+5x+2 的因式","x+2 是 2x²+5x+2 的倍式","2x+1 是 x+2 的因式","餘式是 x+2"],a:0,e:"餘式為 0，所以除式 x+2 是被除式的因式。"},{q:"已知 6x²−11x−7 = (3x−7)(2x+1)，則 2x+1 是 6x²−11x−7 的？",o:["因式","倍式","商式","餘式"],a:0,e:"A = B×C，B、C 都是 A 的因式。"}],
+ q2:[{q:"x² − 3x 因式分解為？",o:["x(x−3)","x(x+3)","(x−3)²","x²(1−3x)"],a:0,e:"提出公因式 x。"},{q:"4a + 8a² 因式分解為？",o:["4a(1+2a)","4(a+2a²)","a(4+8a)","12a³"],a:0,e:"係數的公因數 4 和字母 a 都要提出，得 4a(1+2a)。"}],
+ q3:[{q:"x(x−2) + (x−2) 因式分解為？",o:["(x−2)(x+1)","x(x−2)²","(x−2)(x−1)","2(x−2)"],a:0,e:"提出公因式 (x−2)，剩下 x+1。"},{q:"(3x−4)(3x+1) + (4−3x)(2x−1) = ？",o:["(3x−4)(x+2)","(3x−4)(5x)","(3x−4)(x)","(3x−4)(5x+2)"],a:0,e:"(4−3x) = −(3x−4)，括號內變成 (3x+1)−(2x−1) = x+2。"}],
+ q4:[{q:"4x² − 9 因式分解為？",o:["(2x+3)(2x−3)","(4x+3)(4x−3)","(2x−3)²","4(x+3)(x−3)"],a:0,e:"4x² = (2x)²，9 = 3²。"},{q:"3x² − 12 因式分解為？",o:["3(x+2)(x−2)","(3x+2)(x−6)","3(x−2)²","(3x+12)(x−1)"],a:0,e:"先提出 3，得 3(x²−4) = 3(x+2)(x−2)。"}],
+ q5:[{q:"x² + 6x + 9 因式分解為？",o:["(x+3)²","(x+9)(x−1)","(x−3)²","(x+3)(x−3)"],a:0,e:"x² + 2·x·3 + 3² = (x+3)²。"},{q:"4x² − 16x + 16 因式分解為？",o:["4(x−2)²","(2x−4)²","4(x+2)²","4(x²−4x+4)"],a:0,e:"提出 4 得 4(x²−4x+4) = 4(x−2)²（選項 D 還沒分解完）。"}],
+ q6:[{q:"下列哪一個不能用這一節的方法因式分解？",o:["x² + 100","x² − 100","x² + 20x + 100","x² − 20x + 100"],a:0,e:"x²+100 不是平方差，也不是完全平方式。"},{q:"9x² + 12x + 4 因式分解為？",o:["(3x+2)²","(9x+4)²","(3x+4)²","(3x−2)²"],a:0,e:"(3x)² + 2·(3x)·2 + 2² = (3x+2)²。"}]
+};
+Object.keys(QS).forEach(function(id){
+  var box=$(id),h="<h3>形成性評量</h3>";
+  QS[id].forEach(function(q,qi){h+="<div class='q' data-q='"+id+"' data-i='"+qi+"'><p>Q"+(qi+1)+"　"+q.q+"</p><div class='opts'>"+q.o.map(function(t,oi){return "<button type='button' data-o='"+oi+"'>"+String.fromCharCode(65+oi)+". "+t+"</button>"}).join("")+"</div><div class='fb'></div></div>"});
+  box.innerHTML=h;
+});
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest(".opts button");if(!b)return;
+  var qd=b.closest(".q"),q=QS[qd.dataset.q][+qd.dataset.i],o=+b.dataset.o,fb=qd.querySelector(".fb");
+  qd.querySelectorAll(".opts button").forEach(function(x){x.classList.remove("right","wrong")});
+  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e}
+  else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
+});
+
+/* ---------- teacher mode ---------- */
+var tm=false;
+function setT(v){tm=v;document.body.classList.toggle("tmode",v);$("modeBtn").classList.toggle("on",v);$("modeBtn").textContent=v?"教師模式（開）":"教師模式";$("pw").classList.remove("show")}
+$("modeBtn").addEventListener("click",function(){if(tm){setT(false)}else{$("pw").classList.toggle("show");$("pwIn").focus()}});
+function tryPw(){if($("pwIn").value==="math2026"){setT(true);$("pwIn").value=""}else{$("pwIn").value="";$("pwIn").placeholder="密碼錯誤"}}
+$("pwGo").addEventListener("click",tryPw);$("pwIn").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw()});
+
+/* ---------- tools ---------- */
+$("toolBtn").addEventListener("click",function(){$("tools").classList.toggle("open")});
+$("lotGo").addEventListener("click",function(){var n=clampInt($("lotN"),2,99);$("lotOut").textContent=Math.floor(Math.random()*n)+1+" 號"});
+var tid=null,left=180;
+function showT(){var m=Math.floor(left/60),s=left%60;$("tmOut").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s}
+$("tmGo").addEventListener("click",function(){
+  if(tid){clearInterval(tid);tid=null;$("tmGo").textContent="繼續";return}
+  if(left<=0)left=clampInt($("tmMin"),1,60)*60;
+  $("tmGo").textContent="暫停";showT();
+  tid=setInterval(function(){left--;showT();if(left<=0){clearInterval(tid);tid=null;$("tmGo").textContent="開始";$("tmOut").textContent="時間到！"}},1000)});
+$("tmReset").addEventListener("click",function(){clearInterval(tid);tid=null;left=clampInt($("tmMin"),1,60)*60;$("tmGo").textContent="開始";showT()});
+$("tmMin").addEventListener("input",function(){if(!tid){left=clampInt($("tmMin"),1,60)*60;showT()}});
+
+/* ---------- pen ---------- */
+var pc=$("pen"),px=pc.getContext("2d"),pcol="#ffffff",drawing=false,pa=false;
+function sizePen(){pc.width=window.innerWidth;pc.height=window.innerHeight}
+function ptr(e){return [e.clientX,e.clientY]}
+$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none"});
+document.querySelectorAll(".sw").forEach(function(s){s.addEventListener("click",function(){pcol=s.dataset.c})});
+$("penClr").addEventListener("click",function(){px.clearRect(0,0,pc.width,pc.height)});
+pc.addEventListener("pointerdown",function(e){drawing=true;var p=ptr(e);px.beginPath();px.moveTo(p[0],p[1]);pc.setPointerCapture(e.pointerId)});
+pc.addEventListener("pointermove",function(e){if(!drawing)return;var p=ptr(e);px.strokeStyle=pcol;px.lineWidth=3.5;px.lineCap="round";px.lineJoin="round";px.lineTo(p[0],p[1]);px.stroke()});
+["pointerup","pointercancel"].forEach(function(n){pc.addEventListener(n,function(){drawing=false})});
+
+/* ---------- init ---------- */
+function all(){s1();s2();s2b();s3();s4();s4b();s5();s5b();s6()}
+var rt;window.addEventListener("resize",function(){all();clearTimeout(rt);rt=setTimeout(function(){var img=px.getImageData(0,0,pc.width,pc.height);sizePen();px.putImageData(img,0,0)},150)});
+sizePen();all();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+</body></html>
