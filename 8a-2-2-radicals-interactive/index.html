@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>根式運算互動版｜八上數學教學駕駛艙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sticky wood-frame header, pill nav, one blackboard panel per concept (card -> live tool -> quiz), floating chalk tools. Single dark chalkboard look by design. */
+:root{
+  --board:#1a2a1a; --board2:#223622; --chalk:#e8e4d8; --dim:#aeb8a6;
+  --yellow:#ffd54f; --pink:#ff8a80; --blue:#81d4fa; --green:#a5d6a7;
+  --wood:#8d6e4a; --wood2:#6d5233; --line:rgba(232,228,216,.22);
+  --ff-head:'Noto Serif TC','Songti TC',serif; --ff-body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--board);color:var(--chalk);font-family:var(--ff-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:22px 22px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--wood2)}
+.wrap{max-width:1000px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(#a3825a,var(--wood) 40%,var(--wood2));border-bottom:3px solid #4a371f;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font:700 1.25rem/1.2 var(--ff-head);margin:0;color:#fff8e1;text-wrap:balance}
+header small{display:block;font:400 .78rem var(--ff-body);color:#f1e2c4}
+.modebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;cursor:pointer;color:var(--chalk);background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:44px}
+button:hover{background:rgba(255,255,255,.16)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+button.on{background:var(--yellow);color:#2a2410;border-color:var(--yellow)}
+input[type=number],input[type=password]{font:inherit;color:var(--chalk);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:5.2em;min-height:44px}
+input[type=password]{width:7em}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.chip{background:rgba(129,212,250,.12);border:1px dashed var(--blue);color:var(--blue);border-radius:999px;padding:2px 14px;font-size:.88rem}
+nav.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+nav.pills a{color:var(--yellow);text-decoration:none;border:1px solid rgba(255,213,79,.5);border-radius:999px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:.92rem}
+nav.pills a:hover{background:rgba(255,213,79,.14)}
+section.pt{margin:34px 0;padding:22px;border:2px solid var(--line);border-radius:14px;background:var(--board2);scroll-margin-top:90px}
+section.pt>h2{font:700 1.5rem/1.3 var(--ff-head);color:var(--yellow);margin:0 0 4px;text-wrap:balance}
+.std{color:var(--dim);font-size:.85rem;margin:0 0 14px}
+h3{font:700 1.05rem var(--ff-head);color:var(--blue);margin:20px 0 8px}
+.concept-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px;margin:12px 0}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cb{background:rgba(0,0,0,.22);border-radius:8px;padding:12px;min-width:0}
+.cb p{margin:4px 0}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:.72rem;padding:2px 10px;border-radius:10px;margin-bottom:4px}
+.f{color:var(--blue);font-family:'Noto Serif TC',serif;font-size:1.08rem;text-align:center;padding:4px 0;overflow-wrap:anywhere}
+.cb ul{margin:4px 0 0 18px;padding:0}.cb li{margin-bottom:4px;font-size:.93rem}
+.lab{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.lab h3{margin-top:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:8px 0}
+.row label{display:flex;align-items:center;gap:6px;min-width:0}
+input[type=range]{accent-color:var(--yellow);width:min(220px,100%);min-height:44px}
+.out{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:1.02rem;overflow-wrap:anywhere}
+.out .step{display:block;padding:2px 0}
+.out .ans{color:var(--yellow);font-weight:700;font-size:1.15rem}
+.ok{color:var(--green)}.bad{color:var(--pink)}
+canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10px;border:1px solid var(--line)}
+.q{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.q p{margin:0 0 8px;font-weight:500}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts button{border-radius:10px;text-align:left;padding:8px 14px;overflow-wrap:anywhere}
+.opts button.right{background:rgba(165,214,167,.25);border-color:var(--green)}
+.opts button.wrong{background:rgba(255,138,128,.2);border-color:var(--pink)}
+.fb{margin-top:8px;font-size:.93rem;min-height:1.2em}
+.teacher{display:none;border:1px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:14px;background:rgba(255,138,128,.07)}
+body.tmode .teacher{display:block}
+.teacher b{color:var(--pink)}
+.cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.tools{display:none;width:min(280px,calc(100vw - 32px));background:#10190f;border:2px solid var(--wood);border-radius:12px;padding:12px}
+.tools.open{display:block}
+.tools h4{margin:8px 0 4px;color:var(--yellow);font-size:.95rem}
+.big{font:700 2rem var(--ff-head);color:var(--yellow);font-variant-numeric:tabular-nums}
+.penbar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100vw - 100px)}
+.penbar .sw{width:30px;height:30px;min-height:30px;padding:0;border-radius:50%}
+#pen{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
+#pen.active{pointer-events:auto;cursor:crosshair}
+#pw{display:none;align-items:center;gap:6px}
+#pw.show{display:flex}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;min-height:44px}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25)}
+@media(max-width:1024px){section.pt{padding:18px}}
+@media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+</head><body>
+
+<div class="wrap">
+<header>
+  <div><h1>根式運算駕駛艙</h1><small>第 2 章 平方根與畢氏定理 · 2-2 根式的運算</small></div>
+  <div class="modebar">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <button id="modeBtn" type="button">教師模式</button>
+    <span id="pw"><input type="password" id="pwIn" placeholder="密碼" aria-label="教師密碼"><button type="button" id="pwGo">進入</button></span>
+  </div>
+</header>
+
+<div class="goals">
+  <span class="chip">會簡記並做根式乘除</span><span class="chip">能化為最簡根式</span><span class="chip">能有理化分母</span><span class="chip">能合併同類方根</span><span class="chip">能用乘法公式化簡</span><span class="chip">能求根式近似值</span>
+</div>
+<nav class="pills" aria-label="主題導覽">
+  <a href="#s1">① 根式的意義</a><a href="#s2">② 乘除運算</a><a href="#s3">③ 最簡根式</a><a href="#s4">④ 有理化分母</a><a href="#s5">⑤ 同類方根加減</a><a href="#s6">⑥ 乘法公式</a><a href="#s7">⑦ 近似值</a><a href="#sum">總結</a>
+</nav>
+
+<!-- 1 -->
+<section class="pt" id="s1">
+  <h2>① 根式的意義與簡記</h2><p class="std">課本 P.75–77 · 例 1</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>含有根號（方根）的算式稱為<b style="color:var(--pink)">根式</b>，例如 2×√3、√3＋√2、(3/2)×√3 − 2×√2。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">若 a≠0 且 b≥0：a×√b = a√b<br>√b ÷ a = √b / a = (1/a)√b</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>根式運算規則與代數式相同，× 可以省略。</li><li>4×(√2+√3) 簡記為 4(√2+√3)。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>(−12)×5√3 = (−12×5)√3 = −60√3<br>18√3 ÷ 6 = 3√3</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：正方形土地的邊長</h3>
+    <p style="margin:0 0 6px;color:var(--dim)">兩塊正方形面積為 a、b，另外兩塊長方形面積各是多少？大正方形邊長是多少？</p>
+    <div class="row"><label>左上 a = <input type="range" id="la" min="1" max="12" value="3"><b id="lav">3</b></label>
+    <label>右下 b = <input type="range" id="lb" min="1" max="12" value="2"><b id="lbv">2</b></label></div>
+    <canvas class="viz" id="landCv"></canvas>
+    <div class="out" id="landOut"></div>
+  </div>
+  <div id="q1"></div>
+  <div class="teacher"><b>教學提示：</b>先讓學生猜剩下兩塊土地的面積，再揭曉 √a×√b = √(ab)，自然銜接下一個重點。簡記時強調：係數與根號之間不寫×，但分數係數要放在根號前面。</div>
+</section>
+
+<!-- 2 -->
+<section class="pt" id="s2">
+  <h2>② 根式的乘除運算</h2><p class="std">課本 P.78–81 · 例 2、例 3</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>根號內的數可以直接相乘或相除：兩個非負數的方根相乘，等於它們乘積的方根。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">a≥0, b≥0：√a × √b = √(a×b)<br>a≥0, b&gt;0：√a ÷ √b = √a/√b = √(a/b) = √(a÷b)</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證明：(√a×√b)² = (√a)²×(√b)² = a×b。</li><li>除法時 b 必須大於 0。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>√5×√13 = √65<br>−2√3×3√7 = −6√21<br>√54 ÷ √9 = √6</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：乘除驗算機</h3>
+    <div class="row"><label>√<input type="number" id="ma" value="3" min="0"></label>
+    <select id="mop" aria-label="運算" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="m">×</option><option value="d">÷</option></select>
+    <label>√<input type="number" id="mb" value="2" min="0"></label></div>
+    <div class="out" id="mulOut"></div>
+  </div>
+  <div id="q2"></div>
+  <div class="teacher"><b>教學提示：</b>用計算機比較 √3×√2 與 √6，讓學生看到小數相同；再比較 √2+√3 與 √5 製造衝突，下一個重點才會自然說明加減不能合併根號內的數。</div>
+</section>
+
+<!-- 3 -->
+<section class="pt" id="s3">
+  <h2>③ 最簡根式</h2><p class="std">課本 P.81–82 · 例 4</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>若根式可化簡為 a√b，其中 a 為整數、分數或小數，b 為正整數，且 b 的標準分解式中<b>所有質因數的次方都是 1</b>，稱 a√b 為最簡根式。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">√60 = √(2²×15) = 2√15</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>根號內不能有大於 1 的次方（平方因數）。</li><li>根號內不能有小數、分數，分母也不能有根號。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>√125 = √(5³) = 5√5<br>√3×√84 = √(2²×3²×7) = 6√7</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：最簡根式化簡器</h3>
+    <div class="row"><label>√<input type="number" id="sn" value="60" min="1" max="99999"></label>
+    <button type="button" data-n="125">√125</button><button type="button" data-n="300">√300</button><button type="button" data-n="84">√84</button></div>
+    <div class="out" id="simOut"></div>
+  </div>
+  <div id="q3"></div>
+  <div class="teacher"><b>教學提示：</b>引導學生先做質因數分解，再把「兩個一組」的質因數搬出根號。常見錯誤：只搬出一個平方就停止，例如 √300 寫成 √3×10²，忘了搬出 10。</div>
+</section>
+
+<!-- 4 -->
+<section class="pt" id="s4">
+  <h2>④ 有理化分母</h2><p class="std">課本 P.83、P.91 · 例 5、例 12</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>分母含根號時不是最簡根式，必須把分母化為不帶根號的數，這個過程稱為<b style="color:var(--pink)">有理化分母</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">c/√a：分子分母同乘 √a<br>c/(√a+√b)：同乘 (√a−√b)<br>c/(√a−√b)：同乘 (√a+√b)</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>後兩種利用平方差公式：(√a+√b)(√a−√b)=a−b。</li><li>√0.3 與 √(75/4) 也要先化為分數再化簡。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>2/√3 = 2√3/3<br>1/(2+√3) = 2−√3<br>√0.3 = √30/10</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：有理化分母</h3>
+    <div class="row"><label>型式
+      <select id="rtype" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="1">c / √a</option><option value="2">c / (√a ＋ √b)</option><option value="3">c / (√a − √b)</option></select></label>
+    <label>c<input type="number" id="rc" value="3" style="margin-left:6px"></label>
+    <label>a<input type="number" id="ra" value="5" min="1" style="margin-left:6px"></label>
+    <label id="rbl">b<input type="number" id="rb" value="3" min="1" style="margin-left:6px"></label></div>
+    <div class="out" id="ratOut"></div>
+  </div>
+  <div id="q4"></div>
+  <div class="teacher"><b>教學提示：</b>常見錯誤：1/√12 的最簡根式不是 1/(2√3)，而是 √3/6，因為分母仍有根號。分子分母同乘的數必須相同，才不會改變數值。</div>
+</section>
+
+<!-- 5 -->
+<section class="pt" id="s5">
+  <h2>⑤ 同類方根的加減</h2><p class="std">課本 P.85–87 · 例 7、例 8</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>化簡後根號內相同的根式（如 √2、3√2、−(3/5)√2）稱為<b style="color:var(--pink)">同類方根</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">2√2 + 3√2 = (2+3)√2 = 5√2</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>加減前先把每一項化為最簡根式，再合併同類方根。</li><li>√2+√3 ≠ √(2+3)，不同類的方根不能合併。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>√27 + 5√12 = 3√3 + 10√3 = 13√3<br>2√7 − 3√5 + 5√7 + 9√5 = 7√7 + 6√5</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：先化簡，再合併</h3>
+    <p style="margin:0 0 6px;color:var(--dim)">每一項為「係數 × √根號內的數」。係數填 0 表示不用這一項。</p>
+    <div id="terms"></div>
+    <div class="out" id="addOut"></div>
+  </div>
+  <div id="q5"></div>
+  <div class="teacher"><b>教學提示：</b>用顏色標示同類方根（課本例 7 的做法）。常見錯誤：√8+√18 直接寫成 √26。要求學生先寫出 2√2＋3√2 這一步。</div>
+</section>
+
+<!-- 6 -->
+<section class="pt" id="s6">
+  <h2>⑥ 根式的四則運算與乘法公式</h2><p class="std">課本 P.88–90 · 例 9、例 10、例 11</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>四則運算：用分配律展開，把乘除化簡、同類方根合併，答案寫成最簡根式。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">(a+b)(a−b) = a²−b²<br>(a±b)² = a² ± 2ab + b²<br>(√a)² = a</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>(√7+√5)(√5−√7) 要寫成 (√5)²−(√7)² = −2，不是 2。</li><li>除以根式時，改乘倒數並有理化分母。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>(√5+√3)(√5−√3) = 5−3 = 2<br>(√11−3√2)² = 29−6√22</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：乘法公式驗算</h3>
+    <div class="row"><label>展開
+      <select id="ftype" style="min-height:44px;border-radius:8px;background:#10190f;color:var(--chalk);border:1px solid var(--line);padding:0 8px"><option value="d">(√a + √b)(√a − √b)</option><option value="p">(√a + √b)²</option><option value="m">(√a − √b)²</option></select></label>
+    <label>a<input type="number" id="fa" value="5" min="1" style="margin-left:6px"></label>
+    <label>b<input type="number" id="fb" value="3" min="1" style="margin-left:6px"></label></div>
+    <div class="out" id="fOut"></div>
+  </div>
+  <div id="q6"></div>
+  <div class="teacher"><b>教學提示：</b>建宇的錯誤：(√7+√5)(√5−√7) 被誤當成 (√7+√5)(√7−√5)。請學生先找出「哪一項的平方放前面」：第一個括號的兩項與第二個括號的兩項，要看哪一項符號相同。</div>
+</section>
+
+<!-- 7 -->
+<section class="pt" id="s7">
+  <h2>⑦ 根式的近似值</h2><p class="std">課本 P.84–85 · 例 6、數養知識</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>每取一次近似值就產生一次誤差；取近似值的次數越多，結果與實際值差距越大。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">√500 = 10√5 ≒ 10×2.236 = 22.36</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>先化為最簡根式，再代入已知的近似值。</li><li>要算 3√10/√6，建議先化簡再求近似值，誤差較小。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>已知 √5≒2.236：<br>√45 = 3√5 ≒ 6.708</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：誤差比一比（c√m ÷ √n）</h3>
+    <div class="row"><label>c<input type="number" id="ac" value="3" style="margin-left:6px"></label><label>m<input type="number" id="am" value="10" min="1" style="margin-left:6px"></label><label>n<input type="number" id="an" value="6" min="1" style="margin-left:6px"></label></div>
+    <div class="out" id="apxOut"></div>
+  </div>
+  <div id="q7"></div>
+  <div class="teacher"><b>教學提示：</b>讓學生分組，一組先各自取近似再相除，一組先化簡，比較誰更接近計算機直接算出的值。</div>
+</section>
+
+<!-- summary -->
+<section class="pt" id="sum">
+  <h2>總結 Cheat Sheet</h2><p class="std">課本 P.92 重點整理</p>
+  <div class="cheat">
+    <div class="cb"><span class="card-label">乘除</span><p class="f">√a×√b = √(ab)<br>√a÷√b = √(a/b)</p></div>
+    <div class="cb"><span class="card-label">最簡根式</span><p class="f">a√b，b 的質因數次方皆為 1<br>√18 = 3√2</p></div>
+    <div class="cb"><span class="card-label">有理化 c/√a</span><p class="f">同乘 √a<br>3/√2 = 3√2/2</p></div>
+    <div class="cb"><span class="card-label">有理化 c/(√a+√b)</span><p class="f">同乘 (√a−√b)<br>2/(√6+√3)=(2√6−2√3)/3</p></div>
+    <div class="cb"><span class="card-label">有理化 c/(√a−√b)</span><p class="f">同乘 (√a+√b)<br>2/(√6−√3)=(2√6+2√3)/3</p></div>
+    <div class="cb"><span class="card-label">加減</span><p class="f">先化最簡，再合併同類方根<br>√2+√3 ≠ √5</p></div>
+  </div>
+  <div class="teacher"><b>常見錯誤彙整：</b>(1) √2+√3=√5；(2) √(4/25)=2 1/5；(3) 2√5−√5=5；(4) 1/√12 的最簡根式為 1/(2√3)；(5) (√8+√12)/2 = √4+√6 = 2+√6（應為 √2+√3）。</div>
+</section>
+<div style="text-align:center;margin:36px 0 8px"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a></div>
+</div>
+
+<div class="panel">
+  <div class="tools" id="tools">
+    <h4>抽籤器</h4>
+    <div class="row"><label>座號 1～<input type="number" id="lotN" value="30" min="2" max="99"></label><button type="button" id="lotGo">抽！</button></div>
+    <div class="big" id="lotOut" aria-live="polite">—</div>
+    <h4>計時器</h4>
+    <div class="row"><label><input type="number" id="tmMin" value="3" min="1" max="60"> 分</label><button type="button" id="tmGo">開始</button><button type="button" id="tmReset">重設</button></div>
+    <div class="big" id="tmOut" aria-live="off">03:00</div>
+  </div>
+  <button type="button" id="toolBtn">🧰 工具</button>
+</div>
+<div class="penbar">
+  <button type="button" id="penBtn" aria-pressed="false">✏️ 畫筆</button>
+  <span id="penTools" style="display:none;gap:6px;align-items:center;flex-wrap:wrap">
+    <button class="sw" data-c="#ffffff" style="background:#fff" aria-label="白色"></button>
+    <button class="sw" data-c="#ffd54f" style="background:#ffd54f" aria-label="黃色"></button>
+    <button class="sw" data-c="#ff8a80" style="background:#ff8a80" aria-label="粉紅"></button>
+    <button class="sw" data-c="#81d4fa" style="background:#81d4fa" aria-label="淺藍"></button>
+    <button type="button" id="penClr">清除</button>
+  </span>
+</div>
+<canvas id="pen"></canvas>
+
+<script>
+(function(){
+"use strict";
+var $=function(id){return document.getElementById(id)};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=a%b;a=b;b=t}return a||1}
+function simp(n){var k=1,m=n,f=2;while(f*f<=m){while(m%(f*f)===0){m/=f*f;k*=f}f++}return [k,m]}
+function factor(n){var o=[],f=2;while(f*f<=n){var c=0;while(n%f===0){n/=f;c++}if(c)o.push([f,c]);f++}if(n>1)o.push([n,1]);return o}
+var SUP={2:"²",3:"³",4:"⁴",5:"⁵",6:"⁶",7:"⁷",8:"⁸",9:"⁹"};
+function fstr(n){if(n===1)return "1";return factor(n).map(function(p){return p[0]+(p[1]>1?(SUP[p[1]]||"^"+p[1]):"")}).join("×")}
+function sq(n){return "√"+n}
+// coefficient p/q times sqrt(m), reduced
+function fmt(p,q,m){
+  if(p===0)return "0";
+  var g=gcd(p,q);p/=g;q/=g;
+  var sg=p<0?"−":"";var ap=Math.abs(p);
+  if(m===1)return sg+ap+(q===1?"":"/"+q);
+  var num=(ap===1?"":ap)+sq(m);
+  return sg+(q===1?num:num+"/"+q);
+}
+function r3(x){return Math.round(x*1000)/1000}
+function clampInt(el,lo,hi){var v=Math.round(parseFloat(el.value));if(isNaN(v))v=lo;return Math.max(lo,Math.min(hi,v))}
+
+/* ---------- section 1 canvas ---------- */
+function fit(ctx,text,style,init,maxW,min){min=min||6;var s=init;ctx.font=style+" "+s+"px 'Noto Sans TC',sans-serif";while(ctx.measureText(text).width>maxW&&s>min){s-=.5;ctx.font=style+" "+s+"px 'Noto Sans TC',sans-serif"}return s}
+function setupCv(cv,hRatio){var d=window.devicePixelRatio||1,w=cv.clientWidth,h=Math.round(Math.min(w*hRatio,380));cv.style.height=h+"px";cv.width=w*d;cv.height=h*d;var c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return {c:c,w:w,h:h}}
+function drawLand(){
+  var a=+$("la").value,b=+$("lb").value;$("lav").textContent=a;$("lbv").textContent=b;
+  var cv=$("landCv"),o=setupCv(cv,.6),c=o.c,w=o.w,h=o.h;
+  var sa=Math.sqrt(a),sb=Math.sqrt(b),T=sa+sb;
+  var pad=28,u=Math.min((w-pad*2)/T,(h-pad*2)/T),X=(w-u*T)/2,Y=(h-u*T)/2;
+  var rects=[[0,0,sa,sa,"rgba(165,214,167,.35)",String(a),"#a5d6a7"],[sa,0,sb,sa,"rgba(255,255,255,.07)","√"+(a*b),"#e8e4d8"],[0,sa,sa,sb,"rgba(255,255,255,.07)","√"+(a*b),"#e8e4d8"],[sa,sa,sb,sb,"rgba(255,213,79,.3)",String(b),"#ffd54f"]];
+  c.lineWidth=2;c.strokeStyle="#e8e4d8";
+  rects.forEach(function(r){var x=X+r[0]*u,y=Y+r[1]*u,rw=r[2]*u,rh=r[3]*u;c.fillStyle=r[4];c.fillRect(x,y,rw,rh);c.strokeRect(x,y,rw,rh);
+    var availW=Math.min(rw,rh)-8,size=fit(c,r[5],"bold",Math.min(rh*.5,40),Math.max(availW,10));c.fillStyle=r[6];c.textAlign="center";c.textBaseline="middle";c.fillText(r[5],x+rw/2,y+rh/2)});
+  c.fillStyle="#81d4fa";c.textAlign="center";c.textBaseline="alphabetic";
+  var s1=fit(c,"√"+a,"bold",15,sa*u),lbl="√"+a;c.font="bold "+s1+"px 'Noto Sans TC'";c.fillText(lbl,X+sa*u/2,Y-8);
+  var s2=fit(c,"√"+b,"bold",15,sb*u);c.font="bold "+s2+"px 'Noto Sans TC'";c.fillText("√"+b,X+sa*u+sb*u/2,Y-8);
+  c.textAlign="right";c.textBaseline="middle";c.font="bold "+s1+"px 'Noto Sans TC'";c.fillText("√"+a,X-6,Y+sa*u/2);c.font="bold "+s2+"px 'Noto Sans TC'";c.fillText("√"+b,X-6,Y+sa*u+sb*u/2);
+  var s=simp(a*b);
+  $("landOut").innerHTML="<span class='step'>大正方形邊長 = √"+a+" + √"+b+" ≒ "+r3(T)+"</span><span class='step'>兩塊長方形面積各為 √"+a+"×√"+b+" = √"+(a*b)+(s[0]>1?" = <b class='ans'>"+fmt(s[0],1,s[1])+"</b>":"")+" ≒ "+r3(Math.sqrt(a*b))+"</span>";
+}
+$("la").addEventListener("input",drawLand);$("lb").addEventListener("input",drawLand);
+
+/* ---------- section 2 ---------- */
+function mulOut(){
+  var a=clampInt($("ma"),0,9999),b=clampInt($("mb"),0,9999),d=$("mop").value==="d",h="";
+  if(d){
+    if(b===0){$("mulOut").innerHTML="<span class='bad'>除法要求 b＞0。</span>";return}
+    var v=Math.sqrt(a/b),n=a*b,s=simp(n);
+    h="<span class='step'>√"+a+" ÷ √"+b+" = √("+a+"÷"+b+")</span><span class='step'>左邊 ≒ "+r3(Math.sqrt(a)/Math.sqrt(b))+"；右邊 ≒ "+r3(v)+" <span class='ok'>✔ 相等</span></span><span class='step'>最簡根式：√"+a+"/√"+b+" = √"+n+"/"+b+" = <b class='ans'>"+fmt(s[0],b,s[1])+"</b></span>";
+  }else{
+    var v2=Math.sqrt(a*b),s2=simp(a*b);
+    h="<span class='step'>√"+a+" × √"+b+" = √("+a+"×"+b+") = √"+(a*b)+"</span><span class='step'>左邊 ≒ "+r3(Math.sqrt(a)*Math.sqrt(b))+"；右邊 ≒ "+r3(v2)+" <span class='ok'>✔ 相等</span></span><span class='step'>最簡根式：√"+(a*b)+" = "+(s2[0]>1?"√("+fstr(a*b)+") = ":"")+"<b class='ans'>"+fmt(s2[0],1,s2[1])+"</b></span>";
+  }
+  $("mulOut").innerHTML=h;
+}
+["ma","mb","mop"].forEach(function(i){$(i).addEventListener("input",mulOut)});
+
+/* ---------- section 3 ---------- */
+function simOut(){
+  var n=clampInt($("sn"),1,99999),s=simp(n),h="<span class='step'>√"+n+" = √("+fstr(n)+")</span>";
+  if(s[0]>1){h+="<span class='step'>= √("+s[0]+"²×"+s[1]+") = "+s[0]+"√"+s[1]+"</span><span class='step ans'>最簡根式：√"+n+" = "+fmt(s[0],1,s[1])+"</span>"}
+  else if(s[1]===1){h+="<span class='step ans'>√"+n+" = "+s[0]+"</span>"}
+  else{h+="<span class='step ans'>√"+n+" 已是最簡根式（質因數次方都是 1）</span>"}
+  $("simOut").innerHTML=h;
+}
+$("sn").addEventListener("input",simOut);
+document.querySelectorAll("[data-n]").forEach(function(b){b.addEventListener("click",function(){$("sn").value=b.getAttribute("data-n");simOut()})});
+
+/* ---------- section 4 ---------- */
+function ratOut(){
+  var t=$("rtype").value,c=clampInt($("rc"),-999,999),a=clampInt($("ra"),1,999),b=clampInt($("rb"),1,999);
+  $("rbl").style.display=t==="1"?"none":"flex";var h="";
+  if(c===0){$("ratOut").innerHTML="c 不能為 0。";return}
+  if(t==="1"){
+    var s=simp(a);
+    h="<span class='step'>"+c+"/√"+a+" = "+c+"×√"+a+" / (√"+a+"×√"+a+") = "+c+"√"+a+" / "+a+"</span>";
+    h+="<span class='step ans'>最簡：" +fmt(c*(s[1]===a?1:1),s[0]*s[1],s[1])+"</span>";
+    h+="<span class='step'>驗算：原式 ≒ "+r3(c/Math.sqrt(a))+"，結果 ≒ "+r3(c*Math.sqrt(s[1])/(s[0]*s[1]))+" <span class='ok'>✔</span></span>";
+  }else{
+    if(a===b){$("ratOut").innerHTML="<span class='bad'>a 與 b 不能相等，否則分母為 0 或不需此法。</span>";return}
+    var plus=t==="2",cj=plus?"−":"+",d=a-b;
+    h="<span class='step'>"+c+"/(√"+a+(plus?"＋":"−")+"√"+b+") = "+c+"(√"+a+cj+"√"+b+") / ((√"+a+(plus?"＋":"−")+"√"+b+")(√"+a+cj+"√"+b+"))</span>";
+    h+="<span class='step'>分母用平方差：(√"+a+")²−(√"+b+")² = "+a+"−"+b+" = "+d+"</span>";
+    h+="<span class='step ans'>= "+c+"(√"+a+cj+"√"+b+") / "+(d<0?"("+d+")":d)+"</span>";
+    var orig=c/(Math.sqrt(a)+(plus?1:-1)*Math.sqrt(b)),res=c*(Math.sqrt(a)+(plus?-1:1)*Math.sqrt(b))/d;
+    h+="<span class='step'>驗算：原式 ≒ "+r3(orig)+"，結果 ≒ "+r3(res)+(Math.abs(orig-res)<1e-9?" <span class='ok'>✔</span>":" <span class='bad'>✘</span>")+"</span>";
+  }
+  $("ratOut").innerHTML=h;
+}
+["rtype","rc","ra","rb"].forEach(function(i){$(i).addEventListener("input",ratOut)});
+
+/* ---------- section 5 ---------- */
+var defTerms=[[2,7],[-3,5],[5,7],[9,5]];
+(function(){var h="";for(var i=0;i<4;i++){h+="<div class='row'><label>第"+(i+1)+"項 係數<input type='number' class='tc' value='"+defTerms[i][0]+"'></label><label>× √<input type='number' class='tn' min='1' value='"+defTerms[i][1]+"'></label></div>"}$("terms").innerHTML=h})();
+function addOut(){
+  var cs=document.querySelectorAll(".tc"),ns=document.querySelectorAll(".tn"),parts=[],map={},order=[],h="";
+  for(var i=0;i<4;i++){var c=Math.round(parseFloat(cs[i].value)||0),n=Math.max(1,Math.round(parseFloat(ns[i].value)||1));if(c===0)continue;var s=simp(n);parts.push({c:c,n:n,k:c*s[0],m:s[1]});if(!(s[1] in map)){map[s[1]]=0;order.push(s[1])}map[s[1]]+=c*s[0]}
+  if(!parts.length){$("addOut").innerHTML="請至少填一項。";return}
+  h+="<span class='step'>① 各項化最簡：<br>"+parts.map(function(p){return (p.c<0?"−":"")+(Math.abs(p.c)===1?"":Math.abs(p.c))+"√"+p.n+" = "+fmt(p.k,1,p.m)}).join("<br>")+"</span>";
+  h+="<span class='step'>② 合併同類方根：<br>"+order.map(function(m){var terms=parts.filter(function(p){return p.m===m}).map(function(p){return p.k});return "("+terms.join("＋").replace(/＋−/g,"−")+")"+(m===1?"":"√"+m)+" = "+fmt(map[m],1,m)}).join("<br>")+"</span>";
+  var fin=order.filter(function(m){return map[m]!==0}).sort(function(a,b){return a-b}).map(function(m,i){var t=fmt(map[m],1,m);return (i>0&&map[m]>0?"＋":"")+t}).join("");
+  h+="<span class='step ans'>最簡結果：" +(fin||"0")+"</span>";
+  var tv=parts.reduce(function(s,p){return s+p.c*Math.sqrt(p.n)},0);h+="<span class='step'>驗算：原式 ≒ "+r3(tv)+"</span>";
+  $("addOut").innerHTML=h;
+}
+document.querySelectorAll(".tc,.tn").forEach(function(e){e.addEventListener("input",addOut)});
+
+/* ---------- section 6 ---------- */
+function fOut(){
+  var t=$("ftype").value,a=clampInt($("fa"),1,999),b=clampInt($("fb"),1,999),h="",v;
+  if(t==="d"){
+    h="<span class='step'>(√"+a+"＋√"+b+")(√"+a+"−√"+b+") = (√"+a+")² − (√"+b+")² = "+a+" − "+b+"</span><span class='step ans'>= "+(a-b)+"</span>";
+    v=(Math.sqrt(a)+Math.sqrt(b))*(Math.sqrt(a)-Math.sqrt(b));
+    h+="<span class='step'>驗算：左邊 ≒ "+r3(v)+"，右邊 = "+(a-b)+" <span class='ok'>✔</span></span>";
+  }else{
+    var pl=t==="p",s=simp(a*b),cross=fmt(2*s[0],1,s[1]);
+    h="<span class='step'>(√"+a+(pl?"＋":"−")+"√"+b+")² = (√"+a+")² "+(pl?"＋":"−")+" 2×√"+a+"×√"+b+" ＋ (√"+b+")²</span><span class='step'>= "+a+(pl?" ＋ ":" − ")+"2√"+(a*b)+" ＋ "+b+"</span>";
+    h+="<span class='step ans'>= "+(a+b)+(pl?" ＋ ":" − ")+cross+"</span>";
+    v=Math.pow(Math.sqrt(a)+(pl?1:-1)*Math.sqrt(b),2);var rr=a+b+(pl?1:-1)*2*Math.sqrt(a*b);
+    h+="<span class='step'>驗算：左邊 ≒ "+r3(v)+"，右邊 ≒ "+r3(rr)+" <span class='ok'>✔</span></span>";
+  }
+  $("fOut").innerHTML=h;
+}
+["ftype","fa","fb"].forEach(function(i){$(i).addEventListener("input",fOut)});
+
+/* ---------- section 7 ---------- */
+function apxOut(){
+  var c=clampInt($("ac"),1,99),m=clampInt($("am"),1,999),n=clampInt($("an"),1,999);
+  var A=r3(c*Math.sqrt(m)),B=r3(Math.sqrt(n)),step=r3(A/B),exact=c*Math.sqrt(m)/Math.sqrt(n);
+  var s=simp(m*n),simpStr=fmt(c*s[0],n,s[1]);
+  var g=gcd(c*s[0],n),pp=c*s[0]/g,qq=n/g,sv=r3(pp*Math.sqrt(s[1])/qq);
+  $("apxOut").innerHTML="<span class='step'>做法一（先取近似）："+c+"√"+m+" ≒ "+A+"，√"+n+" ≒ "+B+"，相除 ≒ <b class='bad'>"+step+"</b>（誤差 "+r3(Math.abs(step-exact))+"）</span><span class='step'>做法二（先化簡）：= "+simpStr+" ≒ <b class='ok'>"+sv+"</b></span><span class='step'>計算機直接算 ≒ "+r3(exact)+"</span>";
+}
+["ac","am","an"].forEach(function(i){$(i).addEventListener("input",apxOut)});
+
+/* ---------- quizzes ---------- */
+var QS={
+ q1:[{q:"3×√5 簡記為下列何者？",o:["3√5","√15","3+√5","√(3×5)"],a:0,e:"係數與根號相乘時，× 可省略，寫成 3√5。"},{q:"√3 ÷ 2 簡記為下列何者？",o:["2√3","√3/2","√6","3/2"],a:1,e:"√b ÷ a = √b/a，也可寫成 (1/a)√b。"}],
+ q2:[{q:"√7 × √3 = ？",o:["√21","√10","21","7√3"],a:0,e:"√a×√b = √(a×b) = √21。"},{q:"√48 ÷ √6 = ？",o:["√8","8","√54","2"],a:0,e:"√a÷√b = √(a÷b) = √8，還可化為 2√2。"}],
+ q3:[{q:"√72 化為最簡根式是？",o:["2√18","6√2","3√8","36√2"],a:1,e:"72 = 2³×3² = 6²×2，所以 √72 = 6√2。"},{q:"下列何者為最簡根式？",o:["√18","√(1/3)","3√5","2/√3"],a:2,e:"3√5：根號內 5 的質因數次方為 1，且沒有分數或分母根號。"}],
+ q4:[{q:"6/√3 化簡為？",o:["2√3","6√3","3√2","2"],a:0,e:"6√3/3 = 2√3。"},{q:"1/(√3−1) 化簡為？",o:["(√3+1)/2","(√3−1)/2","√3+1","1/2"],a:0,e:"同乘 (√3+1)，分母 3−1 = 2。"}],
+ q5:[{q:"下列哪一個與 √12 是同類方根？",o:["√18","√27","√20","√8"],a:1,e:"√12 = 2√3，√27 = 3√3，根號內都是 3。"},{q:"√8 + √18 = ？",o:["√26","5√2","6√2","13√2"],a:1,e:"√8 = 2√2，√18 = 3√2，合併得 5√2。"}],
+ q6:[{q:"(√6 + √2)(√6 − √2) = ？",o:["4","8","6−2√12","2"],a:0,e:"平方差：(√6)² − (√2)² = 6 − 2 = 4。"},{q:"(√3 + 1)² = ？",o:["4","3+1","4+2√3","4+√3"],a:2,e:"(√3)² + 2×√3×1 + 1² = 4 + 2√3。"}],
+ q7:[{q:"已知 √3≒1.732，√300 ≒ ？",o:["17.32","5.196","173.2","3.464"],a:0,e:"√300 = 10√3 ≒ 10×1.732 = 17.32。"},{q:"為了讓近似值誤差較小，應該？",o:["每個根號都先取近似再算","先化簡再取近似","全部取整數","先平方再開根"],a:1,e:"取近似的次數越少，累積誤差越小，所以先化簡。"}]
+};
+Object.keys(QS).forEach(function(id){
+  var box=$(id),h="<h3>形成性評量</h3>";
+  QS[id].forEach(function(q,qi){h+="<div class='q' data-q='"+id+"' data-i='"+qi+"'><p>Q"+(qi+1)+"　"+q.q+"</p><div class='opts'>"+q.o.map(function(t,oi){return "<button type='button' data-o='"+oi+"'>"+String.fromCharCode(65+oi)+". "+t+"</button>"}).join("")+"</div><div class='fb'></div></div>"});
+  box.innerHTML=h;
+});
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest(".opts button");if(!b)return;
+  var qd=b.closest(".q"),q=QS[qd.dataset.q][+qd.dataset.i],o=+b.dataset.o,fb=qd.querySelector(".fb");
+  qd.querySelectorAll(".opts button").forEach(function(x){x.classList.remove("right","wrong")});
+  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e}
+  else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
+});
+
+/* ---------- teacher mode ---------- */
+var tm=false;
+function setT(v){tm=v;document.body.classList.toggle("tmode",v);$("modeBtn").classList.toggle("on",v);$("modeBtn").textContent=v?"教師模式（開）":"教師模式";$("pw").classList.remove("show")}
+$("modeBtn").addEventListener("click",function(){if(tm){setT(false)}else{$("pw").classList.toggle("show");$("pwIn").focus()}});
+function tryPw(){if($("pwIn").value==="math2026"){setT(true);$("pwIn").value=""}else{$("pwIn").value="";$("pwIn").placeholder="密碼錯誤"}}
+$("pwGo").addEventListener("click",tryPw);$("pwIn").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw()});
+
+/* ---------- tools ---------- */
+$("toolBtn").addEventListener("click",function(){$("tools").classList.toggle("open")});
+$("lotGo").addEventListener("click",function(){var n=clampInt($("lotN"),2,99);$("lotOut").textContent=Math.floor(Math.random()*n)+1+" 號"});
+var tid=null,left=180;
+function showT(){var m=Math.floor(left/60),s=left%60;$("tmOut").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s}
+$("tmGo").addEventListener("click",function(){
+  if(tid){clearInterval(tid);tid=null;$("tmGo").textContent="繼續";return}
+  if(left<=0)left=clampInt($("tmMin"),1,60)*60;
+  $("tmGo").textContent="暫停";showT();
+  tid=setInterval(function(){left--;showT();if(left<=0){clearInterval(tid);tid=null;$("tmGo").textContent="開始";$("tmOut").textContent="時間到！"}},1000)});
+$("tmReset").addEventListener("click",function(){clearInterval(tid);tid=null;left=clampInt($("tmMin"),1,60)*60;$("tmGo").textContent="開始";showT()});
+$("tmMin").addEventListener("input",function(){if(!tid){left=clampInt($("tmMin"),1,60)*60;showT()}});
+
+/* ---------- pen ---------- */
+var pc=$("pen"),px=pc.getContext("2d"),pcol="#ffffff",drawing=false,pa=false;
+function sizePen(){pc.width=window.innerWidth;pc.height=window.innerHeight}
+function pt(e){return [e.clientX,e.clientY]}
+$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none"});
+document.querySelectorAll(".sw").forEach(function(s){s.addEventListener("click",function(){pcol=s.dataset.c})});
+$("penClr").addEventListener("click",function(){px.clearRect(0,0,pc.width,pc.height)});
+pc.addEventListener("pointerdown",function(e){drawing=true;var p=pt(e);px.beginPath();px.moveTo(p[0],p[1]);pc.setPointerCapture(e.pointerId)});
+pc.addEventListener("pointermove",function(e){if(!drawing)return;var p=pt(e);px.strokeStyle=pcol;px.lineWidth=3.5;px.lineCap="round";px.lineJoin="round";px.lineTo(p[0],p[1]);px.stroke()});
+["pointerup","pointercancel"].forEach(function(n){pc.addEventListener(n,function(){drawing=false})});
+
+/* ---------- init ---------- */
+function all(){drawLand();mulOut();simOut();ratOut();addOut();fOut();apxOut()}
+var rt;window.addEventListener("resize",function(){drawLand();clearTimeout(rt);rt=setTimeout(function(){var img=px.getImageData(0,0,pc.width,pc.height);sizePen();px.putImageData(img,0,0)},150)});
+sizePen();all();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(drawLand);
+})();
+</script>
+</body></html>
