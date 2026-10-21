@@ -1,0 +1,448 @@
+<!doctype html>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>圓心角、圓周角與弧｜九上數學教學駕駛艙</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* Layout: sticky wood-frame header, pill nav, one blackboard panel per concept (card -> live tool -> quiz), floating chalk tools. Single dark chalkboard look by design. */
+:root{
+  --board:#1a2a1a; --board2:#223622; --chalk:#e8e4d8; --dim:#aeb8a6;
+  --yellow:#ffd54f; --pink:#ff8a80; --blue:#81d4fa; --green:#a5d6a7;
+  --wood:#8d6e4a; --wood2:#6d5233; --line:rgba(232,228,216,.22);
+  --ff-head:'Noto Serif TC','Songti TC',serif; --ff-body:'Noto Sans TC','PingFang TC','Microsoft JhengHei',sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--board);color:var(--chalk);font-family:var(--ff-body);font-size:16px;line-height:1.7;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 90px;
+  background-image:radial-gradient(rgba(255,255,255,.035) 1px,transparent 1px);background-size:22px 22px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--wood2)}
+.wrap{max-width:1000px;margin:0 auto}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;margin-inline:calc(-1*max(16px,env(safe-area-inset-left,0px)));
+  padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(#a3825a,var(--wood) 40%,var(--wood2));border-bottom:3px solid #4a371f;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+header h1{font:700 1.25rem/1.2 var(--ff-head);margin:0;color:#fff8e1;text-wrap:balance}
+header small{display:block;font:400 .78rem var(--ff-body);color:#f1e2c4}
+.modebar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+button,.btn{font:inherit;cursor:pointer;color:var(--chalk);background:rgba(255,255,255,.08);border:1px solid var(--line);border-radius:999px;padding:6px 16px;min-height:44px}
+button:hover{background:rgba(255,255,255,.16)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+button.on{background:var(--yellow);color:#2a2410;border-color:var(--yellow)}
+input[type=number],input[type=password]{font:inherit;color:var(--chalk);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:8px;padding:6px 8px;width:5.2em;min-height:44px}
+input[type=password]{width:7em}
+.goals{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0 6px}
+.chip{background:rgba(129,212,250,.12);border:1px dashed var(--blue);color:var(--blue);border-radius:999px;padding:2px 14px;font-size:.88rem}
+nav.pills{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 8px}
+nav.pills a{color:var(--yellow);text-decoration:none;border:1px solid rgba(255,213,79,.5);border-radius:999px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;font-size:.92rem}
+nav.pills a:hover{background:rgba(255,213,79,.14)}
+section.pt{margin:34px 0;padding:22px;border:2px solid var(--line);border-radius:14px;background:var(--board2);scroll-margin-top:90px}
+section.pt>h2{font:700 1.5rem/1.3 var(--ff-head);color:var(--yellow);margin:0 0 4px;text-wrap:balance}
+.std{color:var(--dim);font-size:.85rem;margin:0 0 14px}
+h3{font:700 1.05rem var(--ff-head);color:var(--blue);margin:20px 0 8px}
+.concept-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.15);border-radius:12px;padding:18px;margin:12px 0}
+.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cb{background:rgba(0,0,0,.22);border-radius:8px;padding:12px;min-width:0}
+.cb p{margin:4px 0}
+.card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:.72rem;padding:2px 10px;border-radius:10px;margin-bottom:4px}
+.f{color:var(--blue);font-family:'Noto Serif TC',serif;font-size:1.08rem;text-align:center;padding:4px 0;overflow-wrap:anywhere}
+.cb ul{margin:4px 0 0 18px;padding:0}.cb li{margin-bottom:4px;font-size:.93rem}
+.lab{background:rgba(0,0,0,.25);border:1px solid var(--line);border-radius:12px;padding:16px;margin:14px 0}
+.lab h3{margin-top:0}
+.row{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center;margin:8px 0}
+.row label{display:flex;align-items:center;gap:6px;min-width:0}
+input[type=range]{accent-color:var(--yellow);width:min(220px,100%);min-height:44px}
+.out{background:rgba(0,0,0,.3);border-radius:8px;padding:10px 14px;margin-top:10px;font-size:1.02rem;overflow-wrap:anywhere}
+.out .step{display:block;padding:2px 0}
+.out .ans{color:var(--yellow);font-weight:700;font-size:1.15rem}
+.ok{color:var(--green)}.bad{color:var(--pink)}
+canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10px;border:1px solid var(--line)}
+.q{border-top:1px dashed var(--line);padding-top:12px;margin-top:12px}
+.q p{margin:0 0 8px;font-weight:500}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts button{border-radius:10px;text-align:left;padding:8px 14px;overflow-wrap:anywhere}
+.opts button.right{background:rgba(165,214,167,.25);border-color:var(--green)}
+.opts button.wrong{background:rgba(255,138,128,.2);border-color:var(--pink)}
+.fb{margin-top:8px;font-size:.93rem;min-height:1.2em}
+.teacher{display:none;border:1px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:14px;background:rgba(255,138,128,.07)}
+body.tmode .teacher{display:block}
+.teacher b{color:var(--pink)}
+.cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.tools{display:none;width:min(280px,calc(100vw - 32px));background:#10190f;border:2px solid var(--wood);border-radius:12px;padding:12px}
+.tools.open{display:block}
+.tools h4{margin:8px 0 4px;color:var(--yellow);font-size:.95rem}
+.big{font:700 2rem var(--ff-head);color:var(--yellow);font-variant-numeric:tabular-nums}
+.penbar{position:fixed;left:max(12px,env(safe-area-inset-left,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;gap:6px;align-items:center;flex-wrap:wrap;max-width:calc(100vw - 100px)}
+.penbar .sw{width:30px;height:30px;min-height:30px;padding:0;border-radius:50%}
+#pen{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
+#pen.active{pointer-events:auto;cursor:crosshair}
+#pw{display:none;align-items:center;gap:6px}
+#pw.show{display:flex}
+.btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;min-height:44px}
+.btn-home-nav:hover{background:rgba(255,255,255,0.25)}
+@media(max-width:1024px){section.pt{padding:18px}}
+@media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+</head><body>
+
+<div class="wrap">
+<header>
+  <div><h1>圓心角、圓周角與弧駕駛艙</h1><small>第 2 章 圓 · 2-2 圓心角、圓周角與弧的關係</small></div>
+  <div class="modebar">
+    <a class="btn-home-nav" href="../index.html">🏠 回首頁</a>
+    <button id="modeBtn" type="button">教師模式</button>
+    <span id="pw"><input type="password" id="pwIn" placeholder="密碼" aria-label="教師密碼"><button type="button" id="pwGo">進入</button></span>
+  </div>
+</header>
+
+<div class="goals">
+  <span class="chip">圓心角的度數 = 所對弧的度數</span><span class="chip">等弧對等弦</span><span class="chip">圓周角 = 弧的一半</span><span class="chip">半圓的圓周角是直角</span><span class="chip">平行弦截等弧</span><span class="chip">圓內接四邊形對角互補</span>
+</div>
+<nav class="pills" aria-label="主題導覽">
+  <a href="#s1">① 圓心角與弧</a><a href="#s2">② 等弧與等弦</a><a href="#s3">③ 圓周角</a><a href="#s4">④ 平行弦截弧</a><a href="#s5">⑤ 圓內接四邊形</a><a href="#s6">⑥ 素養：內輪差</a><a href="#sum">總結</a>
+</nav>
+
+<section class="pt" id="s1">
+  <h2>① 圓心角與弧的關係</h2><p class="std">課本 P.110–111 · 例 1 · 學習內容 S-9-6</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>圓上一弧的<b style="color:var(--yellow)">度數</b>就是其所對圓心角的度數。把圓周分成 360 等分，每一等分所對的圓心角是 1°。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">∠AOB = x° ⟹ 弧 AB = x°<br>弧 AB 的長度 = 圓周長 × x/360</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>同圓或等圓中，度數相同的兩弧，弧長相等。</li><li>弧的符號有三種意義：圖形、度數、長度，要看前後文分辨。</li><li>半徑不同的兩圓，相同圓心角所對弧的度數相等，弧長不相等。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>同心圓半徑 8、10，圓心角 120°：<br>弧 AB 長 = 2π×8×120/360 = 16π/3<br>弧 CD 長 = 2π×10×120/360 = 20π/3</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：兩個同心圓，同一個圓心角</h3>
+    <div class="row"><label>圓心角 x = <input type="range" id="s1x" min="10" max="350" value="120"><b id="s1xv">120</b>°</label></div>
+    <div class="row"><label>外圓半徑 <input type="range" id="s1r" min="2" max="20" value="10"><b id="s1rv">10</b></label>
+    <label>內圓半徑 <input type="range" id="s1r2" min="2" max="20" value="8"><b id="s1r2v">8</b></label></div>
+    <canvas class="viz" id="cv1"></canvas>
+    <div class="out" id="out1"></div>
+  </div>
+  <div id="q1"></div>
+  <div class="teacher"><b>教學提示：</b>先問學生「看到弧的符號時，你怎麼知道它是在說度數還是長度？」再看例 1：度數相同、長度不同。課本海盜船情境的答案：角度一樣，因為船首與中間所夾的圓心角固定。</div>
+</section>
+
+<section class="pt" id="s2">
+  <h2>② 等弧對等弦</h2><p class="std">課本 P.112–113 · 例 2、例 3</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>同圓或等圓中，度數相等的兩弧稱為<b style="color:var(--yellow)">等弧</b>，長度相等的兩弦稱為<b style="color:var(--yellow)">等弦</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">弧 AB = 弧 CD ⟺ 弦 AB = 弦 CD<br>證明：△AOB ≅ △COD（SAS 或 SSS）</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>等弧對等弦、等弦對等弧，兩個方向都成立。</li><li>正 n 邊形的頂點在圓上時，各邊所對的弧相等。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>正五邊形 ABCDE 頂點在圓 O 上：<br>弧 ABC = 360°×2/5 = 144°，所以 ∠AOC = 144°。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：比較弧與弦</h3>
+    <div class="row"><label>弧 AB = <input type="range" id="s2a" min="10" max="350" value="80"><b id="s2av">80</b>°</label>
+    <label>弧 CD = <input type="range" id="s2b" min="10" max="350" value="80"><b id="s2bv">80</b>°</label></div>
+    <canvas class="viz" id="cv2"></canvas>
+    <div class="out" id="out2"></div>
+    <div class="row" style="margin-top:12px"><label>正 <input type="number" id="s2n" value="5" min="3" max="20"> 邊形</label></div>
+    <div class="out" id="out2n"></div>
+  </div>
+  <div id="q2"></div>
+  <div class="teacher"><b>教學提示：</b>讓學生把 CD 的度數調到 280° 左右，會看到弧比較大但弦比較短。課本結論只說「相等」，不說「較大」，因為弦長與弧的大小在超過 180° 後不再同向。</div>
+</section>
+
+<section class="pt" id="s3">
+  <h2>③ 圓周角與半圓的圓周角</h2><p class="std">課本 P.114–119 · 例 4、例 5、例 6</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>兩弦的交點在圓周上，所形成的角稱為<b style="color:var(--yellow)">圓周角</b>。∠BAC 所對的弧是弧 BC。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">圓周角 = 所對弧度數 ÷ 2 = 圓心角 ÷ 2<br>同弧所對的圓周角相等<br>半圓所對的圓周角 = 90°</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>圓心可能在圓周角的一邊上、內部、外部，結論都一樣。</li><li>圓周角 ∠ADC 所對的弧可能是優弧：∠ADC = ½(360°−弧 ADC)。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>∠AOC = 130°，則 ∠ABC = 65°（B 在優弧上）；<br>同一條弧另一側的 ∠ADC = ½×230° = 115°。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：拖動頂點 A，看圓周角怎麼變</h3>
+    <div class="row"><label>弧 BC = <input type="range" id="s3s" min="20" max="340" value="100"><b id="s3sv">100</b>°</label>
+    <label>A 的位置 <input type="range" id="s3t" min="0" max="100" value="50"></label></div>
+    <canvas class="viz" id="cv3"></canvas>
+    <div class="out" id="out3"></div>
+  </div>
+  <div id="q3"></div>
+  <div class="teacher"><b>教學提示：</b>把弧 BC 調成 180°，圓心在一邊上，∠BAC = 90°。再慢慢縮小，圓心進入角內；拖動 A 位置讓圓心跑到角外。課本三種情形：圓心在一邊上、在內部、在外部。小翊的說法「同弧所對圓周角相等」正確；小妍的說法錯在 ∠AEB = ∠CED（對頂角）不能推出 AB = CD。</div>
+</section>
+
+<section class="pt" id="s4">
+  <h2>④ 平行弦截等弧</h2><p class="std">課本 P.120 · 例 7</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>圓內兩條互相平行的弦 AB、CD，它們之間夾出兩段弧：弧 AC 與弧 BD。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">AB ∥ CD ⟹ 弧 AC = 弧 BD<br>弧 AC = 弧 BD ⟹ AB ∥ CD</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證法：連接 BC，由內錯角 ∠1=∠2，得 ½弧AC = ½弧BD。</li><li>反過來也成立：連接 AD，內錯角相等就平行。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>弧 AC = 弧 BD，∠DAB = 37°，則 ∠ADC = 37°，AB ∥ CD。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：轉動、平移兩條平行弦</h3>
+    <div class="row"><label>方向 <input type="range" id="s4t" min="0" max="170" value="20"><b id="s4tv">20</b>°</label>
+    <label>弦 AB 位置 <input type="range" id="s4d1" min="-80" max="80" value="35"></label>
+    <label>弦 CD 位置 <input type="range" id="s4d2" min="-80" max="80" value="-30"></label></div>
+    <canvas class="viz" id="cv4"></canvas>
+    <div class="out" id="out4"></div>
+  </div>
+  <div id="q4"></div>
+  <div class="teacher"><b>教學提示：</b>學生常以為要用全等三角形證明。這裡的關鍵是「連一條線，把兩段弧變成兩個圓周角」，再用內錯角相等。</div>
+</section>
+
+<section class="pt" id="s5">
+  <h2>⑤ 圓內接四邊形</h2><p class="std">課本 P.121–122 · 例 8</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">定義</span><p>四邊形的四個頂點都在圓周上，稱為<b style="color:var(--yellow)">圓內接四邊形</b>。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">∠A + ∠C = 180°，∠B + ∠D = 180°<br>外角 = 內對角：∠1 = ∠BAD</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證明：∠A = ½弧BCD、∠C = ½弧BAD，相加 = ½×360° = 180°。</li><li>延長一邊得到的外角，等於它的內對角。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>∠ABC = 70°，∠BAD = 115°：<br>∠ADC = 180°−70° = 110°，∠DCE = ∠BAD = 115°。</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：移動四個頂點</h3>
+    <div class="row"><label>A <input type="range" id="s5a" min="0" max="359" value="100"></label><label>B <input type="range" id="s5b" min="0" max="359" value="195"></label><label>C <input type="range" id="s5c" min="0" max="359" value="290"></label><label>D <input type="range" id="s5d" min="0" max="359" value="20"></label></div>
+    <canvas class="viz" id="cv5"></canvas>
+    <div class="out" id="out5"></div>
+  </div>
+  <div id="q5"></div>
+  <div class="teacher"><b>教學提示：</b>讓學生拖到任何位置，兩組對角和都停在 180°。再用「弧BCD + 弧BAD = 360°」說明為什麼。教學指引提到圓外一點作切線，其實是用「半圓的圓周角是直角」，不是教學重點，讓學生知道尺規真的畫得出來即可。</div>
+</section>
+
+<section class="pt" id="s6">
+  <h2>⑥ 素養：內輪差</h2><p class="std">課本 P.126 · 扉選素養（SDGs 3 良好健康和福祉）</p>
+  <div class="concept-card"><div class="concept-card-body">
+    <div class="cb"><span class="card-label">情境</span><p>大型車輛轉彎時，前內輪與後內輪的旋轉半徑之差稱為<b style="color:var(--yellow)">內輪差</b>，紅色區域是危險區域，行人要保持更遠的距離。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">內輪差 = OA − OB<br>危險區面積 = △AOB − 扇形 OBC</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>∠OBA = 90°，∠AOB = 轉彎角度 θ。</li><li>OB = AB / tanθ，OA = AB / sinθ。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>AB = 4，θ = 30°：OA = 8，OB = 4√3<br>內輪差 = 8 − 4√3 公尺<br>面積 = 8√3 − 4π 平方公尺</p></div>
+  </div></div>
+  <div class="lab"><h3>互動：車長與轉彎角度如何影響危險區</h3>
+    <div class="row"><label>車長 AB = <input type="range" id="s6ab" min="1" max="12" step="0.5" value="4"><b id="s6abv">4</b> 公尺</label>
+    <label>轉彎角度 θ = <input type="range" id="s6th" min="10" max="80" value="30"><b id="s6thv">30</b>°</label></div>
+    <canvas class="viz" id="cv6"></canvas>
+    <div class="out" id="out6"></div>
+  </div>
+  <div id="q6"></div>
+  <div class="teacher"><b>教學提示：</b>課本建議討論「為什麼車越長或轉彎角度越大，內輪差就會越大？」拖動兩個滑桿讓學生觀察。可連結交通安全，培養對公共安全的責任感。</div>
+</section>
+
+<section class="pt" id="sum">
+  <h2>總結 Cheat Sheet</h2><p class="std">課本 P.123 重點整理</p>
+  <div class="cheat">
+    <div class="cb"><span class="card-label">圓心角</span><p class="f">∠AOB = 弧 AB</p></div>
+    <div class="cb"><span class="card-label">圓周角</span><p class="f">∠BAC = ½ 弧 BC<br>= ½ ∠BOC</p></div>
+    <div class="cb"><span class="card-label">半圓的圓周角</span><p class="f">∠ACB = 90°<br>（AB 為直徑）</p></div>
+    <div class="cb"><span class="card-label">平行弦的截弧</span><p class="f">AB ∥ CD ⟺ 弧AC = 弧BD</p></div>
+    <div class="cb"><span class="card-label">圓內接四邊形</span><p class="f">∠A+∠C = 180°<br>∠B+∠D = 180°</p></div>
+    <div class="cb"><span class="card-label">等弧等弦</span><p class="f">弧AB = 弧CD ⟺ 弦AB = 弦CD</p></div>
+  </div>
+  <div class="teacher"><b>常見錯誤彙整：</b>(1) 把圓周角當成圓心角（忘了除以 2）；(2) 圓周角所對的弧是優弧時，仍用劣弧計算；(3) 由 ∠AEB=∠CED（對頂角）推出 AB=CD；(4) 半徑不同的圓，以為相同圓心角的弧長也相等。</div>
+</section>
+<div style="text-align:center;margin:36px 0 8px"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a></div>
+</div>
+
+<div class="panel">
+  <div class="tools" id="tools">
+    <h4>抽籤器</h4>
+    <div class="row"><label>座號 1～<input type="number" id="lotN" value="30" min="2" max="99"></label><button type="button" id="lotGo">抽！</button></div>
+    <div class="big" id="lotOut" aria-live="polite">—</div>
+    <h4>計時器</h4>
+    <div class="row"><label><input type="number" id="tmMin" value="3" min="1" max="60"> 分</label><button type="button" id="tmGo">開始</button><button type="button" id="tmReset">重設</button></div>
+    <div class="big" id="tmOut" aria-live="off">03:00</div>
+  </div>
+  <button type="button" id="toolBtn">🧰 工具</button>
+</div>
+<div class="penbar">
+  <button type="button" id="penBtn" aria-pressed="false">✏️ 畫筆</button>
+  <span id="penTools" style="display:none;gap:6px;align-items:center;flex-wrap:wrap">
+    <button class="sw" data-c="#ffffff" style="background:#fff" aria-label="白色"></button>
+    <button class="sw" data-c="#ffd54f" style="background:#ffd54f" aria-label="黃色"></button>
+    <button class="sw" data-c="#ff8a80" style="background:#ff8a80" aria-label="粉紅"></button>
+    <button class="sw" data-c="#81d4fa" style="background:#81d4fa" aria-label="淺藍"></button>
+    <button type="button" id="penClr">清除</button>
+  </span>
+</div>
+<canvas id="pen"></canvas>
+
+<script>
+(function(){
+"use strict";
+/* ---------- helpers ---------- */
+var $=function(id){return document.getElementById(id)};
+function gcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=a%b;a=b;b=t}return a||1}
+function clampInt(el,lo,hi){var v=Math.round(parseFloat(el.value));if(isNaN(v))v=lo;return Math.max(lo,Math.min(hi,v))}
+function r3(x){return Math.round(x*1000)/1000}
+function r1(x){return Math.round(x*10)/10}
+var D=Math.PI/180;
+function setupCv(cv,ratio,maxH){var d=window.devicePixelRatio||1,w=cv.clientWidth,h=Math.round(Math.min(w*ratio,maxH||380));cv.style.height=h+"px";cv.width=w*d;cv.height=h*d;var c=cv.getContext("2d");c.setTransform(d,0,0,d,0,0);return {c:c,w:w,h:h}}
+function pol(cx,cy,r,deg){return [cx+r*Math.cos(deg*D),cy-r*Math.sin(deg*D)]}
+function circ(c,cx,cy,r,col){c.beginPath();c.arc(cx,cy,r,0,7);c.strokeStyle=col||"#e8e4d8";c.lineWidth=2;c.stroke()}
+function arcD(c,cx,cy,r,f,t,col,lw){c.beginPath();c.arc(cx,cy,r,-f*D,-t*D,true);c.strokeStyle=col;c.lineWidth=lw||4;c.stroke()}
+function seg(c,p,q,col,lw,dash){c.beginPath();c.setLineDash(dash||[]);c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.strokeStyle=col||"#e8e4d8";c.lineWidth=lw||2;c.stroke();c.setLineDash([])}
+function pt(c,p,lab,cx,cy,col){col=col||"#ffd54f";c.beginPath();c.arc(p[0],p[1],4,0,7);c.fillStyle=col;c.fill();var dx=p[0]-cx,dy=p[1]-cy,L=Math.hypot(dx,dy)||1;c.fillStyle=col;c.font="bold 15px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(lab,p[0]+dx/L*15,p[1]+dy/L*15)}
+function angAt(P,Q,R){var a=Math.atan2(Q[1]-P[1],Q[0]-P[0]),b=Math.atan2(R[1]-P[1],R[0]-P[0]),d=Math.abs(a-b)/D;return d>180?360-d:d}
+function fmtPi(r,x){var n=2*r*x,d=360,g=gcd(n,d);n/=g;d/=g;if(d===1)return (n===1?"":n)+"π";return (n===1?"":n)+"π/"+d}
+function radius(w,h,pad){return Math.max(20,Math.min(w,h)/2-pad)}
+function lblText(c,t,x,y,col,sz){c.fillStyle=col||"#e8e4d8";c.font="bold "+(sz||14)+"px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y)}
+
+/* ---------- section 1 ---------- */
+function s1(){
+  var x=+$("s1x").value,r=+$("s1r").value,r2=+$("s1r2").value;$("s1xv").textContent=x;$("s1rv").textContent=r;$("s1r2v").textContent=r2;
+  var o=setupCv($("cv1"),.62),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,34),rm=Math.max(r,r2),Ro=R*r/rm,Ri=R*r2/rm;
+  var f=90-x/2,t=90+x/2;
+  circ(c,cx,cy,Ro,"#e8e4d8");circ(c,cx,cy,Ri,"#81d4fa");
+  var A=pol(cx,cy,Ro,t),B=pol(cx,cy,Ro,f),C=pol(cx,cy,Ri,t),Dd=pol(cx,cy,Ri,f),O=[cx,cy];
+  seg(c,O,A);seg(c,O,B);seg(c,O,C,"#81d4fa",1.5);seg(c,O,Dd,"#81d4fa",1.5);
+  arcD(c,cx,cy,Ro,f,t,"#ff8a80",5);arcD(c,cx,cy,Ri,f,t,"#ffd54f",5);
+  c.beginPath();c.arc(cx,cy,3,0,7);c.fillStyle="#e8e4d8";c.fill();c.fillText("O",cx+10,cy+14);
+  pt(c,A,"A",cx,cy);pt(c,B,"B",cx,cy);pt(c,C,"C",cx,cy,"#81d4fa");pt(c,Dd,"D",cx,cy,"#81d4fa");
+  $("out1").innerHTML="<span class='step'>∠AOB = ∠COD = "+x+"°，所以 弧AB 的度數 = 弧CD 的度數 = <b class='ans'>"+x+"°</b></span>"+
+  "<span class='step'>弧 AB 的長度 = 2π×"+r+"×"+x+"/360 = <b class='ans'>"+fmtPi(r,x)+"</b> ≒ "+r3(2*Math.PI*r*x/360)+"</span>"+
+  "<span class='step'>弧 CD 的長度 = 2π×"+r2+"×"+x+"/360 = <b class='ans'>"+fmtPi(r2,x)+"</b> ≒ "+r3(2*Math.PI*r2*x/360)+"</span>"+
+  "<span class='step'>"+(r===r2?"兩圓半徑相等，度數相同弧長也相等。":"半徑不同：度數相同，但弧長不相等。")+"</span>";
+}
+["s1x","s1r","s1r2"].forEach(function(i){$(i).addEventListener("input",s1)});
+
+/* ---------- section 2 ---------- */
+function s2(){
+  var a=+$("s2a").value,b=+$("s2b").value;$("s2av").textContent=a;$("s2bv").textContent=b;
+  var o=setupCv($("cv2"),.62),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,30);
+  circ(c,cx,cy,R);
+  var A=pol(cx,cy,R,90+a/2),B=pol(cx,cy,R,90-a/2),C=pol(cx,cy,R,270-b/2),Dd=pol(cx,cy,R,270+b/2),O=[cx,cy];
+  var col1="#ffd54f",col2="#81d4fa";
+  seg(c,O,A,col1,1.4);seg(c,O,B,col1,1.4);seg(c,A,B,col1,3);
+  seg(c,O,C,col2,1.4);seg(c,O,Dd,col2,1.4);seg(c,C,Dd,col2,3);
+  arcD(c,cx,cy,R,90-a/2,90+a/2,"#ff8a80",5);arcD(c,cx,cy,R,270-b/2,270+b/2,"#a5d6a7",5);
+  pt(c,A,"A",cx,cy);pt(c,B,"B",cx,cy);pt(c,C,"C",cx,cy,col2);pt(c,Dd,"D",cx,cy,col2);
+  var ca=2*10*Math.sin(a*D/2),cb=2*10*Math.sin(b*D/2),eq=a===b;
+  $("out2").innerHTML="<span class='step'>弧 AB = "+a+"°，弧 CD = "+b+"°（取半徑 10）</span><span class='step'>弦 AB ≒ "+r3(ca)+"，弦 CD ≒ "+r3(cb)+"</span>"+
+  "<span class='step "+(eq?"ok":"")+"'>"+(eq?"✔ 弧 AB = 弧 CD，所以弦 AB = 弦 CD（△AOB ≅ △COD）":"度數不同。注意：弧較大，弦不一定較長（超過 180° 後弦反而變短）。")+"</span>";
+}
+["s2a","s2b"].forEach(function(i){$(i).addEventListener("input",s2)});
+function s2n(){var n=clampInt($("s2n"),3,20),ang=360/n;$("out2n").innerHTML="<span class='step'>正 "+n+" 邊形的頂點在圓上，每一邊所對的弧都相等（等弦對等弧）。</span><span class='step'>相鄰兩頂點與圓心的夾角 = 360°/"+n+" = <b class='ans'>"+r3(ang)+"°</b></span><span class='step'>隔一個頂點的 ∠AOC = "+r3(2*ang)+"°（例 3：正五邊形為 144°）</span>"}
+$("s2n").addEventListener("input",s2n);
+
+/* ---------- section 3 ---------- */
+function s3(){
+  var s=+$("s3s").value,t=+$("s3t").value/100;$("s3sv").textContent=s;
+  var o=setupCv($("cv3"),.66),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,30);
+  var bDeg=270-s/2,cDeg=270+s/2,lo=cDeg+6,hi=bDeg+360-6,phi=lo+(hi-lo)*t,phi2=lo+(hi-lo)*0.2;
+  circ(c,cx,cy,R);
+  var B=pol(cx,cy,R,bDeg),C=pol(cx,cy,R,cDeg),A=pol(cx,cy,R,phi),A2=pol(cx,cy,R,phi2),O=[cx,cy];
+  arcD(c,cx,cy,R,bDeg,cDeg,"#ff8a80",6);
+  seg(c,O,B,"#e8e4d8",1.3,[5,4]);seg(c,O,C,"#e8e4d8",1.3,[5,4]);
+  seg(c,A2,B,"#81d4fa",1.3);seg(c,A2,C,"#81d4fa",1.3);
+  seg(c,A,B,"#ffd54f",2.5);seg(c,A,C,"#ffd54f",2.5);
+  c.beginPath();c.arc(cx,cy,3,0,7);c.fillStyle="#e8e4d8";c.fill();
+  pt(c,B,"B",cx,cy,"#ff8a80");pt(c,C,"C",cx,cy,"#ff8a80");pt(c,A,"A",cx,cy);pt(c,A2,"A′",cx,cy,"#81d4fa");
+  lblText(c,"O",cx+11,cy-11);
+  var ang=angAt(A,B,C),ang2=angAt(A2,B,C);
+  function cr(P,Q,Rr){return (Q[0]-P[0])*(Rr[1]-P[1])-(Q[1]-P[1])*(Rr[0]-P[0])}
+  var k1=cr(A,B,O),k2=cr(A,C,O),kb=cr(A,B,C),kc=cr(A,C,B),eps=R*R*0.004,where;
+  if(Math.abs(k1)<eps||Math.abs(k2)<eps)where="圓心在圓周角的一邊上（一邊為直徑）";
+  else if(k1*kb>0&&k2*kc>0)where="圓心在圓周角的內部";else where="圓心在圓周角的外部";
+  $("out3").innerHTML="<span class='step'>弧 BC = "+s+"°，∠BOC = "+s+"°</span><span class='step'>圓周角 ∠BAC ≒ <b class='ans'>"+r1(ang)+"°</b> = ½×"+s+"° = "+r1(s/2)+"°</span><span class='step'>同弧另一個圓周角 ∠BA′C ≒ "+r1(ang2)+"°（同弧所對的圓周角相等 <span class='ok'>✔</span>）</span><span class='step'>目前："+where+"。"+(Math.abs(s-180)<0.5?" 半圓所對的圓周角是 90°。":"")+"</span>";
+}
+["s3s","s3t"].forEach(function(i){$(i).addEventListener("input",s3)});
+
+/* ---------- section 4 ---------- */
+function s4(){
+  var th=+$("s4t").value,d1=+$("s4d1").value/100,d2=+$("s4d2").value/100;$("s4tv").textContent=th;
+  var o=setupCv($("cv4"),.66),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,30);circ(c,cx,cy,R);
+  var u=[Math.cos(th*D),Math.sin(th*D)],n=[-Math.sin(th*D),Math.cos(th*D)];
+  function P(d,sg){var h=Math.sqrt(1-d*d);return [d*n[0]+sg*h*u[0],d*n[1]+sg*h*u[1]]}
+  function toC(p){return [cx+p[0]*R,cy-p[1]*R]}
+  function deg(p){var a=Math.atan2(p[1],p[0])/D;return (a+360)%360}
+  var A=P(d1,-1),B=P(d1,1),C=P(d2,-1),Dd=P(d2,1);
+  seg(c,toC(A),toC(B),"#ffd54f",3);seg(c,toC(C),toC(Dd),"#81d4fa",3);
+  function minor(p,q,col){var a=deg(p),b=deg(q),df=(b-a+360)%360;if(df<=180)arcD(c,cx,cy,R,a,a+df,col,6);else arcD(c,cx,cy,R,b,b+360-df,col,6);return df<=180?df:360-df}
+  var ok=Math.abs(d1-d2)>0.04;
+  if(!ok){$("out4").innerHTML="<span class='bad'>兩條弦太近了，請把它們分開一點。</span>";pt(c,toC(A),"A",cx,cy);pt(c,toC(B),"B",cx,cy);return}
+  var m1=minor(A,C,"#ff8a80"),m2=minor(B,Dd,"#a5d6a7");
+  pt(c,toC(A),"A",cx,cy);pt(c,toC(B),"B",cx,cy);pt(c,toC(C),"C",cx,cy,"#81d4fa");pt(c,toC(Dd),"D",cx,cy,"#81d4fa");
+  $("out4").innerHTML="<span class='step'>AB ∥ CD（兩弦同方向）</span><span class='step'>弧 AC ≒ <b class='ans'>"+r1(m1)+"°</b>，弧 BD ≒ <b class='ans'>"+r1(m2)+"°</b> <span class='ok'>✔ 相等</span></span><span class='step'>理由：連接 BC，內錯角 ∠1 = ∠2，又 ∠1 = ½弧AC、∠2 = ½弧BD。</span>";
+}
+["s4t","s4d1","s4d2"].forEach(function(i){$(i).addEventListener("input",s4)});
+
+/* ---------- section 5 ---------- */
+function s5(){
+  var v=["s5a","s5b","s5c","s5d"].map(function(i){return +$(i).value}).sort(function(a,b){return a-b});
+  var o=setupCv($("cv5"),.66),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,30);circ(c,cx,cy,R);
+  var P=v.map(function(a){return pol(cx,cy,R,a)}),names=["A","B","C","D"];
+  var minGap=Math.min(v[1]-v[0],v[2]-v[1],v[3]-v[2],360-v[3]+v[0]);
+  c.beginPath();c.moveTo(P[0][0],P[0][1]);for(var i=1;i<4;i++)c.lineTo(P[i][0],P[i][1]);c.closePath();c.fillStyle="rgba(165,214,167,.2)";c.fill();c.strokeStyle="#e8e4d8";c.lineWidth=2.5;c.stroke();
+  P.forEach(function(p,i){pt(c,p,names[i],cx,cy,i%2?"#81d4fa":"#ffd54f")});
+  if(minGap<3){$("out5").innerHTML="<span class='bad'>有兩個頂點太靠近了，請把它們分開一點。</span>";return}
+  var an=[0,1,2,3].map(function(i){return angAt(P[i],P[(i+3)%4],P[(i+1)%4])});
+  $("out5").innerHTML="<span class='step'>∠A ≒ "+r1(an[0])+"°，∠B ≒ "+r1(an[1])+"°，∠C ≒ "+r1(an[2])+"°，∠D ≒ "+r1(an[3])+"°</span><span class='step'>∠A + ∠C ≒ <b class='ans'>"+r1(an[0]+an[2])+"°</b>，∠B + ∠D ≒ <b class='ans'>"+r1(an[1]+an[3])+"°</b> <span class='ok'>✔ 對角互補</span></span><span class='step'>延長 BC 得外角 ∠DCE = 180° − ∠C ≒ "+r1(180-an[2])+"° = ∠A（外角等於內對角）</span>";
+}
+["s5a","s5b","s5c","s5d"].forEach(function(i){$(i).addEventListener("input",s5)});
+
+/* ---------- section 6 ---------- */
+function s6(){
+  var AB=+$("s6ab").value,th=+$("s6th").value;$("s6abv").textContent=AB;$("s6thv").textContent=th;
+  var OB=AB/Math.tan(th*D),OA=AB/Math.sin(th*D),diff=OA-OB,area=0.5*OB*AB-Math.PI*OB*OB*th/360;
+  var o=setupCv($("cv6"),.6,360),c=o.c,w=o.w,h=o.h,pad=34,sc=Math.min((w-pad*2)/AB,(h-pad*2)/OB),ox=pad,oy=h-pad;
+  function T(x,y){return [ox+x*sc,oy-y*sc]}
+  var O=T(0,0),B=T(0,OB),A=T(AB,OB),C=T(OB*Math.sin(th*D),OB*Math.cos(th*D));
+  c.beginPath();c.moveTo(B[0],B[1]);c.lineTo(A[0],A[1]);c.lineTo(C[0],C[1]);c.arc(O[0],O[1],OB*sc,-(90-th)*D,-90*D,true);c.closePath();c.fillStyle="rgba(255,138,128,.45)";c.fill();
+  seg(c,O,B);seg(c,B,A);seg(c,O,A,"#ffd54f",2.5);arcD(c,O[0],O[1],OB*sc,90-th,90,"#81d4fa",3);
+  c.beginPath();c.arc(O[0],O[1],14,-90*D,-(90-th)*D,false);c.strokeStyle="#ffd54f";c.lineWidth=2;c.stroke();
+  c.beginPath();c.arc(O[0],O[1],3,0,7);c.fillStyle="#e8e4d8";c.fill();
+  pt(c,B,"B",O[0]+40,O[1]-40,"#81d4fa");pt(c,A,"A",O[0]+10,O[1]-120);pt(c,C,"C",O[0],O[1]+10,"#81d4fa");lblText(c,"O",O[0]-12,O[1]+4);
+  lblText(c,"θ = "+th+"°",O[0]+32,O[1]-28,"#ffd54f",13);
+  var special=(AB===4&&th===30)?"<span class='step'>這正是課本 Q1、Q2：內輪差 = 8 − 4√3，鋪色面積 = 8√3 − 4π。</span>":"";
+  $("out6").innerHTML="<span class='step'>OB = AB / tanθ ≒ "+r3(OB)+" 公尺，OA = AB / sinθ ≒ "+r3(OA)+" 公尺</span><span class='step'>內輪差 = OA − OB ≒ <b class='ans'>"+r3(diff)+" 公尺</b>（行人要保持超過這個距離）</span><span class='step'>危險區面積 = ½×OB×AB − π×OB²×θ/360 ≒ <b class='ans'>"+r3(area)+" 平方公尺</b></span>"+special;
+}
+["s6ab","s6th"].forEach(function(i){$(i).addEventListener("input",s6)});
+
+/* ---------- quizzes ---------- */
+var QS={
+ q1:[{q:"圓的半徑為 6，圓心角 60° 所對的弧長是？",o:["2π","6π","π","12π"],a:0,e:"弧長 = 2π×6×60/360 = 2π。"},{q:"兩個同心圓的圓心角都是 90°，則兩個弧的度數？",o:["外圓較大","內圓較大","都是 90°","要看半徑"],a:2,e:"弧的度數 = 所對圓心角的度數，和半徑無關，但弧長不同。"}],
+ q2:[{q:"同圓中，弦 AB = 弦 CD，則？",o:["弧 AB = 弧 CD 的度數","∠AOB ≠ ∠COD","弧 AB 比弧 CD 長","兩弧無法比較"],a:0,e:"等弦對等弧（△AOB ≅ △COD，SSS）。"},{q:"正八邊形的頂點在圓 O 上，相鄰兩頂點與圓心的夾角是？",o:["30°","45°","60°","135°"],a:1,e:"360° ÷ 8 = 45°。"}],
+ q3:[{q:"圓心角 ∠AOC = 70°，B 在優弧上，則圓周角 ∠ABC = ？",o:["35°","70°","140°","110°"],a:0,e:"圓周角 = 圓心角的一半 = 35°。"},{q:"AB 是圓的直徑，C 在圓上，則 ∠ACB = ？",o:["45°","60°","90°","180°"],a:2,e:"半圓所對的圓周角是 90°。"}],
+ q4:[{q:"圓中弦 AB ∥ 弦 CD，則下列何者正確？",o:["弧 AC = 弧 BD","弧 AB = 弧 CD","弦 AB = 弦 CD","∠A = ∠C"],a:0,e:"平行弦所截的兩段弧度數相等。"},{q:"圓中弧 AC = 弧 BD，則 AB 與 CD 的關係是？",o:["相交","平行","垂直","重合"],a:1,e:"連接 AD，內錯角相等，所以 AB ∥ CD。"}],
+ q5:[{q:"圓內接四邊形 ABCD 中，∠A = 80°，則 ∠C = ？",o:["80°","100°","110°","280°"],a:1,e:"對角互補：180° − 80° = 100°。"},{q:"∠BAD = 115°，延長 BC 到 E，則外角 ∠DCE = ？",o:["65°","115°","180°","245°"],a:1,e:"外角等於它的內對角 ∠BAD。"}],
+ q6:[{q:"課本 Q1：AB = 4，轉彎角度 30°，內輪差是？",o:["8 − 4√3","8 + 4√3","4√3","4"],a:0,e:"OA = 8，OB = 4√3，OA − OB = 8 − 4√3。"},{q:"車長 AB 固定，轉彎角度越大，內輪差會？",o:["越小","不變","越大","先小後大"],a:2,e:"內輪差 = AB(1/sinθ − 1/tanθ) = AB·tan(θ/2)，θ 越大值越大。"}]
+};
+Object.keys(QS).forEach(function(id){
+  var box=$(id),h="<h3>形成性評量</h3>";
+  QS[id].forEach(function(q,qi){h+="<div class='q' data-q='"+id+"' data-i='"+qi+"'><p>Q"+(qi+1)+"　"+q.q+"</p><div class='opts'>"+q.o.map(function(t,oi){return "<button type='button' data-o='"+oi+"'>"+String.fromCharCode(65+oi)+". "+t+"</button>"}).join("")+"</div><div class='fb'></div></div>"});
+  box.innerHTML=h;
+});
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest(".opts button");if(!b)return;
+  var qd=b.closest(".q"),q=QS[qd.dataset.q][+qd.dataset.i],o=+b.dataset.o,fb=qd.querySelector(".fb");
+  qd.querySelectorAll(".opts button").forEach(function(x){x.classList.remove("right","wrong")});
+  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e}
+  else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
+});
+
+/* ---------- teacher mode ---------- */
+var tm=false;
+function setT(v){tm=v;document.body.classList.toggle("tmode",v);$("modeBtn").classList.toggle("on",v);$("modeBtn").textContent=v?"教師模式（開）":"教師模式";$("pw").classList.remove("show")}
+$("modeBtn").addEventListener("click",function(){if(tm){setT(false)}else{$("pw").classList.toggle("show");$("pwIn").focus()}});
+function tryPw(){if($("pwIn").value==="math2026"){setT(true);$("pwIn").value=""}else{$("pwIn").value="";$("pwIn").placeholder="密碼錯誤"}}
+$("pwGo").addEventListener("click",tryPw);$("pwIn").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw()});
+
+/* ---------- tools ---------- */
+$("toolBtn").addEventListener("click",function(){$("tools").classList.toggle("open")});
+$("lotGo").addEventListener("click",function(){var n=clampInt($("lotN"),2,99);$("lotOut").textContent=Math.floor(Math.random()*n)+1+" 號"});
+var tid=null,left=180;
+function showT(){var m=Math.floor(left/60),s=left%60;$("tmOut").textContent=(m<10?"0":"")+m+":"+(s<10?"0":"")+s}
+$("tmGo").addEventListener("click",function(){
+  if(tid){clearInterval(tid);tid=null;$("tmGo").textContent="繼續";return}
+  if(left<=0)left=clampInt($("tmMin"),1,60)*60;
+  $("tmGo").textContent="暫停";showT();
+  tid=setInterval(function(){left--;showT();if(left<=0){clearInterval(tid);tid=null;$("tmGo").textContent="開始";$("tmOut").textContent="時間到！"}},1000)});
+$("tmReset").addEventListener("click",function(){clearInterval(tid);tid=null;left=clampInt($("tmMin"),1,60)*60;$("tmGo").textContent="開始";showT()});
+$("tmMin").addEventListener("input",function(){if(!tid){left=clampInt($("tmMin"),1,60)*60;showT()}});
+
+/* ---------- pen ---------- */
+var pc=$("pen"),px=pc.getContext("2d"),pcol="#ffffff",drawing=false,pa=false;
+function sizePen(){pc.width=window.innerWidth;pc.height=window.innerHeight}
+function ptr(e){return [e.clientX,e.clientY]}
+$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none"});
+document.querySelectorAll(".sw").forEach(function(s){s.addEventListener("click",function(){pcol=s.dataset.c})});
+$("penClr").addEventListener("click",function(){px.clearRect(0,0,pc.width,pc.height)});
+pc.addEventListener("pointerdown",function(e){drawing=true;var p=ptr(e);px.beginPath();px.moveTo(p[0],p[1]);pc.setPointerCapture(e.pointerId)});
+pc.addEventListener("pointermove",function(e){if(!drawing)return;var p=ptr(e);px.strokeStyle=pcol;px.lineWidth=3.5;px.lineCap="round";px.lineJoin="round";px.lineTo(p[0],p[1]);px.stroke()});
+["pointerup","pointercancel"].forEach(function(n){pc.addEventListener(n,function(){drawing=false})});
+
+/* ---------- init ---------- */
+function all(){s1();s2();s2n();s3();s4();s5();s6()}
+var rt;window.addEventListener("resize",function(){all();clearTimeout(rt);rt=setTimeout(function(){var img=px.getImageData(0,0,pc.width,pc.height);sizePen();px.putImageData(img,0,0)},150)});
+sizePen();all();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
+})();
+</script>
+</body></html>
