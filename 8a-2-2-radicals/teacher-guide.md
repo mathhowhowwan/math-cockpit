@@ -1,4 +1,4 @@
-# 根式運算教學駕駛艙
+# 根式運算教材
 
 適用：八年級上學期，南一版 2-2。學習內容 N-8-1。
 
@@ -42,6 +42,6 @@ worksheet.html 為 15 題分層學習單；teacher-answers.html 提供解題步�
 
 ## 本次交付範圍
 
-本機可離線 HTML 教學駕駛艙、21 張文字教學卡、7 個互動區、21 題測驗、15 題學習單、教師解答。
+本機可離線 HTML 教材、21 張文字教學卡、7 個互動區、21 題測驗、15 題學習單、教師解答。
 未產製 NotebookLM 簡報 PDF 或自學影片：此環境未找到 NotebookLM MCP 或 nlm CLI。
 已發布於 GitHub Pages：https://mathhowhowwan.github.io/math-cockpit/8a-2-2-radicals/ 。不包含原始課本 PDF。
