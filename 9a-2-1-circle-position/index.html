@@ -4,6 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>2-1 點、直線與圓之間的位置關係｜教材</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
 <style>
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -70,6 +73,7 @@ table.cheat th{background:rgba(255,213,79,.18);color:#ffd54f}
 .video-box{background:rgba(0,0,0,.35);border:2px dashed rgba(255,255,255,.3);border-radius:10px;padding:24px;text-align:center;color:#a5d6a7}
 .video-box iframe{width:100%;aspect-ratio:16/9;border:0;border-radius:8px}
 svg text{fill:#e8e4d8;font-family:inherit}
+.katex{font-size:1.08em}.formula-text .katex{font-size:1.2em}.readout .katex{font-size:1.1em}
 /* floating tools */
 #tools{position:fixed;right:12px;top:110px;z-index:60;width:230px;background:#241a10;border:3px solid #8d6e4a;border-radius:12px;padding:10px 12px;font-size:.85rem;box-shadow:0 4px 14px rgba(0,0,0,.6)}
 #tools.min{width:auto;padding:6px 10px}#tools.min .tb{display:none}
@@ -185,18 +189,18 @@ svg text{fill:#e8e4d8;font-family:inherit}
     <div class="concept-card-header"><span class="concept-icon">🥧</span><h3 class="concept-card-title">弧長與扇形面積</h3></div>
     <div class="concept-card-body">
       <div class="concept-def"><span class="card-label">定義</span>
-        <p><b>圓周率 π</b> 是「圓周長與直徑的比值」，約為 3.14，無法以有限小數或分數表示。圓周長＝2πr；圓面積＝πr²。</p></div>
+        <p><b>圓周率 \(\pi\)</b> 是「圓周長與直徑的比值」，約為 3.14，無法以有限小數或分數表示。圓周長＝\(2\pi r\)；圓面積＝\(\pi r^{2}\)。</p></div>
       <div class="concept-formula"><span class="card-label">公式 / 性質</span>
-        <p class="formula-text">弧長＝2πr × x／360<br>扇形面積＝πr² × x／360</p></div>
+        <p class="formula-text">弧長＝\(2\pi r\times\dfrac{x}{360}\)<br>扇形面積＝\(\pi r^{2}\times\dfrac{x}{360}\)</p></div>
       <div class="concept-keypoints"><span class="card-label">重要提醒</span>
         <ul>
-          <li>圓心角 x° 是周角 360° 的 x／360 倍，所以弧長與扇形面積都是整圓的 x／360 倍。</li>
+          <li>圓心角 \(x^{\circ}\) 是周角 \(360^{\circ}\) 的 \(\dfrac{x}{360}\) 倍，所以弧長與扇形面積都是整圓的 \(\dfrac{x}{360}\) 倍。</li>
           <li>扇形周長＝弧長＋2 個半徑。</li>
           <li>弓形面積＝扇形面積－三角形面積（圓心角 90° 或 60° 時三角形較好算）。</li>
           <li>已知弧長或面積可反求圓心角：先求占整圓的幾分之幾。</li>
         </ul></div>
       <div class="concept-example"><span class="card-label">例</span>
-        <p>半徑 10、圓心角 60°：弧長＝10π／3；周長＝10π／3＋20；面積＝50π／3。</p></div>
+        <p>半徑 10、圓心角 \(60^{\circ}\)：弧長＝\(\dfrac{10\pi}{3}\)；周長＝\(\dfrac{10\pi}{3}+20\)；面積＝\(\dfrac{50\pi}{3}\)。</p></div>
     </div>
   </div>
   <div class="lab">
@@ -225,11 +229,11 @@ svg text{fill:#e8e4d8;font-family:inherit}
       <div class="concept-def"><span class="card-label">定義</span>
         <p>圓把平面分成三部分：<b>圓的內部</b>（包含圓心）、<b>圓周</b>、<b>圓的外部</b>。</p></div>
       <div class="concept-formula"><span class="card-label">公式 / 性質</span>
-        <p class="formula-text">OP ＜ r　點在圓內<br>OP ＝ r　點在圓上<br>OP ＞ r　點在圓外</p></div>
+        <p class="formula-text">\(\overline{OP}\lt r\)　點在圓內<br>\(\overline{OP}=r\)　點在圓上<br>\(\overline{OP}>r\)　點在圓外</p></div>
       <div class="concept-keypoints"><span class="card-label">重要提醒</span>
         <ul><li>比較「點到圓心的距離」與「半徑」的大小。</li><li>反過來也成立：知道位置關係就能判斷 OP 與 r 的大小。</li><li>圓心 O 本身也在圓內部。</li></ul></div>
       <div class="concept-example"><span class="card-label">例</span>
-        <p>圓 O 半徑 r＝5：若 OP＝3，P 在圓內；OP＝5，P 在圓上；OP＝7，P 在圓外。</p></div>
+        <p>圓 O 半徑 \(r=5\)：若 \(\overline{OP}=3\)，P 在圓內；\(\overline{OP}=5\)，P 在圓上；\(\overline{OP}=7\)，P 在圓外。</p></div>
     </div>
   </div>
   <div class="lab">
@@ -249,11 +253,11 @@ svg text{fill:#e8e4d8;font-family:inherit}
     <div class="concept-card-header"><span class="concept-icon">📏</span><h3 class="concept-card-title">不相交、相切、割線</h3></div>
     <div class="concept-card-body">
       <div class="concept-def"><span class="card-label">定義</span>
-        <p>圓心 O 到直線 L 的距離＝垂足 P 到 O 的線段 OP。交於兩點的直線稱<b>割線</b>；只交於一點的直線稱<b>切線</b>，交點為<b>切點</b>。</p></div>
+        <p>圓心 O 到直線 L 的距離＝垂足 P 到 O 的線段 \(\overline{OP}\)。交於兩點的直線稱<b>割線</b>；只交於一點的直線稱<b>切線</b>，交點為<b>切點</b>。</p></div>
       <div class="concept-formula"><span class="card-label">公式 / 性質</span>
-        <p class="formula-text">d ＞ r：不相交（0 個交點）<br>d ＝ r：切線（1 個交點）<br>d ＜ r：割線（2 個交點）</p></div>
+        <p class="formula-text">\(d>r\)：不相交（0 個交點）<br>\(d=r\)：切線（1 個交點）<br>\(d\lt r\)：割線（2 個交點）</p></div>
       <div class="concept-keypoints"><span class="card-label">重要提醒（切線性質）</span>
-        <ul><li>圓心與切點的連線必垂直此切線（OP⊥L，且 OP＝r）。</li><li>反之，過圓上一點且垂直於該點半徑的直線，是圓的切線。</li><li>切線上除切點外的點都在圓外。</li></ul></div>
+        <ul><li>圓心與切點的連線必垂直此切線（\(\overline{OP}\perp L\)，且 \(\overline{OP}=r\)）。</li><li>反之，過圓上一點且垂直於該點半徑的直線，是圓的切線。</li><li>切線上除切點外的點都在圓外。</li></ul></div>
       <div class="concept-example"><span class="card-label">例</span>
         <p>直徑 15（r＝7.5），圓心到 L、M、N、H 的距離 15、10、7.5、5：L、M 不相交；N 是切線；H 是割線。</p></div>
     </div>
@@ -284,11 +288,11 @@ svg text{fill:#e8e4d8;font-family:inherit}
       <div class="concept-def"><span class="card-label">定義</span>
         <p>P 為圓 O 外一點，直線 AP 切圓 O 於 A，則線段 <b>AP 稱為切線段</b>（圓外一點到切點的線段）。</p></div>
       <div class="concept-formula"><span class="card-label">公式 / 性質</span>
-        <p class="formula-text">PA ＝ √(OP² － r²)<br>PA ＝ PB<br>PO 平分 ∠APB；PO 垂直平分 AB</p></div>
+        <p class="formula-text">\(\overline{PA}=\sqrt{\overline{OP}^{2}-r^{2}}\)<br>\(\overline{PA}=\overline{PB}\)<br>\(\overline{PO}\) 平分 \(\angle APB\)；\(\overline{PO}\) 垂直平分 \(\overline{AB}\)</p></div>
       <div class="concept-keypoints"><span class="card-label">重要提醒</span>
-        <ul><li>「切線」是直線，不可測量長度；「切線段長」是線段，可測量。</li><li>△OAP≅△OBP（RHS）⇒ PA＝PB，∠APO＝∠BPO。</li><li>四邊形 OBPA 是箏形，可用箏形性質幫助記憶。</li></ul></div>
+        <ul><li>「切線」是直線，不可測量長度；「切線段長」是線段，可測量。</li><li>\(\triangle OAP\cong\triangle OBP\)（RHS）⇒ \(\overline{PA}=\overline{PB}\)，\(\angle APO=\angle BPO\)。</li><li>四邊形 OBPA 是箏形，可用箏形性質幫助記憶。</li></ul></div>
       <div class="concept-example"><span class="card-label">例</span>
-        <p>r＝5、OB＝13：△OAB 為直角三角形，切線段 AB＝√(13²－5²)＝12。</p></div>
+        <p>\(r=5\)、\(\overline{OB}=13\)：\(\triangle OAB\) 為直角三角形，切線段 \(\overline{AB}=\sqrt{13^{2}-5^{2}}=12\)。</p></div>
     </div>
   </div>
   <div class="lab">
@@ -313,11 +317,11 @@ svg text{fill:#e8e4d8;font-family:inherit}
       <div class="concept-def"><span class="card-label">定義</span>
         <p><b>弦心距</b>：圓心到弦的距離（垂線段）。圓 O 上弦 AB，OM⊥AB 於 M，則 OM 是 AB 的弦心距。</p></div>
       <div class="concept-formula"><span class="card-label">公式 / 性質</span>
-        <p class="formula-text">一弦的中垂線必過圓心<br>過圓心且垂直弦 ⇒ 平分此弦<br>(AB／2)² ＋ OM² ＝ r²</p></div>
+        <p class="formula-text">一弦的中垂線必過圓心<br>過圓心且垂直弦 ⇒ 平分此弦<br>\(\left(\dfrac{\overline{AB}}{2}\right)^{2}+\overline{OM}^{2}=r^{2}\)</p></div>
       <div class="concept-keypoints"><span class="card-label">重要提醒</span>
         <ul><li>若弦不是直徑，過圓心且平分弦的直線必垂直此弦。</li><li>同圓中：兩弦等長 ⇔ 弦心距相等；弦愈長，弦心距愈小。</li><li>半徑相等的兩圓（等圓）中，上述性質仍成立。</li></ul></div>
       <div class="concept-example"><span class="card-label">例</span>
-        <p>弦心距 OC＝3、弦 AB＝8：AC＝4，r＝√(3²＋4²)＝5。</p></div>
+        <p>弦心距 \(\overline{OC}=3\)、弦 \(\overline{AB}=8\)：\(\overline{AC}=4\)，\(r=\sqrt{3^{2}+4^{2}}=5\)。</p></div>
     </div>
   </div>
   <div class="lab">
@@ -338,13 +342,13 @@ svg text{fill:#e8e4d8;font-family:inherit}
   <h2>📋 總結 Cheat Sheet</h2>
   <table class="cheat">
     <tr><th>主題</th><th>重點</th></tr>
-    <tr><td>弧長與扇形面積</td><td>弧長＝2πr×x／360；扇形面積＝πr²×x／360</td></tr>
-    <tr><td>點與圓</td><td>OP＜r 圓內；OP＝r 圓上；OP＞r 圓外</td></tr>
-    <tr><td>直線與圓</td><td>d＞r 不相交（0 點）；d＝r 切線（1 點）；d＜r 割線（2 點）</td></tr>
+    <tr><td>弧長與扇形面積</td><td>弧長＝\(2\pi r\times\dfrac{x}{360}\)；扇形面積＝\(\pi r^{2}\times\dfrac{x}{360}\)</td></tr>
+    <tr><td>點與圓</td><td>\(\overline{OP}\lt r\) 圓內；\(\overline{OP}=r\) 圓上；\(\overline{OP}>r\) 圓外</td></tr>
+    <tr><td>直線與圓</td><td>\(d>r\) 不相交（0 點）；\(d=r\) 切線（1 點）；\(d\lt r\) 割線（2 點）</td></tr>
     <tr><td>切線性質</td><td>切線⊥過切點的半徑；過半徑外端且垂直半徑的直線為切線</td></tr>
-    <tr><td>切線段性質</td><td>PA＝PB；PO 平分 ∠APB；PO 垂直平分 AB；PA＝√(OP²－r²)</td></tr>
+    <tr><td>切線段性質</td><td>\(\overline{PA}=\overline{PB}\)；\(\overline{PO}\) 平分 \(\angle APB\)；\(\overline{PO}\) 垂直平分 \(\overline{AB}\)；\(\overline{PA}=\sqrt{\overline{OP}^{2}-r^{2}}\)</td></tr>
     <tr><td>弦的性質</td><td>弦的中垂線過圓心；過圓心垂直弦必平分弦；非直徑時過圓心平分弦必垂直弦</td></tr>
-    <tr><td>弦心距</td><td>(AB／2)²＋d²＝r²；同圓中弦愈長，弦心距愈小</td></tr>
+    <tr><td>弦心距</td><td>\(\left(\dfrac{\overline{AB}}{2}\right)^{2}+d^{2}=r^{2}\)；同圓中弦愈長，弦心距愈小</td></tr>
   </table>
   <div class="teacher-only"><h4>⚠️ 常見錯誤（教師備課）</h4><ul>
     <li>混淆「切線」（直線）與「切線段長」（線段）。</li>
@@ -400,6 +404,8 @@ const TEACHER_PW='math2026';
 const C={bg:'#16261a',chalk:'#e8e4d8',y:'#ffd54f',p:'#ff8a80',b:'#81d4fa',g:'#a5d6a7'};
 const rad=a=>a*Math.PI/180;
 const $=s=>document.querySelector(s);
+function typeset(el){try{if(el&&window.renderMathInElement)renderMathInElement(el,{delimiters:[{left:'\\(',right:'\\)',display:false}],throwOnError:false});}catch(e){}}
+window.addEventListener('load',()=>typeset(document.body));
 
 /* ---------- 模式切換 ---------- */
 $('#bTea').onclick=()=>{
@@ -433,7 +439,7 @@ function setupCanvas(id,draw,ptr){
     const up=()=>{down=false;};
     c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
   }
-  o.render=()=>{const dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,o.W,o.H);draw(ctx,o.W,o.H,o);};
+  o.render=()=>{const dpr=window.devicePixelRatio||1;ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,o.W,o.H);draw(ctx,o.W,o.H,o);const ro=document.getElementById('ro'+id.slice(2));if(ro)typeset(ro);};
   o.resize=()=>{const dpr=window.devicePixelRatio||1;o.W=c.clientWidth||600;o.H=o.W<520?300:360;c.style.height=o.H+'px';c.width=Math.round(o.W*dpr);c.height=Math.round(o.H*dpr);o.render();};
   return o;
 }
@@ -487,6 +493,7 @@ setupCanvas('cv1',draw1);
 
 /* ---------- 2. 弧長與扇形面積 ---------- */
 function gcd(a,b){return b?gcd(b,a%b):Math.abs(a);}
+function fracTex(n,d){if(n===0)return '0';const g=gcd(n,d);n/=g;d/=g;const c=n===1?'':n;return d===1?(c+'\\pi'):'\\dfrac{'+c+'\\pi}{'+d+'}';}
 function frac(n,d){if(n===0)return '0';const g=gcd(n,d);n/=g;d/=g;const c=n===1?'':n;return d===1?(c+'π'):(c+'π／'+d);}
 function draw2(ctx,W,H){
   const r=+$('#r2').value,x=+$('#x2').value;
@@ -502,10 +509,11 @@ function draw2(ctx,W,H){
   txt(ctx,`r = ${r}`,cx+R/2,cy+15,C.y,14,'bold');
   txt(ctx,`${x}°`,cx-R-6>18?cx-R+4:cx,cy-R-10<12?12:cy-R-10,C.b,15,'bold');
   const arc=r*x/180,per=arc+2*r;
+  const T=t=>'\\('+t+'\\)';
   $('#ro2').innerHTML=
-   `弧長 ＝ 2π×${r}×${x}／360 ＝ <span class="hl">${frac(r*x,180)}</span>　(≈ ${(arc*Math.PI).toFixed(2)})<br>`+
-   `扇形面積 ＝ π×${r}²×${x}／360 ＝ <span class="pk">${frac(r*r*x,360)}</span>　(≈ ${(r*r*x/360*Math.PI).toFixed(2)})<br>`+
-   `扇形周長 ＝ 弧長＋2×${r} ＝ <span class="bl">${x===0?'—':frac(r*x,180)+' ＋ '+2*r}</span>　｜　圓心角占整圓的 <span class="gn">${(function(){const g=gcd(x,360)||1;return x===0?'0':(x/g)+'／'+(360/g);})()}</span>`;
+   `弧長 ＝ ${T('2\\pi\\times'+r+'\\times\\dfrac{'+x+'}{360}')} ＝ <span class="hl">${T(fracTex(r*x,180))}</span>　(≈ ${(arc*Math.PI).toFixed(2)})<br>`+
+   `扇形面積 ＝ ${T('\\pi\\times'+r+'^{2}\\times\\dfrac{'+x+'}{360}')} ＝ <span class="pk">${T(fracTex(r*r*x,360))}</span>　(≈ ${(r*r*x/360*Math.PI).toFixed(2)})<br>`+
+   `扇形周長 ＝ 弧長＋2×${r} ＝ <span class="bl">${x===0?'—':T(fracTex(r*x,180)+'+'+2*r)}</span>　｜　圓心角占整圓的 <span class="gn">${(function(){const g=gcd(x,360)||1;return x===0?'0':T('\\dfrac{'+(x/g)+'}{'+(360/g)+'}');})()}</span>`;
 }
 setupCanvas('cv2',draw2);
 ['r2','x2'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#r2v').textContent=$('#r2').value;$('#x2v').textContent=$('#x2').value;cvs.cv2.render();}));
@@ -522,8 +530,8 @@ function draw3(ctx,W,H){
   ln(ctx,O,P,col,2,[6,4]);dot(ctx,O,C.chalk);txt(ctx,'O',cx-12,cy+14,C.chalk,14,'italic');
   dot(ctx,P,col,7);txt(ctx,'P',P.x+14,P.y-12,col,16,'bold italic');
   txt(ctx,'內部',cx,cy-R*0.55,C.g,13);txt(ctx,'外部',cx-R-30<20?20:cx-R-30,cy-R-12<12?14:cy-R-12,C.p,13);
-  const lab=on?'圓上（OP＝r）':d<5?'圓內（OP＜r）':'圓外（OP＞r）';
-  $('#ro3').innerHTML=`OP ≈ <span class="hl">${(on?5:d).toFixed(1)}</span>　r ＝ 5　⇒　P 在<span class="${on?'hl':d<5?'gn':'pk'}"> ${lab}</span>`;
+  const lab=on?'圓上（\\(\\overline{OP}=r\\)）':d<5?'圓內（\\(\\overline{OP}\\lt r\\)）':'圓外（\\(\\overline{OP}>r\\)）';
+  $('#ro3').innerHTML=`\\(\\overline{OP}\\approx ${(on?5:d).toFixed(1)}\\)　\\(r=5\\)　⇒　P 在<span class="${on?'hl':d<5?'gn':'pk'}"> ${lab}</span>`;
 }
 setupCanvas('cv3',draw3,(p,o)=>{const R=Math.min(o.W,o.H)*0.3,s=R/5;p3.x=Math.max(-(o.W/2-12),Math.min(o.W/2-12,p.x-o.W/2))/s;p3.y=Math.max(-(o.H/2-12),Math.min(o.H/2-12,p.y-o.H/2))/s;});
 
@@ -542,8 +550,8 @@ function draw4(ctx,W,H){
   dot(ctx,O,C.chalk);txt(ctx,'O',cx-12,cy+14,C.chalk,14,'italic');
   if(rel==='sec'){const h=Math.sqrt(25-d*d)*s;[1,-1].forEach(k=>dot(ctx,{x:F.x+t.x*h*k,y:F.y+t.y*h*k},C.y,6));}
   if(rel==='tan')dot(ctx,F,C.y,7);
-  const m={tan:['切線','1','d ＝ r'],sec:['割線','2','d ＜ r'],none:['與圓不相交','0','d ＞ r']}[rel];
-  $('#ro4').innerHTML=`圓心到直線距離 d ＝ <span class="hl">${d.toFixed(1)}</span>，半徑 r ＝ 5（${m[2]}）　⇒　直線 L 是<span class="pk"> ${m[0]}</span>，交點數 <span class="bl">${m[1]}</span> 個`+(rel==='tan'?'<br>👉 此時 OP⊥L，且 OP＝r（切線性質）':'');
+  const m={tan:['切線','1','\\(d=r\\)'],sec:['割線','2','\\(d\\lt r\\)'],none:['與圓不相交','0','\\(d>r\\)']}[rel];
+  $('#ro4').innerHTML=`圓心到直線距離 \\(d=${d.toFixed(1)}\\)，半徑 \\(r=5\\)（${m[2]}）　⇒　直線 L 是<span class="pk"> ${m[0]}</span>，交點數 <span class="bl">${m[1]}</span> 個`+(rel==='tan'?'<br>👉 此時 \\(\\overline{OP}\\perp L\\)，且 \\(\\overline{OP}=r\\)（切線性質）':'');
 }
 setupCanvas('cv4',draw4);
 ['d4','t4'].forEach(id=>$('#'+id).addEventListener('input',()=>{$('#d4v').textContent=(+$('#d4').value).toFixed(1);$('#t4v').textContent=$('#t4').value+'°';cvs.cv4.render();}));
@@ -570,7 +578,7 @@ function draw5(ctx,W,H){
   [['A',A],['B',B]].forEach(([n,p])=>{const u=unit(O,p);txt(ctx,n,p.x+u.x*15,p.y+u.y*15,C.chalk,15,'italic');});
   txt(ctx,'M',M.x+4,M.y-13,C.p,13,'italic');
   const pa=Math.sqrt(D*D-9),ang=2*Math.asin(3/D)*180/Math.PI;
-  $('#ro5').innerHTML=`OP ≈ <span class="bl">${D.toFixed(2)}</span>，r＝3　⇒　PA ＝ √(OP²－r²) ≈ <span class="hl">${pa.toFixed(2)}</span>，PB ≈ <span class="hl">${pa.toFixed(2)}</span>（<span class="gn">PA＝PB</span>）<br>∠APB ≈ ${ang.toFixed(1)}°，∠APO＝∠BPO ≈ ${(ang/2).toFixed(1)}°（PO 平分 ∠APB）；PO 垂直平分 AB（<span class="pk">紅色線</span>）`;
+  $('#ro5').innerHTML=`\\(\\overline{OP}\\approx ${D.toFixed(2)}\\)，\\(r=3\\)　⇒　\\(\\overline{PA}=\\sqrt{\\overline{OP}^{2}-r^{2}}\\approx ${pa.toFixed(2)}\\)，\\(\\overline{PB}\\approx ${pa.toFixed(2)}\\)（<span class="gn">\\(\\overline{PA}=\\overline{PB}\\)</span>）<br>\\(\\angle APB\\approx ${ang.toFixed(1)}^{\\circ}\\)，\\(\\angle APO=\\angle BPO\\approx ${(ang/2).toFixed(1)}^{\\circ}\\)（\\(\\overline{PO}\\) 平分 \\(\\angle APB\\)）；\\(\\overline{PO}\\) 垂直平分 \\(\\overline{AB}\\)（<span class="pk">紅色線</span>）`;
 }
 setupCanvas('cv5',draw5,(p,o)=>{const R=Math.min(o.W,o.H)*0.2,s=R/3;let x=(p.x-o.W*0.35)/s,y=(p.y-o.H/2)/s;const d=Math.hypot(x,y);if(d<3.2){const k=3.2/(d||1);x*=k;y*=k||1;if(d===0){x=3.2;y=0;}}p5.x=x;p5.y=y;});
 
@@ -589,7 +597,7 @@ function draw6(ctx,W,H){
   if(d>0.05){txt(ctx,'M',M.x+13,M.y+13,C.b,14,'italic');txt(ctx,'弦心距 d',cx+34,(cy+M.y)/2,C.b,13,'bold','left');}
   txt(ctx,'r',(O.x+A.x)/2-12,(O.y+A.y)/2-8,C.y,14,'italic bold');
   const ab=2*h;
-  $('#ro6').innerHTML=`d ＝ <span class="bl">${d.toFixed(1)}</span>，r ＝ 5　⇒　AM ＝ √(r²－d²) ＝ √(25－${(d*d).toFixed(2)}) ≈ <span class="hl">${h.toFixed(2)}</span><br>弦 AB ＝ 2×AM ≈ <span class="pk">${ab.toFixed(2)}</span>（弦心距 d 愈小，弦愈長；d＝0 時 AB＝直徑＝10）`;
+  $('#ro6').innerHTML=`\\(d=${d.toFixed(1)}\\)，\\(r=5\\)　⇒　\\(\\overline{AM}=\\sqrt{r^{2}-d^{2}}=\\sqrt{25-${(d*d).toFixed(2)}}\\approx ${h.toFixed(2)}\\)<br>弦 \\(\\overline{AB}=2\\times\\overline{AM}\\approx ${ab.toFixed(2)}\\)（弦心距 \\(d\\) 愈小，弦愈長；\\(d=0\\) 時 \\(\\overline{AB}\\)＝直徑＝10）`;
 }
 setupCanvas('cv6',draw6,(p,o)=>{const s=Math.min(o.W,o.H)*0.36/5;let d=(p.y-(o.H/2-8))/s;d=Math.max(0,Math.min(4.9,Math.round(d*10)/10));$('#d6').value=d;$('#d6v').textContent=d.toFixed(1);});
 $('#d6').addEventListener('input',()=>{$('#d6v').textContent=(+$('#d6').value).toFixed(1);cvs.cv6.render();});
@@ -601,23 +609,23 @@ const QZ={
   {q:'由兩條半徑與一段弧所圍成的圖形稱為？',o:['弓形','圓心角','扇形','優弧'],a:2,e:'兩半徑＋一弧＝扇形；弦＋一弧＝弓形。'},
   {q:'關於一圓的弦與直徑，下列何者正確？',o:['直徑比任何弦都短','直徑是最長的弦','弦一定通過圓心','弦一定等於半徑'],a:1,e:'直徑是該圓最長的弦。'}],
  quiz2:[
-  {q:'圓半徑 12、圓心角 90°，弧長為？',o:['3π','6π','12π','24π'],a:1,e:'2π×12×90/360＝6π。'},
-  {q:'圓半徑 10、圓心角 36°，扇形面積為？',o:['5π','10π','20π','36π'],a:1,e:'π×10²×36/360＝10π。'},
+  {q:'圓半徑 12、圓心角 90°，弧長為？',o:['\\(3\\pi\\)','\\(6\\pi\\)','\\(12\\pi\\)','\\(24\\pi\\)'],a:1,e:'\\(2\\pi\\times12\\times\\dfrac{90}{360}=6\\pi\\)。'},
+  {q:'圓半徑 10、圓心角 36°，扇形面積為？',o:['\\(5\\pi\\)','\\(10\\pi\\)','\\(20\\pi\\)','\\(36\\pi\\)'],a:1,e:'\\(\\pi\\times10^{2}\\times\\dfrac{36}{360}=10\\pi\\)。'},
   {q:'某弧長恰為圓周長的 1/4，其圓心角為幾度？',o:['45°','60°','90°','120°'],a:2,e:'占整圓 1/4，圓心角＝360°×1/4＝90°。'}],
  quiz3:[
-  {q:'圓 O 半徑 7，若 OP＝7，則 P 點在？',o:['圓內','圓上','圓外','無法判斷'],a:1,e:'OP＝r，P 在圓上。'},
-  {q:'若 P 在圓 O 的內部，則下列何者正確？',o:['OP＞r','OP＝r','OP＜r','OP＝0'],a:2,e:'在圓內 ⇔ OP＜r。'},
-  {q:'圓 O 直徑 16，OP＝9，則 P 點在？',o:['圓內','圓上','圓外','圓心'],a:2,e:'半徑＝8，OP＝9＞8，在圓外。'}],
+  {q:'圓 O 半徑 7，若 \\(\\overline{OP}=7\\)，則 P 點在？',o:['圓內','圓上','圓外','無法判斷'],a:1,e:'\\(\\overline{OP}=r\\)，P 在圓上。'},
+  {q:'若 P 在圓 O 的內部，則下列何者正確？',o:['\\(\\overline{OP}>r\\)','\\(\\overline{OP}=r\\)','\\(\\overline{OP}\\lt r\\)','\\(\\overline{OP}=0\\)'],a:2,e:'在圓內 ⇔ \\(\\overline{OP}\\lt r\\)。'},
+  {q:'圓 O 直徑 16，\\(\\overline{OP}=9\\)，則 P 點在？',o:['圓內','圓上','圓外','圓心'],a:2,e:'半徑＝8，\\(\\overline{OP}=9>8\\)，在圓外。'}],
  quiz4:[
-  {q:'圓半徑 4，圓心到直線 L 的距離為 4，則 L 與圓的關係？',o:['不相交','切線','割線','無法判斷'],a:1,e:'d＝r，L 是切線，只有 1 個交點。'},
+  {q:'圓半徑 4，圓心到直線 L 的距離為 4，則 L 與圓的關係？',o:['不相交','切線','割線','無法判斷'],a:1,e:'\\(d=r\\)，L 是切線，只有 1 個交點。'},
   {q:'切線與過切點的半徑，位置關係為？',o:['平行','相交但不垂直','互相垂直','重合'],a:2,e:'圓心與切點的連線必垂直切線。'},
-  {q:'圓半徑 5，圓心到直線 M 的距離為 2，則 M 與圓有幾個交點？',o:['0','1','2','3'],a:2,e:'d＝2＜5，M 是割線，交於 2 點。'}],
+  {q:'圓半徑 5，圓心到直線 M 的距離為 2，則 M 與圓有幾個交點？',o:['0','1','2','3'],a:2,e:'\\(d=2\\lt 5\\)，M 是割線，交於 2 點。'}],
  quiz5:[
-  {q:'圓半徑 7，圓外一點 P 到圓心的距離為 25，則切線段 PA 長為？',o:['18','24','25','32'],a:1,e:'PA＝√(25²－7²)＝√576＝24。'},
-  {q:'P 為圓外一點，PA、PB 為兩條切線段，則？',o:['PA＞PB','PA＜PB','PA＝PB','視位置而定'],a:2,e:'△OAP≅△OBP（RHS），所以 PA＝PB。'},
-  {q:'下列哪一項是圓的切線段性質？',o:['PO 平分 ∠APB','PO＝PA','PO＝r','AB 是直徑'],a:0,e:'PO 平分 ∠APB，且 PO 垂直平分 AB。'}],
+  {q:'圓半徑 7，圓外一點 P 到圓心的距離為 25，則切線段 PA 長為？',o:['18','24','25','32'],a:1,e:'\\(\\overline{PA}=\\sqrt{25^{2}-7^{2}}=\\sqrt{576}=24\\)。'},
+  {q:'P 為圓外一點，PA、PB 為兩條切線段，則？',o:['\\(\\overline{PA}>\\overline{PB}\\)','\\(\\overline{PA}<\\overline{PB}\\)','\\(\\overline{PA}=\\overline{PB}\\)','視位置而定'],a:2,e:'\\(\\triangle OAP\\cong\\triangle OBP\\)（RHS），所以 \\(\\overline{PA}=\\overline{PB}\\)。'},
+  {q:'下列哪一項是圓的切線段性質？',o:['\\(\\overline{PO}\\) 平分 \\(\\angle APB\\)','\\(\\overline{PO}=\\overline{PA}\\)','\\(\\overline{PO}=r\\)','\\(\\overline{AB}\\) 是直徑'],a:0,e:'\\(\\overline{PO}\\) 平分 \\(\\angle APB\\)，且 \\(\\overline{PO}\\) 垂直平分 \\(\\overline{AB}\\)。'}],
  quiz6:[
-  {q:'圓半徑 20，弦心距 12，則弦長為？',o:['16','24','32','40'],a:2,e:'半弦＝√(20²－12²)＝16，弦長＝2×16＝32。'},
+  {q:'圓半徑 20，弦心距 12，則弦長為？',o:['16','24','32','40'],a:2,e:'半弦＝\\(\\sqrt{20^{2}-12^{2}}=16\\)，弦長＝\\(2\\times16=32\\)。'},
   {q:'在同一圓中，弦愈長，其弦心距？',o:['愈大','愈小','不變','不一定'],a:1,e:'弦愈長，弦心距愈小；直徑的弦心距為 0。'},
   {q:'過圓心且垂直於一弦的直線，必定？',o:['平分此弦','與此弦平行','與此弦等長','切於圓'],a:0,e:'過圓心且與弦垂直的直線，必平分此弦。'}]
 };
@@ -627,13 +635,14 @@ Object.keys(QZ).forEach(id=>{
     const d=document.createElement('div');d.className='q';
     d.innerHTML=`<div>${qi+1}. ${it.q}</div><div class="opts"></div><div class="fb"></div>`;
     const opts=d.querySelector('.opts'),fb=d.querySelector('.fb');let done=false;
-    it.o.forEach((t,oi)=>{const b=document.createElement('button');b.textContent='（'+'ABCD'[oi]+'）'+t;
+    it.o.forEach((t,oi)=>{const b=document.createElement('button');b.innerHTML='（'+'ABCD'[oi]+'）'+t;
       b.onclick=()=>{if(done)return;
-        if(oi===it.a){done=true;b.classList.add('ok');fb.className='fb';fb.textContent='✅ 答對了！'+it.e;}
+        if(oi===it.a){done=true;b.classList.add('ok');fb.className='fb';fb.innerHTML='✅ 答對了！'+it.e;typeset(fb);}
         else{b.classList.add('no');fb.className='fb bad';fb.textContent='❌ 再想想看，再試一次。';}};
       opts.appendChild(b);});
     box.appendChild(d);
   });
+  typeset(box);
 });
 
 /* ---------- 抽籤 / 計時 ---------- */
