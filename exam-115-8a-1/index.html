@@ -53,6 +53,7 @@ math{font-family:'STIX Two Math','Cambria Math','Latin Modern Math',var(--font-m
 .m .katex{font-size:1em}
 .m.dm{display:block;margin:.35em 0;overflow-x:auto}
 .m.dm math{display:inline math}
+@media (max-width:520px){.m{font-size:.92em}.m.dm{font-size:.88em}}
 /* hero */
 .hero{
   margin-top:20px;padding:24px 20px 20px;border:1px solid var(--line);border-radius:4px;
@@ -427,7 +428,7 @@ function mj(src,disp){
   if(window.katex){
     try{return window.katex.renderToString(toTeX(src),{output:'mathml',displayMode:!!disp,throwOnError:true});}catch(e){}
   }
-  return mjOld(src);
+  return mjOld(src.replace(/\\checkmark\s*/g,'✓'));
 }
 function T(s,disp){
   var parts=s.split('$'),out='';
@@ -435,6 +436,7 @@ function T(s,disp){
     var p=parts[k];
     if(k%2){
       var d=disp&&p.indexOf('=')>-1;
+      if(d&&parts[k+1]){var mc=/^\s*✓/.exec(parts[k+1]);if(mc){p+=' \\checkmark ';parts[k+1]=parts[k+1].slice(mc[0].length);}}
       out+=d?'<span class="m dm">'+mj(p,true)+'</span>':'<span class="m">'+mj(p)+'</span>';
       if(d&&parts[k+1])parts[k+1]=parts[k+1].replace(/^[。;;,,、]\s*/,'');
     }else out+=p;
