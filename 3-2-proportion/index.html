@@ -127,6 +127,7 @@ input[type=range]{accent-color:var(--yellow);width:140px;}
   .infographic-grid{grid-template-columns:repeat(2,1fr);}
 }
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -1044,24 +1045,20 @@ function setTimer(s){
 }
 
 // ===== DRAW =====
-let drawActive=false, drawCtx=null, drawColor='#ffd54f', drawPainting=false;
+let drawActive=false, penE=null;
 function toggleDraw(){
   drawActive=!drawActive;
   const dc=document.getElementById('draw-canvas');
   const btn=document.getElementById('draw-btn');
+  dc.style.display=drawActive?'block':'none';
   dc.classList.toggle('active',drawActive);
   btn.style.background=drawActive?'var(--yellow)':'var(--card)';
   btn.style.color=drawActive?'#1a1a1a':'var(--chalk)';
-  if(!drawCtx){
-    dc.width=window.innerWidth;dc.height=window.innerHeight;
-    drawCtx=dc.getContext('2d');
-    dc.addEventListener('mousedown',e=>{if(!drawActive)return;drawPainting=true;drawCtx.beginPath();drawCtx.moveTo(e.clientX,e.clientY);});
-    dc.addEventListener('mousemove',e=>{if(!drawPainting)return;drawCtx.lineTo(e.clientX,e.clientY);drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=3;drawCtx.lineCap='round';drawCtx.stroke();});
-    dc.addEventListener('mouseup',()=>{drawPainting=false;});
-    dc.addEventListener('touchstart',e=>{if(!drawActive)return;e.preventDefault();drawPainting=true;const t=e.touches[0];drawCtx.beginPath();drawCtx.moveTo(t.clientX,t.clientY);});
-    dc.addEventListener('touchmove',e=>{if(!drawPainting)return;e.preventDefault();const t=e.touches[0];drawCtx.lineTo(t.clientX,t.clientY);drawCtx.strokeStyle=drawColor;drawCtx.lineWidth=3;drawCtx.stroke();});
-    dc.addEventListener('touchend',()=>{drawPainting=false;});
+  if(!penE){
+    penE=CockpitPen.mount({canvas:dc,color:()=>'#ffd54f',width:()=>3,active:()=>drawActive,floatBar:{left:'12px',bottom:'134px',z:95}});
   }
+  penE.show(drawActive);
+  if(!drawActive) penE.reset();
 }
 
 // ===== TOOL PANELS =====

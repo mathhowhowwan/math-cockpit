@@ -205,6 +205,7 @@ canvas{width:100%;background:#0d1a0d;border-radius:4px;display:block;}
   .quiz-options{flex-direction:column;}
 }
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -951,55 +952,16 @@ function toggleDraw(){
   document.getElementById('clear-draw').classList.toggle('show', drawActive);
   document.getElementById('draw-toggle').classList.toggle('active', drawActive);
   document.getElementById('draw-toolbar').classList.toggle('show', drawActive);
-  if(drawActive){ resizeDrawCanvas(); }
+  penE.show(drawActive); if(!drawActive) penE.reset();
 }
-function clearDraw(){
-  drawCtx.globalCompositeOperation='source-over';
-  drawCtx.clearRect(0,0,drawCanvas.width,drawCanvas.height);
-}
-function resizeDrawCanvas(){
-  const imgData = drawCtx.getImageData(0,0,drawCanvas.width,drawCanvas.height);
-  drawCanvas.width = window.innerWidth;
-  drawCanvas.height = window.innerHeight;
-  drawCtx.putImageData(imgData,0,0);
-}
+function clearDraw(){ penE.clear(); }
 
-drawCanvas.addEventListener('mousedown', e=>{
-  drawing=true; lastX=e.clientX; lastY=e.clientY;
-});
-drawCanvas.addEventListener('mousemove', e=>{
-  if(!drawing) return;
-  applyDrawStyle();
-  drawCtx.beginPath();
-  drawCtx.moveTo(lastX,lastY);
-  drawCtx.lineTo(e.clientX,e.clientY);
-  drawCtx.stroke();
-  lastX=e.clientX; lastY=e.clientY;
-});
-drawCanvas.addEventListener('mouseup',()=>drawing=false);
-drawCanvas.addEventListener('mouseleave',()=>drawing=false);
-drawCanvas.addEventListener('touchstart', e=>{
-  e.preventDefault();
-  drawing=true;
-  lastX=e.touches[0].clientX; lastY=e.touches[0].clientY;
-},{passive:false});
-drawCanvas.addEventListener('touchmove', e=>{
-  e.preventDefault();
-  if(!drawing) return;
-  const t=e.touches[0];
-  applyDrawStyle();
-  drawCtx.beginPath();
-  drawCtx.moveTo(lastX,lastY);
-  drawCtx.lineTo(t.clientX,t.clientY);
-  drawCtx.stroke();
-  lastX=t.clientX; lastY=t.clientY;
-},{passive:false});
-drawCanvas.addEventListener('touchend',()=>drawing=false);
+const penE=CockpitPen.mount({canvas:drawCanvas,color:()=>eraserMode?'erase':drawColor,width:()=>drawSize,active:()=>drawActive,tools:document.querySelector('#draw-toolbar .dc-row:last-child'),like:document.getElementById('ds-s')});
+penE.show(false);
 
 // ==================== Resize ====================
 function resizeCanvases(){
   drawC1(); drawC2(); drawC3(); drawC4(); drawC5();
-  if(drawActive) resizeDrawCanvas();
 }
 window.addEventListener('resize', resizeCanvases);
 

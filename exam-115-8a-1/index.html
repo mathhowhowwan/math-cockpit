@@ -1,4 +1,7 @@
+<meta charset="utf-8">
 <title>八年級段考數學</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<script src="../assets/pen.js"></script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -373,27 +376,18 @@ $('tgo').addEventListener('click',function(){
 });
 $('treset').addEventListener('click',function(){stop();left=(+$('tmin').value||3)*60;fmt();$('clock').classList.remove('done');});
 /* chalk pen */
-var cv=$('chalk'),cx=cv.getContext('2d'),color='#f4f1e6',erase=false,down=false,lx=0,ly=0;
-function size(){var dpr=window.devicePixelRatio||1;cv.width=innerWidth*dpr;cv.height=innerHeight*dpr;cx.setTransform(dpr,0,0,dpr,0,0);cx.lineCap='round';cx.lineJoin='round';}
-size();window.addEventListener('resize',size);
+var cv=$('chalk'),color='#f4f1e6',erase=false;
+var penE=CockpitPen.mount({canvas:cv,color:function(){return erase?'erase':color},width:function(){return 4},active:function(){return document.body.classList.contains('penning')},tools:document.querySelector('#pentools .prow:last-child'),like:$('clearpen')});
 $('penbtn').addEventListener('click',function(){
   var on=!document.body.classList.contains('penning');
-  document.body.classList.toggle('penning',on);$('pentools').hidden=!on;this.setAttribute('aria-pressed',String(on));this.textContent=on?'收起畫筆':'畫筆';
+  document.body.classList.toggle('penning',on);$('pentools').hidden=!on;this.setAttribute('aria-pressed',String(on));this.textContent=on?'收起畫筆':'畫筆';if(!on)penE.reset();
 });
 [].forEach.call(document.querySelectorAll('.sw button'),function(b){b.addEventListener('click',function(){
   color=b.dataset.c;erase=false;$('eraser').setAttribute('aria-pressed','false');
   [].forEach.call(document.querySelectorAll('.sw button'),function(x){x.setAttribute('aria-pressed',String(x===b));});
 });});
 $('eraser').addEventListener('click',function(){erase=!erase;this.setAttribute('aria-pressed',String(erase));});
-$('clearpen').addEventListener('click',function(){cx.clearRect(0,0,innerWidth,innerHeight);});
-cv.addEventListener('pointerdown',function(e){down=true;lx=e.clientX;ly=e.clientY;cv.setPointerCapture(e.pointerId);});
-cv.addEventListener('pointermove',function(e){
-  if(!down)return;
-  cx.globalCompositeOperation=erase?'destination-out':'source-over';
-  cx.strokeStyle=color;cx.lineWidth=erase?28:4;
-  cx.beginPath();cx.moveTo(lx,ly);cx.lineTo(e.clientX,e.clientY);cx.stroke();lx=e.clientX;ly=e.clientY;
-});
-['pointerup','pointercancel'].forEach(function(t){cv.addEventListener(t,function(){down=false;});});
+$('clearpen').addEventListener('click',function(){penE.clear();});
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.11/katex.min.js"></script>

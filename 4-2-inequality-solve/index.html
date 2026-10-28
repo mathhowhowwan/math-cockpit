@@ -130,6 +130,7 @@ canvas{width:100%;height:100%;display:block}
   .cheatsheet-grid{grid-template-columns:1fr}
 }
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -962,21 +963,17 @@ function openFull(src){document.getElementById('fullImg').src=src;document.getEl
 function closeFull(){document.getElementById('fullscreen').classList.remove('show');}
 
 // ===== 畫筆 =====
-let drawing=false,drawActive=false;
+let drawActive=false;
 const dc=document.getElementById('drawCanvas');
+const penE=CockpitPen.mount({canvas:dc,color:()=>'#ffd54f',width:()=>3,active:()=>drawActive,tools:document.getElementById('drawToggle').parentElement,like:document.getElementById('drawToggle')});
+penE.show(false);
 function toggleDraw(){
   drawActive=!drawActive;
   dc.style.display=drawActive?'block':'none';dc.style.pointerEvents=drawActive?'auto':'none';
   const dt=document.getElementById('drawToggle');dt.style.background=drawActive?'var(--yellow)':'';dt.style.color=drawActive?'#1a1a1a':'';
-  if(drawActive){dc.width=window.innerWidth;dc.height=window.innerHeight;}
+  penE.show(drawActive); if(!drawActive) penE.reset();
 }
-function clearDraw(){dc.getContext('2d').clearRect(0,0,dc.width,dc.height);}
-dc.addEventListener('mousedown',e=>{drawing=true;const ctx=dc.getContext('2d');ctx.beginPath();ctx.moveTo(e.clientX,e.clientY);});
-dc.addEventListener('mousemove',e=>{if(!drawing)return;const ctx=dc.getContext('2d');ctx.lineWidth=3;ctx.strokeStyle='#ffd54f';ctx.lineTo(e.clientX,e.clientY);ctx.stroke();});
-dc.addEventListener('mouseup',()=>{drawing=false;});
-dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const t=e.touches[0],ctx=dc.getContext('2d');ctx.beginPath();ctx.moveTo(t.clientX,t.clientY);},{passive:false});
-dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const t=e.touches[0],ctx=dc.getContext('2d');ctx.lineWidth=3;ctx.strokeStyle='#ffd54f';ctx.lineTo(t.clientX,t.clientY);ctx.stroke();},{passive:false});
-dc.addEventListener('touchend',()=>{drawing=false;});
+function clearDraw(){penE.clear();}
 </script>
 </body>
 </html>

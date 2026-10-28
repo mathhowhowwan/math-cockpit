@@ -11,15 +11,18 @@
  *     active: function(){ return penOn },        // 選填
  *     tools:  element,                           // 選填：自動補上「復原」「手指」按鈕的容器
  *     like:   element,                           // 選填：自動補上的按鈕沿用此按鈕的 class
- *     undoBtn: element, fingerBtn: element       // 選填：頁面已有按鈕時直接綁定
+ *     undoBtn: element, fingerBtn: element,      // 選填：頁面已有按鈕時直接綁定
+ *     floatBar: {left:'12px', bottom:'134px', z:210}  // 選填：頁面沒有工具列時，自動補一條浮動工具列（復原／手指／清除）
  *   });
  *   pen.clear(); pen.undo(); pen.reset();        // reset：關閉畫筆時中斷進行中的筆畫
+ *   pen.show(true/false);                        // 顯示／隱藏自動補上的按鈕或浮動工具列
  */
 (function (global) {
   'use strict';
 
   function mount(o) {
     var cv = o.canvas, ctx = cv.getContext('2d');
+    cv.style.touchAction = 'none'; // 避免瀏覽器把筆畫當成捲動而取消
     var strokes = [], cur = null, scrollPtr = null, raf = 0, fingerDraws = true;
     var fingerBtn = o.fingerBtn || null, undoBtn = o.undoBtn || null;
 
@@ -80,17 +83,25 @@
     function capture(e) { try { cv.setPointerCapture(e.pointerId); } catch (_) {} }
     function isActive() { return o.active ? !!o.active() : true; }
 
+    var created = [], bar = null;
+    if (o.floatBar) {
+      bar = document.createElement('div');
+      bar.style.cssText = 'position:fixed;display:none;flex-direction:column;gap:8px;left:' + (o.floatBar.left || '12px') + ';bottom:' + (o.floatBar.bottom || '134px') + ';z-index:' + (o.floatBar.z || 210);
+      document.body.appendChild(bar);
+    }
     function makeBtn(text, title) {
       var b = document.createElement('button');
       b.type = 'button';
       b.title = title;
       b.textContent = text;
-      if (o.like && o.like.className) b.className = o.like.className;
-      if (o.tools) o.tools.appendChild(b);
+      if (o.like && o.like.className) b.className = String(o.like.className).replace(/\b(active|on|sel|show)\b/g, '').trim();
+      if (o.floatBar && bar) { b.style.cssText = 'width:44px;height:44px;border-radius:50%;border:2px solid #fff;background:#243024;color:#fff;font-size:1rem;cursor:pointer;padding:0'; bar.appendChild(b); }
+      else if (o.tools) { o.tools.appendChild(b); created.push(b); }
       return b;
     }
-    if (!undoBtn && o.tools) undoBtn = makeBtn('↶', '復原上一筆');
-    if (!fingerBtn && o.tools) fingerBtn = makeBtn('☝️畫', '手指：畫線／捲動');
+    if (!undoBtn && (o.tools || bar)) undoBtn = makeBtn('↶', '復原上一筆');
+    if (!fingerBtn && (o.tools || bar)) fingerBtn = makeBtn('☝️畫', '手指：畫線／捲動');
+    if (bar) { var clr = makeBtn('🗑', '全部清除'); clr.addEventListener('click', function () { strokes.length = 0; cur = null; redraw(); }); }
     if (undoBtn) undoBtn.addEventListener('click', function () { strokes.pop(); redraw(); });
     if (fingerBtn) fingerBtn.addEventListener('click', function () { fingerDraws = !fingerDraws; label(); });
     label();
@@ -141,7 +152,11 @@
       clear: function () { strokes.length = 0; cur = null; redraw(); },
       undo: function () { strokes.pop(); redraw(); },
       reset: function () { cur = null; scrollPtr = null; },
-      redraw: redraw
+      redraw: redraw,
+      show: function (v) {
+        if (bar) bar.style.display = v ? 'flex' : 'none';
+        else if (Array.isArray(created)) created.forEach(function (b) { b.style.display = v ? '' : 'none'; });
+      }
     };
   }
 

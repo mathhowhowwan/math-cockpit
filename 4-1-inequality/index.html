@@ -189,6 +189,7 @@ canvas{width:100%;height:100%;display:block}
   .cheatsheet-grid{grid-template-columns:1fr}
 }
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -1212,28 +1213,18 @@ function pauseTimer(){clearInterval(timerInt);timerRunning=false;}
 function resetTimer(){clearInterval(timerInt);timerRunning=false;timerSec=120;updateTimerDisplay();}
 
 // ========== 畫筆 ==========
-let drawing=false, drawActive=false;
+let drawActive=false;
 const dc=document.getElementById('drawCanvas');
-let lastX=0,lastY=0;
-dc.width=window.innerWidth; dc.height=window.innerHeight;
-window.addEventListener('resize',()=>{dc.width=window.innerWidth;dc.height=window.innerHeight;});
+const penE=CockpitPen.mount({canvas:dc,color:()=>'rgba(255,213,79,0.9)',width:()=>3,active:()=>drawActive,tools:document.getElementById('drawToggle').parentElement,like:document.getElementById('drawToggle')});
+penE.show(false);
 function toggleDraw(){
   drawActive=!drawActive;
   dc.style.display=drawActive?'block':'none';
   dc.style.pointerEvents=drawActive?'all':'none';
   document.getElementById('drawToggle').style.background=drawActive?'var(--yellow)':'';
+  penE.show(drawActive); if(!drawActive) penE.reset();
 }
-function clearDraw(){dc.getContext('2d').clearRect(0,0,dc.width,dc.height);}
-function getPos(e){
-  if(e.touches) return {x:e.touches[0].clientX,y:e.touches[0].clientY};
-  return {x:e.clientX,y:e.clientY};
-}
-dc.addEventListener('mousedown',e=>{drawing=true;const p=getPos(e);lastX=p.x;lastY=p.y;});
-dc.addEventListener('mousemove',e=>{if(!drawing)return;const p=getPos(e);const dctx=dc.getContext('2d');dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(p.x,p.y);dctx.stroke();lastX=p.x;lastY=p.y;});
-dc.addEventListener('mouseup',()=>drawing=false);
-dc.addEventListener('touchstart',e=>{e.preventDefault();drawing=true;const p=getPos(e);lastX=p.x;lastY=p.y;},{passive:false});
-dc.addEventListener('touchmove',e=>{e.preventDefault();if(!drawing)return;const p=getPos(e);const dctx=dc.getContext('2d');dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(p.x,p.y);dctx.stroke();lastX=p.x;lastY=p.y;},{passive:false});
-dc.addEventListener('touchend',()=>drawing=false);
+function clearDraw(){penE.clear();}
 
 // ========== 全螢幕圖片 ==========
 function openFull(src){

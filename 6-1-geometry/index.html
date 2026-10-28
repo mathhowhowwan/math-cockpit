@@ -156,6 +156,7 @@ video,iframe{width:100%;border-radius:10px;}
 }
 @media(max-width:480px){.cheat-grid{grid-template-columns:1fr;}}
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -931,26 +932,15 @@ function resetTimer(){
 }
 
 // ===== 畫筆 =====
-let drawing=false, drawMode=false;
+let drawMode=false;
 const drawCanvas = document.getElementById('draw-canvas');
-const dctx = drawCanvas.getContext('2d');
-function resizeDrawCanvas(){
-  drawCanvas.width=window.innerWidth;
-  drawCanvas.height=window.innerHeight;
-}
-resizeDrawCanvas();
-window.addEventListener('resize', resizeDrawCanvas);
+const penE=CockpitPen.mount({canvas:drawCanvas,color:()=>'rgba(255,213,79,0.9)',width:()=>3,active:()=>drawMode,floatBar:{left:'14px',bottom:'70px',z:210}});
 function toggleDrawMode(){
   drawMode=!drawMode;
   document.getElementById('draw-btn').classList.toggle('active',drawMode);
   drawCanvas.classList.toggle('active',drawMode);
+  penE.show(drawMode); if(!drawMode) penE.reset();
 }
-drawCanvas.addEventListener('mousedown', e=>{if(!drawMode)return;drawing=true;dctx.beginPath();dctx.moveTo(e.clientX,e.clientY);});
-drawCanvas.addEventListener('mousemove', e=>{if(!drawing)return;dctx.lineTo(e.clientX,e.clientY);dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.stroke();});
-drawCanvas.addEventListener('mouseup',()=>drawing=false);
-drawCanvas.addEventListener('touchstart',e=>{if(!drawMode)return;e.preventDefault();drawing=true;dctx.beginPath();dctx.moveTo(e.touches[0].clientX,e.touches[0].clientY);},{passive:false});
-drawCanvas.addEventListener('touchmove',e=>{if(!drawing)return;e.preventDefault();dctx.lineTo(e.touches[0].clientX,e.touches[0].clientY);dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.stroke();},{passive:false});
-drawCanvas.addEventListener('touchend',()=>drawing=false);
 
 // ===== CANVAS 互動 =====
 // — cv1：直線/線段/射線/角 —

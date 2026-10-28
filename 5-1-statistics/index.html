@@ -136,6 +136,7 @@ video{width:100%;border-radius:8px;}
 @media(max-width:1024px){.cheat-grid{grid-template-columns:repeat(2,1fr);}}
 @media(max-width:768px){.concept-card-body{grid-template-columns:1fr;}.cheat-grid{grid-template-columns:1fr;}.section{padding:20px 14px;}.site-header{padding:10px 14px;}.nav-pills{padding:10px 14px;}}
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -865,32 +866,12 @@ function timerSet(s){ timerReset(); timerSec=s; timerRender(); }
 // ── Draw Canvas ──
 let drawActive=false;
 const dc = document.getElementById('draw-canvas');
-const dctx = dc.getContext('2d');
-let drawing=false, lastX=0, lastY=0;
+const penE=CockpitPen.mount({canvas:dc,color:()=>'rgba(255,213,79,0.9)',width:()=>3,active:()=>drawActive,floatBar:{left:'16px',bottom:'134px',z:210}});
 function toggleDraw(){
   drawActive=!drawActive;
   dc.style.display = drawActive?'block':'none';
-  if(drawActive){ dc.width=window.innerWidth; dc.height=window.innerHeight; }
+  penE.show(drawActive); if(!drawActive) penE.reset();
 }
-dc.addEventListener('mousedown',e=>{drawing=true;[lastX,lastY]=[e.clientX,e.clientY];});
-dc.addEventListener('mousemove',e=>{
-  if(!drawing)return;
-  dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';
-  dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(e.clientX,e.clientY);dctx.stroke();
-  [lastX,lastY]=[e.clientX,e.clientY];
-});
-dc.addEventListener('mouseup',()=>drawing=false);
-dc.addEventListener('touchstart',e=>{
-  const t=e.touches[0]; drawing=true; [lastX,lastY]=[t.clientX,t.clientY]; e.preventDefault();
-},{passive:false});
-dc.addEventListener('touchmove',e=>{
-  if(!drawing)return;
-  const t=e.touches[0];
-  dctx.strokeStyle='rgba(255,213,79,0.8)';dctx.lineWidth=3;dctx.lineCap='round';
-  dctx.beginPath();dctx.moveTo(lastX,lastY);dctx.lineTo(t.clientX,t.clientY);dctx.stroke();
-  [lastX,lastY]=[t.clientX,t.clientY]; e.preventDefault();
-},{passive:false});
-dc.addEventListener('touchend',()=>drawing=false);
 
 // ════════════════════════════════
 // CANVAS 1: 圖表類型選擇器
