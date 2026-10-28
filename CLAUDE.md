@@ -1,4 +1,4 @@
-# 國中數學教學駕駛艙 — 專案規則
+# 國中數學練功房 — 專案規則
 
 這是部署到 GitHub Pages 的靜態網站（push 到 main 後由 `.github/workflows/deploy.yml` 自動部署）。
 新增或搬動頁面時，請遵守下面的規則。
