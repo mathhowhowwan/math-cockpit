@@ -35,7 +35,9 @@ section>h2{margin:0 0 4px;color:#ffd54f;font-size:1.5rem}
 .concept-card-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;border-bottom:1px dashed rgba(255,255,255,0.2);padding-bottom:10px}
 .concept-icon{font-size:1.4rem}
 .concept-card-title{color:#ffd54f;font-size:1.15rem;margin:0}
-.concept-card-body{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.concept-card-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.concept-card-body>div{min-width:0;overflow-wrap:anywhere}
+.formula-text,.concept-card-body li,.concept-card-body p{overflow-wrap:anywhere}
 .concept-def,.concept-formula,.concept-keypoints,.concept-example{background:rgba(0,0,0,0.2);border-radius:8px;padding:12px}
 .card-label{display:inline-block;background:#2e7d32;color:#fff;font-size:0.72rem;padding:2px 8px;border-radius:10px;margin-bottom:6px}
 .concept-card p{margin:4px 0}
@@ -88,11 +90,14 @@ svg text{fill:#e8e4d8;font-family:inherit}
 #penBar.show{display:flex}
 #penBar button{width:34px;height:34px;border-radius:50%;border:2px solid #fff;cursor:pointer;font-size:.9rem;background:#444;color:#fff}
 #penBar button.sel{outline:3px solid #ffd54f}
-#pen{position:fixed;inset:0;z-index:55;pointer-events:none;touch-action:none}
+#penBar button#penFinger{font-size:.8rem}
+#penBar{max-height:calc(100dvh - 24px);overflow-y:auto}
+#penBtn{bottom:calc(14px + env(safe-area-inset-bottom,0px))}
+#pen{position:fixed;inset:0;width:100vw;height:100vh;height:100dvh;z-index:55;pointer-events:none;touch-action:none}
 #pen.on{pointer-events:auto;cursor:crosshair}
 .foot{text-align:center;color:#9aa89a;font-size:.8rem;margin-top:40px}
 @media(max-width:1024px){#tools{top:auto;bottom:70px;right:8px}}
-@media(max-width:768px){.concept-card-body{grid-template-columns:1fr}.opts{grid-template-columns:1fr}.hdr h1{font-size:1rem}#tools{width:200px}section>h2{font-size:1.25rem}}
+@media(max-width:768px){.concept-card-body{grid-template-columns:minmax(0,1fr)}.opts{grid-template-columns:1fr}.hdr h1{font-size:1rem}#tools{width:200px}section>h2{font-size:1.25rem}}
 @media(pointer:coarse){.modebar button,.btn,.tabs button,.opts button,.pills a,.btn-home-nav{min-height:44px;display:inline-flex;align-items:center}.opts button{display:flex}.ctrl input[type=range]{min-height:44px}#penBar button{width:44px;height:44px}#tools .btn{min-height:44px}}
 </style>
 </head>
@@ -393,6 +398,8 @@ svg text{fill:#e8e4d8;font-family:inherit}
   <button data-c="#ff8a80" style="background:#ff8a80"></button>
   <button data-c="#81d4fa" style="background:#81d4fa"></button>
   <button data-c="erase" title="橡皮擦">🧽</button>
+  <button id="penUndo" title="復原上一筆">↶</button>
+  <button id="penFinger" title="手指：畫線／捲動" aria-pressed="true">☝️畫</button>
   <button id="penClear" title="全部清除">🗑</button>
   <button id="penOff" title="關閉畫筆">✕</button>
 </div>
@@ -669,18 +676,49 @@ $('#tReset').onclick=()=>{clearInterval(tTimer);tTimer=null;tLeft=Math.max(1,+$(
 $('#tMin').onclick=()=>{const t=$('#tools');t.classList.toggle('min');$('#tMin').textContent=t.classList.contains('min')?'🧰':'—';};
 
 /* ---------- 畫筆 ---------- */
-const pen=$('#pen'),pctx=pen.getContext('2d');let penColor='#ffffff',penOn=false,drawing=false,last=null;
-function sizePen(){const dpr=window.devicePixelRatio||1;const img=pen.width?pctx.getImageData(0,0,pen.width,pen.height):null;pen.width=innerWidth*dpr;pen.height=innerHeight*dpr;pctx.setTransform(dpr,0,0,dpr,0,0);if(img)pctx.putImageData(img,0,0);}
-sizePen();window.addEventListener('resize',sizePen);
-$('#penBtn').onclick=()=>{penOn=!penOn;pen.classList.toggle('on',penOn);$('#penBar').classList.toggle('show',penOn);};
-$('#penOff').onclick=()=>{penOn=false;pen.classList.remove('on');$('#penBar').classList.remove('show');};
-$('#penClear').onclick=()=>pctx.clearRect(0,0,innerWidth,innerHeight);
+const pen=$('#pen'),pctx=pen.getContext('2d');
+let penColor='#ffffff',penOn=false,fingerDraws=true;
+const strokes=[];let cur=null,scrollPtr=null,raf=0;
+/* 筆跡以「頁面座標」儲存：x 為視窗寬度比例、y 為頁面像素，捲動或轉向後仍貼合內容 */
+function pageW(){return document.documentElement.clientWidth||innerWidth}
+function toPage(e){return {x:e.clientX/pageW(),y:e.clientY+scrollY,p:(e.pressure>0&&e.pointerType==='pen')?e.pressure:0.5}}
+function sizePen(){const d=window.devicePixelRatio||1;pen.width=Math.round(innerWidth*d);pen.height=Math.round(innerHeight*d);redraw()}
+function strokePath(st,from){const d=window.devicePixelRatio||1,W=pageW();pctx.setTransform(d,0,0,d,0,0);pctx.lineCap='round';pctx.lineJoin='round';
+  if(st.c==='erase'){pctx.globalCompositeOperation='destination-out';pctx.lineWidth=26}else{pctx.globalCompositeOperation='source-over';pctx.strokeStyle=st.c;pctx.lineWidth=3.5}
+  const pts=st.pts;if(!pts.length)return;pctx.beginPath();
+  let i=from||0;if(i<1){pctx.moveTo(pts[0].x*W,pts[0].y-scrollY);i=1}else{pctx.moveTo(pts[i-1].x*W,pts[i-1].y-scrollY)}
+  if(pts.length===1){pctx.lineTo(pts[0].x*W+.01,pts[0].y-scrollY)}
+  for(;i<pts.length;i++)pctx.lineTo(pts[i].x*W,pts[i].y-scrollY);pctx.stroke()}
+function redraw(){raf=0;const d=window.devicePixelRatio||1;pctx.setTransform(d,0,0,d,0,0);pctx.globalCompositeOperation='source-over';pctx.clearRect(0,0,innerWidth,innerHeight);strokes.forEach(st=>strokePath(st,0))}
+function later(){if(!raf)raf=requestAnimationFrame(redraw)}
+sizePen();window.addEventListener('resize',()=>{sizePen()});window.addEventListener('scroll',later,{passive:true});
+function cap(e){try{pen.setPointerCapture(e.pointerId)}catch(_){}}
+function setPen(on){penOn=on;pen.classList.toggle('on',on);$('#penBar').classList.toggle('show',on);if(!on){cur=null;scrollPtr=null}}
+$('#penBtn').onclick=()=>setPen(!penOn);
+$('#penOff').onclick=()=>setPen(false);
+$('#penClear').onclick=()=>{strokes.length=0;redraw()};
+$('#penUndo').onclick=()=>{strokes.pop();redraw()};
+function fingerLabel(){const b=$('#penFinger');b.textContent=fingerDraws?'☝️畫':'☝️捲';b.setAttribute('aria-pressed',fingerDraws)}
+$('#penFinger').onclick=()=>{fingerDraws=!fingerDraws;fingerLabel()};
 document.querySelectorAll('#penBar button[data-c]').forEach(b=>b.onclick=()=>{penColor=b.dataset.c;document.querySelectorAll('#penBar button[data-c]').forEach(x=>x.classList.toggle('sel',x===b));});
-pen.addEventListener('pointerdown',e=>{drawing=true;last={x:e.clientX,y:e.clientY};pen.setPointerCapture(e.pointerId);});
-pen.addEventListener('pointermove',e=>{if(!drawing)return;pctx.beginPath();pctx.lineCap='round';pctx.lineJoin='round';
-  if(penColor==='erase'){pctx.globalCompositeOperation='destination-out';pctx.lineWidth=26;}else{pctx.globalCompositeOperation='source-over';pctx.strokeStyle=penColor;pctx.lineWidth=3.5;}
-  pctx.moveTo(last.x,last.y);pctx.lineTo(e.clientX,e.clientY);pctx.stroke();last={x:e.clientX,y:e.clientY};});
-['pointerup','pointercancel'].forEach(ev=>pen.addEventListener(ev,()=>{drawing=false;}));
+pen.addEventListener('pointerdown',e=>{
+  if(!penOn)return;
+  /* 偵測到觸控筆後，手指改為捲動（手掌防誤觸） */
+  if(e.pointerType==='pen'&&fingerDraws){fingerDraws=false;fingerLabel()}
+  if(e.pointerType==='touch'&&!fingerDraws){scrollPtr={id:e.pointerId,y:e.clientY};cap(e);return}
+  if(cur)return; /* 已有一筆在畫，忽略其他手指／手掌 */
+  cur={id:e.pointerId,c:penColor,pts:[toPage(e)]};strokes.push(cur);cap(e);strokePath(cur,0);
+});
+pen.addEventListener('pointermove',e=>{
+  if(scrollPtr&&e.pointerId===scrollPtr.id){const dy=scrollPtr.y-e.clientY;scrollPtr.y=e.clientY;window.scrollBy({top:dy,left:0,behavior:'instant'});return}
+  if(!cur||e.pointerId!==cur.id)return;
+  const evs=(e.getCoalescedEvents&&e.getCoalescedEvents())||[];const list=evs.length?evs:[e];
+  const from=cur.pts.length;list.forEach(ev=>cur.pts.push(toPage(ev)));strokePath(cur,from);
+});
+['pointerup','pointercancel'].forEach(ev=>pen.addEventListener(ev,e=>{
+  if(scrollPtr&&e.pointerId===scrollPtr.id)scrollPtr=null;
+  if(cur&&e.pointerId===cur.id)cur=null;
+}));
 
 resizeCanvases();
 </script>
