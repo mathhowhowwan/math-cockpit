@@ -100,6 +100,7 @@ svg text{fill:#e8e4d8;font-family:inherit}
 @media(max-width:768px){.concept-card-body{grid-template-columns:minmax(0,1fr)}.opts{grid-template-columns:1fr}.hdr h1{font-size:1rem}#tools{width:200px}section>h2{font-size:1.25rem}}
 @media(pointer:coarse){.modebar button,.btn,.tabs button,.opts button,.pills a,.btn-home-nav{min-height:44px;display:inline-flex;align-items:center}.opts button{display:flex}.ctrl input[type=range]{min-height:44px}#penBar button{width:44px;height:44px}#tools .btn{min-height:44px}}
 </style>
+<script src="../assets/pen.js"></script>
 </head>
 <body>
 
@@ -676,49 +677,13 @@ $('#tReset').onclick=()=>{clearInterval(tTimer);tTimer=null;tLeft=Math.max(1,+$(
 $('#tMin').onclick=()=>{const t=$('#tools');t.classList.toggle('min');$('#tMin').textContent=t.classList.contains('min')?'🧰':'—';};
 
 /* ---------- 畫筆 ---------- */
-const pen=$('#pen'),pctx=pen.getContext('2d');
-let penColor='#ffffff',penOn=false,fingerDraws=true;
-const strokes=[];let cur=null,scrollPtr=null,raf=0;
-/* 筆跡以「頁面座標」儲存：x 為視窗寬度比例、y 為頁面像素，捲動或轉向後仍貼合內容 */
-function pageW(){return document.documentElement.clientWidth||innerWidth}
-function toPage(e){return {x:e.clientX/pageW(),y:e.clientY+scrollY,p:(e.pressure>0&&e.pointerType==='pen')?e.pressure:0.5}}
-function sizePen(){const d=window.devicePixelRatio||1;pen.width=Math.round(innerWidth*d);pen.height=Math.round(innerHeight*d);redraw()}
-function strokePath(st,from){const d=window.devicePixelRatio||1,W=pageW();pctx.setTransform(d,0,0,d,0,0);pctx.lineCap='round';pctx.lineJoin='round';
-  if(st.c==='erase'){pctx.globalCompositeOperation='destination-out';pctx.lineWidth=26}else{pctx.globalCompositeOperation='source-over';pctx.strokeStyle=st.c;pctx.lineWidth=3.5}
-  const pts=st.pts;if(!pts.length)return;pctx.beginPath();
-  let i=from||0;if(i<1){pctx.moveTo(pts[0].x*W,pts[0].y-scrollY);i=1}else{pctx.moveTo(pts[i-1].x*W,pts[i-1].y-scrollY)}
-  if(pts.length===1){pctx.lineTo(pts[0].x*W+.01,pts[0].y-scrollY)}
-  for(;i<pts.length;i++)pctx.lineTo(pts[i].x*W,pts[i].y-scrollY);pctx.stroke()}
-function redraw(){raf=0;const d=window.devicePixelRatio||1;pctx.setTransform(d,0,0,d,0,0);pctx.globalCompositeOperation='source-over';pctx.clearRect(0,0,innerWidth,innerHeight);strokes.forEach(st=>strokePath(st,0))}
-function later(){if(!raf)raf=requestAnimationFrame(redraw)}
-sizePen();window.addEventListener('resize',()=>{sizePen()});window.addEventListener('scroll',later,{passive:true});
-function cap(e){try{pen.setPointerCapture(e.pointerId)}catch(_){}}
-function setPen(on){penOn=on;pen.classList.toggle('on',on);$('#penBar').classList.toggle('show',on);if(!on){cur=null;scrollPtr=null}}
+let penColor='#ffffff',penOn=false;
+const penE=CockpitPen.mount({canvas:$('#pen'),color:()=>penColor,active:()=>penOn,undoBtn:$('#penUndo'),fingerBtn:$('#penFinger')});
+function setPen(on){penOn=on;$('#pen').classList.toggle('on',on);$('#penBar').classList.toggle('show',on);if(!on)penE.reset();}
 $('#penBtn').onclick=()=>setPen(!penOn);
 $('#penOff').onclick=()=>setPen(false);
-$('#penClear').onclick=()=>{strokes.length=0;redraw()};
-$('#penUndo').onclick=()=>{strokes.pop();redraw()};
-function fingerLabel(){const b=$('#penFinger');b.textContent=fingerDraws?'☝️畫':'☝️捲';b.setAttribute('aria-pressed',fingerDraws)}
-$('#penFinger').onclick=()=>{fingerDraws=!fingerDraws;fingerLabel()};
+$('#penClear').onclick=()=>penE.clear();
 document.querySelectorAll('#penBar button[data-c]').forEach(b=>b.onclick=()=>{penColor=b.dataset.c;document.querySelectorAll('#penBar button[data-c]').forEach(x=>x.classList.toggle('sel',x===b));});
-pen.addEventListener('pointerdown',e=>{
-  if(!penOn)return;
-  /* 偵測到觸控筆後，手指改為捲動（手掌防誤觸） */
-  if(e.pointerType==='pen'&&fingerDraws){fingerDraws=false;fingerLabel()}
-  if(e.pointerType==='touch'&&!fingerDraws){scrollPtr={id:e.pointerId,y:e.clientY};cap(e);return}
-  if(cur)return; /* 已有一筆在畫，忽略其他手指／手掌 */
-  cur={id:e.pointerId,c:penColor,pts:[toPage(e)]};strokes.push(cur);cap(e);strokePath(cur,0);
-});
-pen.addEventListener('pointermove',e=>{
-  if(scrollPtr&&e.pointerId===scrollPtr.id){const dy=scrollPtr.y-e.clientY;scrollPtr.y=e.clientY;window.scrollBy({top:dy,left:0,behavior:'instant'});return}
-  if(!cur||e.pointerId!==cur.id)return;
-  const evs=(e.getCoalescedEvents&&e.getCoalescedEvents())||[];const list=evs.length?evs:[e];
-  const from=cur.pts.length;list.forEach(ev=>cur.pts.push(toPage(ev)));strokePath(cur,from);
-});
-['pointerup','pointercancel'].forEach(ev=>pen.addEventListener(ev,e=>{
-  if(scrollPtr&&e.pointerId===scrollPtr.id)scrollPtr=null;
-  if(cur&&e.pointerId===cur.id)cur=null;
-}));
 
 resizeCanvases();
 </script>

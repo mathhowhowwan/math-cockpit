@@ -85,6 +85,7 @@ body.tmode .teacher{display:block}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<script src="../assets/pen.js"></script>
 </head><body>
 
 <div class="wrap">
@@ -485,20 +486,16 @@ $("tmReset").addEventListener("click",function(){clearInterval(tid);tid=null;lef
 $("tmMin").addEventListener("input",function(){if(!tid){left=clampInt($("tmMin"),1,60)*60;showT()}});
 
 /* ---------- pen ---------- */
-var pc=$("pen"),px=pc.getContext("2d"),pcol="#ffffff",drawing=false,pa=false;
-function sizePen(){pc.width=window.innerWidth;pc.height=window.innerHeight}
-function ptr(e){return [e.clientX,e.clientY]}
-$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none"});
+var pc=$("pen"),pcol="#ffffff",pa=false;
+var penE=CockpitPen.mount({canvas:pc,color:function(){return pcol},active:function(){return pa},tools:$("penTools"),like:$("penClr")});
+$("penBtn").addEventListener("click",function(){pa=!pa;pc.classList.toggle("active",pa);$("penBtn").classList.toggle("on",pa);$("penBtn").setAttribute("aria-pressed",pa);$("penTools").style.display=pa?"flex":"none";if(!pa)penE.reset()});
 document.querySelectorAll(".sw").forEach(function(s){s.addEventListener("click",function(){pcol=s.dataset.c})});
-$("penClr").addEventListener("click",function(){px.clearRect(0,0,pc.width,pc.height)});
-pc.addEventListener("pointerdown",function(e){drawing=true;var p=ptr(e);px.beginPath();px.moveTo(p[0],p[1]);pc.setPointerCapture(e.pointerId)});
-pc.addEventListener("pointermove",function(e){if(!drawing)return;var p=ptr(e);px.strokeStyle=pcol;px.lineWidth=3.5;px.lineCap="round";px.lineJoin="round";px.lineTo(p[0],p[1]);px.stroke()});
-["pointerup","pointercancel"].forEach(function(n){pc.addEventListener(n,function(){drawing=false})});
+$("penClr").addEventListener("click",function(){penE.clear()});
 
 /* ---------- init ---------- */
 function all(){s1();s2();s3();s4();s5();s5b();s6()}
-var rt;window.addEventListener("resize",function(){all();clearTimeout(rt);rt=setTimeout(function(){var img=px.getImageData(0,0,pc.width,pc.height);sizePen();px.putImageData(img,0,0)},150)});
-sizePen();all();
+var rt;window.addEventListener("resize",function(){all();});
+all();
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
 })();
 </script>
