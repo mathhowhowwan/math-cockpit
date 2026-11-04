@@ -83,8 +83,12 @@ body.tmode .teacher{display:block}
 @media(max-width:1024px){section.pt{padding:18px}}
 @media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+.katex{font-size:1.06em}.f .katex{font-size:1.12em}.opts button .katex{font-size:1.02em}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
+<link rel="stylesheet" href="katex/katex.min.css">
+<script src="katex/katex.min.js"></script>
+<script src="katex/auto-render.min.js"></script>
 <script src="../assets/pen.js"></script>
 </head><body>
 
@@ -108,10 +112,10 @@ body.tmode .teacher{display:block}
 <section class="pt" id="s1">
   <h2>① 圓心角與弧的關係</h2><p class="std">課本 P.110–111 · 例 1 · 學習內容 S-9-6</p>
   <div class="concept-card"><div class="concept-card-body">
-    <div class="cb"><span class="card-label">定義</span><p>圓上一弧的<b style="color:var(--yellow)">度數</b>就是其所對圓心角的度數。把圓周分成 360 等分，每一等分所對的圓心角是 1°。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">∠AOB = x° ⟹ 弧 AB = x°<br>弧 AB 的長度 = 圓周長 × x/360</p></div>
+    <div class="cb"><span class="card-label">定義</span><p>圓上一弧的<b style="color:var(--yellow)">度數</b>就是其所對圓心角的度數。把圓周分成 360 等分，每一等分所對的圓心角是 $1^\circ$。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">$\angle AOB = x^\circ \;\Rightarrow\; \arc{AB} = x^\circ$<br>$\arc{AB}$ 的長度 $=$ 圓周長 $\times \dfrac{x}{360}$</p></div>
     <div class="cb"><span class="card-label">重要提醒</span><ul><li>同圓或等圓中，度數相同的兩弧，弧長相等。</li><li>弧的符號有三種意義：圖形、度數、長度，要看前後文分辨。</li><li>半徑不同的兩圓，相同圓心角所對弧的度數相等，弧長不相等。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>同心圓半徑 8、10，圓心角 120°：<br>弧 AB 長 = 2π×8×120/360 = 16π/3<br>弧 CD 長 = 2π×10×120/360 = 20π/3</p></div>
+    <div class="cb"><span class="card-label">例</span><p>同心圓半徑 8、10，圓心角 $120^\circ$：<br>$\arc{AB}$ 長 $= 2\pi\times 8\times\dfrac{120}{360} = \dfrac{16\pi}{3}$<br>$\arc{CD}$ 長 $= 2\pi\times 10\times\dfrac{120}{360} = \dfrac{20\pi}{3}$</p></div>
   </div></div>
   <div class="lab"><h3>互動：兩個同心圓，同一個圓心角</h3>
     <div class="row"><label>圓心角 x = <input type="range" id="s1x" min="10" max="350" value="120"><b id="s1xv">120</b>°</label></div>
@@ -128,9 +132,9 @@ body.tmode .teacher{display:block}
   <h2>② 等弧對等弦</h2><p class="std">課本 P.112–113 · 例 2、例 3</p>
   <div class="concept-card"><div class="concept-card-body">
     <div class="cb"><span class="card-label">定義</span><p>同圓或等圓中，度數相等的兩弧稱為<b style="color:var(--yellow)">等弧</b>，長度相等的兩弦稱為<b style="color:var(--yellow)">等弦</b>。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">弧 AB = 弧 CD ⟺ 弦 AB = 弦 CD<br>證明：△AOB ≅ △COD（SAS 或 SSS）</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>等弧對等弦、等弦對等弧，兩個方向都成立。</li><li>正 n 邊形的頂點在圓上時，各邊所對的弧相等。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>正五邊形 ABCDE 頂點在圓 O 上：<br>弧 ABC = 360°×2/5 = 144°，所以 ∠AOC = 144°。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">$\arc{AB} = \arc{CD} \iff \overline{AB} = \overline{CD}$<br>證明：$\triangle AOB \cong \triangle COD$（SAS 或 SSS）</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>等弧對等弦、等弦對等弧，兩個方向都成立。</li><li>「等弦對等弧」指的是同為劣弧的兩弧；同一條弦所對的優弧與劣弧，度數並不相等。</li><li>正 $n$ 邊形的頂點在圓上時，各邊所對的弧相等。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>正五邊形 $ABCDE$ 頂點在圓 $O$ 上：<br>$\arc{ABC} = 360^\circ\times\dfrac{2}{5} = 144^\circ$，所以 $\angle AOC = 144^\circ$。</p></div>
   </div></div>
   <div class="lab"><h3>互動：比較弧與弦</h3>
     <div class="row"><label>弧 AB = <input type="range" id="s2a" min="10" max="350" value="80"><b id="s2av">80</b>°</label>
@@ -141,16 +145,16 @@ body.tmode .teacher{display:block}
     <div class="out" id="out2n"></div>
   </div>
   <div id="q2"></div>
-  <div class="teacher"><b>教學提示：</b>讓學生把 CD 的度數調到 280° 左右，會看到弧比較大但弦比較短。課本結論只說「相等」，不說「較大」，因為弦長與弧的大小在超過 180° 後不再同向。</div>
+  <div class="teacher"><b>教學提示：</b>讓學生把弧 CD 調到 $300^\circ$ 左右，會看到弧比較大但弦比較短；再把弧 AB 設 $80^\circ$、弧 CD 設 $280^\circ$，兩弦竟然相等，因為這是劣弧與優弧的組合（$80^\circ+280^\circ=360^\circ$）。所以課本結論只說同為劣弧的等弧與等弦互相對應，不說「弧大弦就長」。</div>
 </section>
 
 <section class="pt" id="s3">
   <h2>③ 圓周角與半圓的圓周角</h2><p class="std">課本 P.114–119 · 例 4、例 5、例 6</p>
   <div class="concept-card"><div class="concept-card-body">
-    <div class="cb"><span class="card-label">定義</span><p>兩弦的交點在圓周上，所形成的角稱為<b style="color:var(--yellow)">圓周角</b>。∠BAC 所對的弧是弧 BC。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">圓周角 = 所對弧度數 ÷ 2 = 圓心角 ÷ 2<br>同弧所對的圓周角相等<br>半圓所對的圓周角 = 90°</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>圓心可能在圓周角的一邊上、內部、外部，結論都一樣。</li><li>圓周角 ∠ADC 所對的弧可能是優弧：∠ADC = ½(360°−弧 ADC)。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>∠AOC = 130°，則 ∠ABC = 65°（B 在優弧上）；<br>同一條弧另一側的 ∠ADC = ½×230° = 115°。</p></div>
+    <div class="cb"><span class="card-label">定義</span><p>兩弦的交點在圓周上，所形成的角稱為<b style="color:var(--yellow)">圓周角</b>。$\angle BAC$ 所對的弧是 $\arc{BC}$。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">圓周角 $=\dfrac{1}{2}\times$ 所對弧的度數 $=\dfrac{1}{2}\times$ 圓心角<br>同弧所對的圓周角相等<br>半圓所對的圓周角 $=90^\circ$</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>圓心可能在圓周角的一邊上、內部、外部，結論都一樣。</li><li>圓周角 $\angle ADC$ 所對的弧可能是優弧：$\angle ADC = \dfrac12(360^\circ-\arc{ADC})$。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>$\angle AOC = 130^\circ$，則 $\angle ABC = 65^\circ$（$B$ 在優弧上）；<br>同一條弧另一側的 $\angle ADC = \dfrac12\times 230^\circ = 115^\circ$。</p></div>
   </div></div>
   <div class="lab"><h3>互動：拖動頂點 A，看圓周角怎麼變</h3>
     <div class="row"><label>弧 BC = <input type="range" id="s3s" min="20" max="340" value="100"><b id="s3sv">100</b>°</label>
@@ -159,18 +163,19 @@ body.tmode .teacher{display:block}
     <div class="out" id="out3"></div>
   </div>
   <div id="q3"></div>
-  <div class="teacher"><b>教學提示：</b>把弧 BC 調成 180°，圓心在一邊上，∠BAC = 90°。再慢慢縮小，圓心進入角內；拖動 A 位置讓圓心跑到角外。課本三種情形：圓心在一邊上、在內部、在外部。小翊的說法「同弧所對圓周角相等」正確；小妍的說法錯在 ∠AEB = ∠CED（對頂角）不能推出 AB = CD。</div>
+  <div class="teacher"><b>教學提示：</b>把弧 $BC$ 調成 $180^\circ$，$BC$ 就是直徑，無論 $A$ 在哪裡，$\angle BAC$ 都是 $90^\circ$（半圓的圓周角）。再慢慢拖動 $A$：當 $AB$ 或 $AC$ 剛好通過圓心 $O$ 時就是「圓心在一邊上」，其他位置則是圓心在角的內部或外部，課本三種情形都能看到。小翊的說法「同弧所對圓周角相等」正確；小妍的說法錯在 $\angle AEB=\angle CED$（對頂角）不能推出 $AB=CD$。</div>
 </section>
 
 <section class="pt" id="s4">
   <h2>④ 平行弦截等弧</h2><p class="std">課本 P.120 · 例 7</p>
   <div class="concept-card"><div class="concept-card-body">
-    <div class="cb"><span class="card-label">定義</span><p>圓內兩條互相平行的弦 AB、CD，它們之間夾出兩段弧：弧 AC 與弧 BD。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">AB ∥ CD ⟹ 弧 AC = 弧 BD<br>弧 AC = 弧 BD ⟹ AB ∥ CD</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證法：連接 BC，由內錯角 ∠1=∠2，得 ½弧AC = ½弧BD。</li><li>反過來也成立：連接 AD，內錯角相等就平行。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>弧 AC = 弧 BD，∠DAB = 37°，則 ∠ADC = 37°，AB ∥ CD。</p></div>
+    <div class="cb"><span class="card-label">定義</span><p>圓內兩條互相平行的弦 $AB$、$CD$，它們之間夾出兩段弧：$\arc{AC}$ 與 $\arc{BD}$。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">$AB \parallel CD \;\Rightarrow\; \arc{AC} = \arc{BD}$<br>$\arc{AC} = \arc{BD} \;\Rightarrow\; AB \parallel CD$</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證法：連接 $BC$，由內錯角 $\angle 1=\angle 2$，得 $\dfrac12\arc{AC}=\dfrac12\arc{BD}$。</li><li>反過來也成立：連接 $AD$，內錯角相等就平行。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>$\arc{AC}=\arc{BD}$，$\angle DAB = 37^\circ$，則 $\angle ADC = 37^\circ$，$AB \parallel CD$。</p></div>
   </div></div>
   <div class="lab"><h3>互動：轉動、平移兩條平行弦</h3>
+    <p style="margin:0 0 6px;color:var(--dim)">兩個「位置」滑桿的數字，就是弦的端點離開直徑的角度，所以兩弦之間的弧度數可以直接算出來。</p>
     <div class="row"><label>方向 <input type="range" id="s4t" min="0" max="170" value="20"><b id="s4tv">20</b>°</label>
     <label>弦 AB 位置 <input type="range" id="s4d1" min="-80" max="80" value="35"></label>
     <label>弦 CD 位置 <input type="range" id="s4d2" min="-80" max="80" value="-30"></label></div>
@@ -185,26 +190,27 @@ body.tmode .teacher{display:block}
   <h2>⑤ 圓內接四邊形</h2><p class="std">課本 P.121–122 · 例 8</p>
   <div class="concept-card"><div class="concept-card-body">
     <div class="cb"><span class="card-label">定義</span><p>四邊形的四個頂點都在圓周上，稱為<b style="color:var(--yellow)">圓內接四邊形</b>。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">∠A + ∠C = 180°，∠B + ∠D = 180°<br>外角 = 內對角：∠1 = ∠BAD</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證明：∠A = ½弧BCD、∠C = ½弧BAD，相加 = ½×360° = 180°。</li><li>延長一邊得到的外角，等於它的內對角。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>∠ABC = 70°，∠BAD = 115°：<br>∠ADC = 180°−70° = 110°，∠DCE = ∠BAD = 115°。</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">$\angle A + \angle C = 180^\circ$，$\angle B + \angle D = 180^\circ$<br>外角 $=$ 內對角：$\angle 1 = \angle BAD$</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>證明：$\angle A=\dfrac12\arc{BCD}$、$\angle C=\dfrac12\arc{BAD}$，相加 $=\dfrac12\times 360^\circ=180^\circ$。</li><li>延長一邊得到的外角，等於它的內對角。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>$\angle ABC = 70^\circ$，$\angle BAD = 115^\circ$：<br>$\angle ADC = 180^\circ-70^\circ=110^\circ$，$\angle DCE = \angle BAD = 115^\circ$。</p></div>
   </div></div>
   <div class="lab"><h3>互動：移動四個頂點</h3>
-    <div class="row"><label>A <input type="range" id="s5a" min="0" max="359" value="100"></label><label>B <input type="range" id="s5b" min="0" max="359" value="195"></label><label>C <input type="range" id="s5c" min="0" max="359" value="290"></label><label>D <input type="range" id="s5d" min="0" max="359" value="20"></label></div>
+    <p style="margin:0 0 6px;color:var(--dim)">四個滑桿控制四個頂點在圓上的位置；頂點依逆時針順序標為 A、B、C、D。</p>
+    <div class="row"><label>頂點 1 <input type="range" id="s5a" min="0" max="359" value="100"></label><label>頂點 2 <input type="range" id="s5b" min="0" max="359" value="195"></label><label>頂點 3 <input type="range" id="s5c" min="0" max="359" value="290"></label><label>頂點 4 <input type="range" id="s5d" min="0" max="359" value="20"></label></div>
     <canvas class="viz" id="cv5"></canvas>
     <div class="out" id="out5"></div>
   </div>
   <div id="q5"></div>
-  <div class="teacher"><b>教學提示：</b>讓學生拖到任何位置，兩組對角和都停在 180°。再用「弧BCD + 弧BAD = 360°」說明為什麼。教學指引提到圓外一點作切線，其實是用「半圓的圓周角是直角」，不是教學重點，讓學生知道尺規真的畫得出來即可。</div>
+  <div class="teacher"><b>教學提示：</b>讓學生拖到任何位置，兩組對角和都停在 $180^\circ$。再用 $\arc{BCD}+\arc{BAD}=360^\circ$ 說明為什麼。教學指引提到圓外一點作切線，其實是用「半圓的圓周角是直角」，不是教學重點，讓學生知道尺規真的畫得出來即可。</div>
 </section>
 
 <section class="pt" id="s6">
   <h2>⑥ 素養：內輪差</h2><p class="std">課本 P.126 · 扉選素養（SDGs 3 良好健康和福祉）</p>
   <div class="concept-card"><div class="concept-card-body">
     <div class="cb"><span class="card-label">情境</span><p>大型車輛轉彎時，前內輪與後內輪的旋轉半徑之差稱為<b style="color:var(--yellow)">內輪差</b>，紅色區域是危險區域，行人要保持更遠的距離。</p></div>
-    <div class="cb"><span class="card-label">公式／性質</span><p class="f">內輪差 = OA − OB<br>危險區面積 = △AOB − 扇形 OBC</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>∠OBA = 90°，∠AOB = 轉彎角度 θ。</li><li>OB = AB / tanθ，OA = AB / sinθ。</li></ul></div>
-    <div class="cb"><span class="card-label">例</span><p>AB = 4，θ = 30°：OA = 8，OB = 4√3<br>內輪差 = 8 − 4√3 公尺<br>面積 = 8√3 − 4π 平方公尺</p></div>
+    <div class="cb"><span class="card-label">公式／性質</span><p class="f">內輪差 $=OA-OB$<br>危險區面積 $=\triangle AOB-$ 扇形 $OBC$</p></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>$\angle OBA=90^\circ$，$\angle AOB=$ 轉彎角度 $\theta$。</li><li>$OB=\dfrac{AB}{\tan\theta}$，$OA=\dfrac{AB}{\sin\theta}$。</li></ul></div>
+    <div class="cb"><span class="card-label">例</span><p>$AB = 4$，$\theta = 30^\circ$：$OA = 8$，$OB = 4\sqrt{3}$<br>內輪差 $= 8-4\sqrt{3}$ 公尺<br>面積 $= 8\sqrt{3}-4\pi$ 平方公尺</p></div>
   </div></div>
   <div class="lab"><h3>互動：車長與轉彎角度如何影響危險區</h3>
     <div class="row"><label>車長 AB = <input type="range" id="s6ab" min="1" max="12" step="0.5" value="4"><b id="s6abv">4</b> 公尺</label>
@@ -213,20 +219,20 @@ body.tmode .teacher{display:block}
     <div class="out" id="out6"></div>
   </div>
   <div id="q6"></div>
-  <div class="teacher"><b>教學提示：</b>課本建議討論「為什麼車越長或轉彎角度越大，內輪差就會越大？」拖動兩個滑桿讓學生觀察。可連結交通安全，培養對公共安全的責任感。</div>
+  <div class="teacher"><b>教學提示：</b>課本建議討論「為什麼車越長或轉彎角度越大，內輪差就會越大？」拖動兩個滑桿讓學生觀察。轉彎角度剛好是 $30^\circ$、$45^\circ$、$60^\circ$ 時，頁面會用根號與 $\pi$ 顯示精確值。可連結交通安全，培養對公共安全的責任感。</div>
 </section>
 
 <section class="pt" id="sum">
   <h2>總結 Cheat Sheet</h2><p class="std">課本 P.123 重點整理</p>
   <div class="cheat">
-    <div class="cb"><span class="card-label">圓心角</span><p class="f">∠AOB = 弧 AB</p></div>
-    <div class="cb"><span class="card-label">圓周角</span><p class="f">∠BAC = ½ 弧 BC<br>= ½ ∠BOC</p></div>
-    <div class="cb"><span class="card-label">半圓的圓周角</span><p class="f">∠ACB = 90°<br>（AB 為直徑）</p></div>
-    <div class="cb"><span class="card-label">平行弦的截弧</span><p class="f">AB ∥ CD ⟺ 弧AC = 弧BD</p></div>
-    <div class="cb"><span class="card-label">圓內接四邊形</span><p class="f">∠A+∠C = 180°<br>∠B+∠D = 180°</p></div>
-    <div class="cb"><span class="card-label">等弧等弦</span><p class="f">弧AB = 弧CD ⟺ 弦AB = 弦CD</p></div>
+    <div class="cb"><span class="card-label">圓心角</span><p class="f">$\angle AOB = \arc{AB}$</p></div>
+    <div class="cb"><span class="card-label">圓周角</span><p class="f">$\angle BAC = \dfrac12\arc{BC}$<br>$=\dfrac12\angle BOC$</p></div>
+    <div class="cb"><span class="card-label">半圓的圓周角</span><p class="f">$\angle ACB = 90^\circ$<br>（$AB$ 為直徑）</p></div>
+    <div class="cb"><span class="card-label">平行弦的截弧</span><p class="f">$AB \parallel CD \iff \arc{AC} = \arc{BD}$</p></div>
+    <div class="cb"><span class="card-label">圓內接四邊形</span><p class="f">$\angle A+\angle C = 180^\circ$<br>$\angle B+\angle D = 180^\circ$</p></div>
+    <div class="cb"><span class="card-label">等弧等弦</span><p class="f">$\arc{AB} = \arc{CD} \iff \overline{AB} = \overline{CD}$<br>（同為劣弧）</p></div>
   </div>
-  <div class="teacher"><b>常見錯誤彙整：</b>(1) 把圓周角當成圓心角（忘了除以 2）；(2) 圓周角所對的弧是優弧時，仍用劣弧計算；(3) 由 ∠AEB=∠CED（對頂角）推出 AB=CD；(4) 半徑不同的圓，以為相同圓心角的弧長也相等。</div>
+  <div class="teacher"><b>常見錯誤彙整：</b>(1) 把圓周角當成圓心角（忘了除以 2）；(2) 圓周角所對的弧是優弧時，仍用劣弧計算；(3) 由 $\angle AEB=\angle CED$（對頂角）推出 $AB=CD$；(4) 半徑不同的圓，以為相同圓心角的弧長也相等；(5) 以為弧越大弦一定越長（超過 $180^\circ$ 就不成立）。</div>
 </section>
 <div style="text-align:center;margin:36px 0 8px"><span style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a><a class="btn-home-nav" href="https://mathhowhowwan.github.io/math-hub/" target="_top">🎓 回數學教學中心</a></span></div>
 </div>
@@ -271,25 +277,32 @@ function arcD(c,cx,cy,r,f,t,col,lw){c.beginPath();c.arc(cx,cy,r,-f*D,-t*D,true);
 function seg(c,p,q,col,lw,dash){c.beginPath();c.setLineDash(dash||[]);c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.strokeStyle=col||"#e8e4d8";c.lineWidth=lw||2;c.stroke();c.setLineDash([])}
 function pt(c,p,lab,cx,cy,col){col=col||"#ffd54f";c.beginPath();c.arc(p[0],p[1],4,0,7);c.fillStyle=col;c.fill();var dx=p[0]-cx,dy=p[1]-cy,L=Math.hypot(dx,dy)||1;c.fillStyle=col;c.font="bold 15px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(lab,p[0]+dx/L*15,p[1]+dy/L*15)}
 function angAt(P,Q,R){var a=Math.atan2(Q[1]-P[1],Q[0]-P[0]),b=Math.atan2(R[1]-P[1],R[0]-P[0]),d=Math.abs(a-b)/D;return d>180?360-d:d}
-function fmtPi(r,x){var n=2*r*x,d=360,g=gcd(n,d);n/=g;d/=g;if(d===1)return (n===1?"":n)+"π";return (n===1?"":n)+"π/"+d}
+function fmtPi(r,x){var n=2*r*x,d=360,g=gcd(n,d);n/=g;d/=g;var num=(n===1?"":n)+"\pi";return d===1?num:"\dfrac{"+num+"}{"+d+"}"}
+var KOPT={delimiters:[{left:"$",right:"$",display:false}],macros:{"\arc":"\overset{\frown}{#1}"},throwOnError:false,strict:false};
+function rd(el){if(window.renderMathInElement)renderMathInElement(el,KOPT)}
 function radius(w,h,pad){return Math.max(20,Math.min(w,h)/2-pad)}
 function lblText(c,t,x,y,col,sz){c.fillStyle=col||"#e8e4d8";c.font="bold "+(sz||14)+"px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y)}
 
 /* ---------- section 1 ---------- */
-function s1(){
-  var x=+$("s1x").value,r=+$("s1r").value,r2=+$("s1r2").value;$("s1xv").textContent=x;$("s1rv").textContent=r;$("s1r2v").textContent=r2;
+function s1(ev){
+  var el=$("s1r"),el2=$("s1r2");
+  /* 外圓半徑不得小於內圓半徑：拉動其中一個時，另一個跟著限制 */
+  if(+el2.value>+el.value){if(ev&&ev.target===el2)el.value=el2.value;else el2.value=el.value}
+  var x=+$("s1x").value,r=+el.value,r2=+el2.value;$("s1xv").textContent=x;$("s1rv").textContent=r;$("s1r2v").textContent=r2;
+  /* 圖示（課本例 1）：A、B 在內圓（半徑 r2），C、D 在外圓（半徑 r） */
   var o=setupCv($("cv1"),.62),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,34),rm=Math.max(r,r2),Ro=R*r/rm,Ri=R*r2/rm;
   var f=90-x/2,t=90+x/2;
   circ(c,cx,cy,Ro,"#e8e4d8");circ(c,cx,cy,Ri,"#81d4fa");
-  var A=pol(cx,cy,Ro,t),B=pol(cx,cy,Ro,f),C=pol(cx,cy,Ri,t),Dd=pol(cx,cy,Ri,f),O=[cx,cy];
-  seg(c,O,A);seg(c,O,B);seg(c,O,C,"#81d4fa",1.5);seg(c,O,Dd,"#81d4fa",1.5);
+  var A=pol(cx,cy,Ri,t),B=pol(cx,cy,Ri,f),C=pol(cx,cy,Ro,t),Dd=pol(cx,cy,Ro,f),O=[cx,cy];
+  seg(c,O,C);seg(c,O,Dd);seg(c,O,A,"#81d4fa",1.5);seg(c,O,B,"#81d4fa",1.5);
   arcD(c,cx,cy,Ro,f,t,"#ff8a80",5);arcD(c,cx,cy,Ri,f,t,"#ffd54f",5);
   c.beginPath();c.arc(cx,cy,3,0,7);c.fillStyle="#e8e4d8";c.fill();c.fillText("O",cx+10,cy+14);
-  pt(c,A,"A",cx,cy);pt(c,B,"B",cx,cy);pt(c,C,"C",cx,cy,"#81d4fa");pt(c,Dd,"D",cx,cy,"#81d4fa");
-  $("out1").innerHTML="<span class='step'>∠AOB = ∠COD = "+x+"°，所以 弧AB 的度數 = 弧CD 的度數 = <b class='ans'>"+x+"°</b></span>"+
-  "<span class='step'>弧 AB 的長度 = 2π×"+r+"×"+x+"/360 = <b class='ans'>"+fmtPi(r,x)+"</b> ≒ "+r3(2*Math.PI*r*x/360)+"</span>"+
-  "<span class='step'>弧 CD 的長度 = 2π×"+r2+"×"+x+"/360 = <b class='ans'>"+fmtPi(r2,x)+"</b> ≒ "+r3(2*Math.PI*r2*x/360)+"</span>"+
-  "<span class='step'>"+(r===r2?"兩圓半徑相等，度數相同弧長也相等。":"半徑不同：度數相同，但弧長不相等。")+"</span>";
+  pt(c,C,"C",cx,cy);pt(c,Dd,"D",cx,cy);pt(c,A,"A",cx,cy,"#81d4fa");pt(c,B,"B",cx,cy,"#81d4fa");
+  $("out1").innerHTML="<span class='step'>$\\angle AOB=\\angle COD="+x+"^\\circ$，所以 $\\arc{AB}$ 的度數 $=\\arc{CD}$ 的度數 $=$ <b class='ans'>$"+x+"^\\circ$</b></span>"+
+  "<span class='step'>$\\arc{AB}$（內圓，半徑 "+r2+"）的長度 $=2\\pi\\times"+r2+"\\times\\dfrac{"+x+"}{360}=$ <b class='ans'>$"+fmtPi(r2,x)+"$</b></span>"+
+  "<span class='step'>$\\arc{CD}$（外圓，半徑 "+r+"）的長度 $=2\\pi\\times"+r+"\\times\\dfrac{"+x+"}{360}=$ <b class='ans'>$"+fmtPi(r,x)+"$</b></span>"+
+  "<span class='step'>"+(r===r2?"兩圓半徑相等，度數相同弧長也相等。":"半徑不同：度數相同，但弧長不相等（外圓的弧較長）。")+"</span>";
+  rd($("out1"));
 }
 ["s1x","s1r","s1r2"].forEach(function(i){$(i).addEventListener("input",s1)});
 
@@ -304,12 +317,20 @@ function s2(){
   seg(c,O,C,col2,1.4);seg(c,O,Dd,col2,1.4);seg(c,C,Dd,col2,3);
   arcD(c,cx,cy,R,90-a/2,90+a/2,"#ff8a80",5);arcD(c,cx,cy,R,270-b/2,270+b/2,"#a5d6a7",5);
   pt(c,A,"A",cx,cy);pt(c,B,"B",cx,cy);pt(c,C,"C",cx,cy,col2);pt(c,Dd,"D",cx,cy,col2);
-  var ca=2*10*Math.sin(a*D/2),cb=2*10*Math.sin(b*D/2),eq=a===b;
-  $("out2").innerHTML="<span class='step'>弧 AB = "+a+"°，弧 CD = "+b+"°（取半徑 10）</span><span class='step'>弦 AB ≒ "+r3(ca)+"，弦 CD ≒ "+r3(cb)+"</span>"+
-  "<span class='step "+(eq?"ok":"")+"'>"+(eq?"✔ 弧 AB = 弧 CD，所以弦 AB = 弦 CD（△AOB ≅ △COD）":"度數不同。注意：弧較大，弦不一定較長（超過 180° 後弦反而變短）。")+"</span>";
+  var ca=2*10*Math.sin(a*D/2),cb=2*10*Math.sin(b*D/2),eq=a===b,sup=(a+b===360)&&!eq,msg;
+  if(eq)msg="<span class='step ok'>✔ $\\arc{AB}=\\arc{CD}$，所以 $\\overline{AB}=\\overline{CD}$（$\\triangle AOB\\cong\\triangle COD$）</span>";
+  else if(sup)msg="<span class='step'>兩弦相等，但兩弧度數不同：一個是劣弧、一個是優弧（合起來剛好是整圓 $"+a+"^\\circ+"+b+"^\\circ=360^\\circ$）。「等弦對等弧」指的是同為劣弧的兩弧。</span>";
+  else msg="<span class='step'>度數不同。注意：弧較大，弦不一定較長（超過 $180^\\circ$ 後弦反而變短）。</span>";
+  $("out2").innerHTML="<span class='step'>$\\arc{AB}="+a+"^\\circ$，$\\arc{CD}="+b+"^\\circ$（取半徑 10）</span><span class='step'>$\\overline{AB}\\approx"+r3(ca)+"$，$\\overline{CD}\\approx"+r3(cb)+"$</span>"+msg;
+  rd($("out2"));
 }
 ["s2a","s2b"].forEach(function(i){$(i).addEventListener("input",s2)});
-function s2n(){var n=clampInt($("s2n"),3,20),ang=360/n;$("out2n").innerHTML="<span class='step'>正 "+n+" 邊形的頂點在圓上，每一邊所對的弧都相等（等弦對等弧）。</span><span class='step'>相鄰兩頂點與圓心的夾角 = 360°/"+n+" = <b class='ans'>"+r3(ang)+"°</b></span><span class='step'>隔一個頂點的 ∠AOC = "+r3(2*ang)+"°（例 3：正五邊形為 144°）</span>"}
+function s2n(){
+  var n=clampInt($("s2n"),3,20);
+  function deg(k){var g=gcd(360*k,n),p=360*k/g,q=n/g;return q===1?p+"^\\circ":"\\dfrac{"+p+"}{"+q+"}^\\circ"}
+  $("out2n").innerHTML="<span class='step'>正 "+n+" 邊形的頂點在圓上，每一邊所對的弧都相等（等弦對等弧）。</span><span class='step'>相鄰兩頂點與圓心的夾角 $=\\dfrac{360^\\circ}{"+n+"}=$ <b class='ans'>$"+deg(1)+"$</b></span><span class='step'>隔一個頂點的 $\\angle AOC="+deg(2)+"$（例 3：正五邊形為 $144^\\circ$）</span>";
+  rd($("out2n"));
+}
 $("s2n").addEventListener("input",s2n);
 
 /* ---------- section 3 ---------- */
@@ -326,31 +347,35 @@ function s3(){
   c.beginPath();c.arc(cx,cy,3,0,7);c.fillStyle="#e8e4d8";c.fill();
   pt(c,B,"B",cx,cy,"#ff8a80");pt(c,C,"C",cx,cy,"#ff8a80");pt(c,A,"A",cx,cy);pt(c,A2,"A′",cx,cy,"#81d4fa");
   lblText(c,"O",cx+11,cy-11);
-  var ang=angAt(A,B,C),ang2=angAt(A2,B,C);
   function cr(P,Q,Rr){return (Q[0]-P[0])*(Rr[1]-P[1])-(Q[1]-P[1])*(Rr[0]-P[0])}
   var k1=cr(A,B,O),k2=cr(A,C,O),kb=cr(A,B,C),kc=cr(A,C,B),eps=R*R*0.004,where;
-  if(Math.abs(k1)<eps||Math.abs(k2)<eps)where="圓心在圓周角的一邊上（一邊為直徑）";
+  if(Math.abs(k1)<eps||Math.abs(k2)<eps)where="圓心在圓周角的一邊上（一邊通過圓心）";
   else if(k1*kb>0&&k2*kc>0)where="圓心在圓周角的內部";else where="圓心在圓周角的外部";
-  $("out3").innerHTML="<span class='step'>弧 BC = "+s+"°，∠BOC = "+s+"°</span><span class='step'>圓周角 ∠BAC ≒ <b class='ans'>"+r1(ang)+"°</b> = ½×"+s+"° = "+r1(s/2)+"°</span><span class='step'>同弧另一個圓周角 ∠BA′C ≒ "+r1(ang2)+"°（同弧所對的圓周角相等 <span class='ok'>✔</span>）</span><span class='step'>目前："+where+"。"+(Math.abs(s-180)<0.5?" 半圓所對的圓周角是 90°。":"")+"</span>";
+  var v=s/2;
+  $("out3").innerHTML="<span class='step'>$\\arc{BC}="+s+"^\\circ$，$\\angle BOC="+s+"^\\circ$</span><span class='step'>圓周角 $\\angle BAC=\\dfrac12\\times"+s+"^\\circ=$ <b class='ans'>$"+v+"^\\circ$</b></span><span class='step'>同弧另一個圓周角 $\\angle BA'C=$ <b class='ans'>$"+v+"^\\circ$</b>（同弧所對的圓周角相等 <span class='ok'>✔</span>）</span><span class='step'>目前："+where+"。"+(s===180?" $BC$ 是直徑，半圓所對的圓周角是 $90^\\circ$。":"")+"</span>";
+  rd($("out3"));
 }
 ["s3s","s3t"].forEach(function(i){$(i).addEventListener("input",s3)});
 
 /* ---------- section 4 ---------- */
+/* 兩個「位置」滑桿的數字 = 弦的端點離開直徑的角度 φ（度），弦到圓心的距離 = sin φ。
+   於是 弧AC = 弧BD = |φ1 − φ2| 是整數度，可以精確顯示。 */
 function s4(){
-  var th=+$("s4t").value,d1=+$("s4d1").value/100,d2=+$("s4d2").value/100;$("s4tv").textContent=th;
+  var th=+$("s4t").value,p1=+$("s4d1").value,p2=+$("s4d2").value;$("s4tv").textContent=th;
   var o=setupCv($("cv4"),.66),c=o.c,cx=o.w/2,cy=o.h/2,R=radius(o.w,o.h,30);circ(c,cx,cy,R);
+  var d1=Math.sin(p1*D),d2=Math.sin(p2*D);
   var u=[Math.cos(th*D),Math.sin(th*D)],n=[-Math.sin(th*D),Math.cos(th*D)];
   function P(d,sg){var h=Math.sqrt(1-d*d);return [d*n[0]+sg*h*u[0],d*n[1]+sg*h*u[1]]}
   function toC(p){return [cx+p[0]*R,cy-p[1]*R]}
-  function deg(p){var a=Math.atan2(p[1],p[0])/D;return (a+360)%360}
   var A=P(d1,-1),B=P(d1,1),C=P(d2,-1),Dd=P(d2,1);
   seg(c,toC(A),toC(B),"#ffd54f",3);seg(c,toC(C),toC(Dd),"#81d4fa",3);
-  function minor(p,q,col){var a=deg(p),b=deg(q),df=(b-a+360)%360;if(df<=180)arcD(c,cx,cy,R,a,a+df,col,6);else arcD(c,cx,cy,R,b,b+360-df,col,6);return df<=180?df:360-df}
-  var ok=Math.abs(d1-d2)>0.04;
-  if(!ok){$("out4").innerHTML="<span class='bad'>兩條弦太近了，請把它們分開一點。</span>";pt(c,toC(A),"A",cx,cy);pt(c,toC(B),"B",cx,cy);return}
-  var m1=minor(A,C,"#ff8a80"),m2=minor(B,Dd,"#a5d6a7");
+  var m=Math.abs(p1-p2);
+  if(m<3){$("out4").innerHTML="<span class='bad'>兩條弦太近了，請把它們分開一點。</span>";pt(c,toC(A),"A",cx,cy);pt(c,toC(B),"B",cx,cy);return}
+  arcD(c,cx,cy,R,th+180-Math.max(p1,p2),th+180-Math.min(p1,p2),"#ff8a80",6);
+  arcD(c,cx,cy,R,th+Math.min(p1,p2),th+Math.max(p1,p2),"#a5d6a7",6);
   pt(c,toC(A),"A",cx,cy);pt(c,toC(B),"B",cx,cy);pt(c,toC(C),"C",cx,cy,"#81d4fa");pt(c,toC(Dd),"D",cx,cy,"#81d4fa");
-  $("out4").innerHTML="<span class='step'>AB ∥ CD（兩弦同方向）</span><span class='step'>弧 AC ≒ <b class='ans'>"+r1(m1)+"°</b>，弧 BD ≒ <b class='ans'>"+r1(m2)+"°</b> <span class='ok'>✔ 相等</span></span><span class='step'>理由：連接 BC，內錯角 ∠1 = ∠2，又 ∠1 = ½弧AC、∠2 = ½弧BD。</span>";
+  $("out4").innerHTML="<span class='step'>$AB\\parallel CD$（兩弦同方向）</span><span class='step'>$\\arc{AC}=$ <b class='ans'>$"+m+"^\\circ$</b>，$\\arc{BD}=$ <b class='ans'>$"+m+"^\\circ$</b> <span class='ok'>✔ 相等</span></span><span class='step'>理由：連接 $BC$，內錯角 $\\angle 1=\\angle 2$，又 $\\angle 1=\\dfrac12\\arc{AC}$、$\\angle 2=\\dfrac12\\arc{BD}$。</span>";
+  rd($("out4"));
 }
 ["s4t","s4d1","s4d2"].forEach(function(i){$(i).addEventListener("input",s4)});
 
@@ -363,15 +388,17 @@ function s5(){
   c.beginPath();c.moveTo(P[0][0],P[0][1]);for(var i=1;i<4;i++)c.lineTo(P[i][0],P[i][1]);c.closePath();c.fillStyle="rgba(165,214,167,.2)";c.fill();c.strokeStyle="#e8e4d8";c.lineWidth=2.5;c.stroke();
   P.forEach(function(p,i){pt(c,p,names[i],cx,cy,i%2?"#81d4fa":"#ffd54f")});
   if(minGap<3){$("out5").innerHTML="<span class='bad'>有兩個頂點太靠近了，請把它們分開一點。</span>";return}
-  var an=[0,1,2,3].map(function(i){return angAt(P[i],P[(i+3)%4],P[(i+1)%4])});
-  $("out5").innerHTML="<span class='step'>∠A ≒ "+r1(an[0])+"°，∠B ≒ "+r1(an[1])+"°，∠C ≒ "+r1(an[2])+"°，∠D ≒ "+r1(an[3])+"°</span><span class='step'>∠A + ∠C ≒ <b class='ans'>"+r1(an[0]+an[2])+"°</b>，∠B + ∠D ≒ <b class='ans'>"+r1(an[1]+an[3])+"°</b> <span class='ok'>✔ 對角互補</span></span><span class='step'>延長 BC 得外角 ∠DCE = 180° − ∠C ≒ "+r1(180-an[2])+"° = ∠A（外角等於內對角）</span>";
+  /* 頂點在整數度的位置：每個圓周角 = ½ × 它所對的弧（不含該頂點的那段弧），可精確算出 */
+  var an=[0,1,2,3].map(function(i){var prev=v[(i+3)%4],next=v[(i+1)%4];return (360-((next-prev+360)%360))/2});
+  $("out5").innerHTML="<span class='step'>$\\angle A="+an[0]+"^\\circ$，$\\angle B="+an[1]+"^\\circ$，$\\angle C="+an[2]+"^\\circ$，$\\angle D="+an[3]+"^\\circ$</span><span class='step'>$\\angle A+\\angle C="+(an[0]+an[2])+"^\\circ$，$\\angle B+\\angle D="+(an[1]+an[3])+"^\\circ$ <span class='ok'>✔ 對角互補</span></span><span class='step'>延長 $BC$ 得外角 $\\angle DCE=180^\\circ-\\angle C="+(180-an[2])+"^\\circ=\\angle A$（外角等於內對角）</span>";
+  rd($("out5"));
 }
 ["s5a","s5b","s5c","s5d"].forEach(function(i){$(i).addEventListener("input",s5)});
 
 /* ---------- section 6 ---------- */
 function s6(){
   var AB=+$("s6ab").value,th=+$("s6th").value;$("s6abv").textContent=AB;$("s6thv").textContent=th;
-  var OB=AB/Math.tan(th*D),OA=AB/Math.sin(th*D),diff=OA-OB,area=0.5*OB*AB-Math.PI*OB*OB*th/360;
+  var OB=AB/Math.tan(th*D),OA=AB/Math.sin(th*D),diff=OA-OB,areaA=0.5*OB*AB,areaB=OB*OB*th/360;
   var o=setupCv($("cv6"),.6,360),c=o.c,w=o.w,h=o.h,pad=34,sc=Math.min((w-pad*2)/AB,(h-pad*2)/OB),ox=pad,oy=h-pad;
   function T(x,y){return [ox+x*sc,oy-y*sc]}
   var O=T(0,0),B=T(0,OB),A=T(AB,OB),C=T(OB*Math.sin(th*D),OB*Math.cos(th*D));
@@ -381,30 +408,43 @@ function s6(){
   c.beginPath();c.arc(O[0],O[1],3,0,7);c.fillStyle="#e8e4d8";c.fill();
   pt(c,B,"B",O[0]+40,O[1]-40,"#81d4fa");pt(c,A,"A",O[0]+10,O[1]-120);pt(c,C,"C",O[0],O[1]+10,"#81d4fa");lblText(c,"O",O[0]-12,O[1]+4);
   lblText(c,"θ = "+th+"°",O[0]+32,O[1]-28,"#ffd54f",13);
-  var special=(AB===4&&th===30)?"<span class='step'>這正是課本 Q1、Q2：內輪差 = 8 − 4√3，鋪色面積 = 8√3 − 4π。</span>":"";
-  $("out6").innerHTML="<span class='step'>OB = AB / tanθ ≒ "+r3(OB)+" 公尺，OA = AB / sinθ ≒ "+r3(OA)+" 公尺</span><span class='step'>內輪差 = OA − OB ≒ <b class='ans'>"+r3(diff)+" 公尺</b>（行人要保持超過這個距離）</span><span class='step'>危險區面積 = ½×OB×AB − π×OB²×θ/360 ≒ <b class='ans'>"+r3(area)+" 平方公尺</b></span>"+special;
+  /* θ = 30°、45°、60° 時可用根號與 π 表示精確值；AB = k/2（滑桿以 0.5 為單位），n = k² */
+  function fr(a,b){var g=gcd(a,b);a/=g;b/=g;return b===1?""+a:"\\dfrac{"+a+"}{"+b+"}"}
+  function cf(a,b){var g=gcd(a,b);a/=g;b/=g;return a===b?"":(b===1?""+a:"\\dfrac{"+a+"}{"+b+"}")}
+  var k=Math.round(AB*2),n=k*k,ex=null;
+  if(th===30)ex={OB:cf(k,2)+"\\sqrt{3}",OA:fr(k,1),diff:fr(k,1)+"-"+cf(k,2)+"\\sqrt{3}",a:cf(n,8)+"\\sqrt{3}",b:cf(n,16)+"\\pi"};
+  else if(th===45)ex={OB:fr(k,2),OA:cf(k,2)+"\\sqrt{2}",diff:cf(k,2)+"\\sqrt{2}-"+fr(k,2),a:fr(n,8),b:cf(n,32)+"\\pi"};
+  else if(th===60)ex={OB:cf(k,6)+"\\sqrt{3}",OA:cf(k,3)+"\\sqrt{3}",diff:cf(k,6)+"\\sqrt{3}",a:cf(n,24)+"\\sqrt{3}",b:cf(n,72)+"\\pi"};
+  var special=(AB===4&&th===30)?"<span class='step'>這正是課本 Q1、Q2：內輪差 $=8-4\\sqrt{3}$，鋪色面積 $=8\\sqrt{3}-4\\pi$。</span>":"";
+  var areaFormula="危險區面積 $=\\dfrac12\\times OB\\times AB-\\pi\\times OB^2\\times\\dfrac{\\theta}{360}$";
+  if(ex){
+    $("out6").innerHTML="<span class='step'>$OB="+ex.OB+"$ 公尺，$OA="+ex.OA+"$ 公尺</span><span class='step'>內輪差 $=OA-OB=$ <b class='ans'>$"+ex.diff+"$ 公尺</b>（行人要保持超過這個距離）</span><span class='step'>"+areaFormula+"</span><span class='step'>$=$ <b class='ans'>$"+ex.a+"-"+ex.b+"$ 平方公尺</b></span>"+special;
+  }else{
+    $("out6").innerHTML="<span class='step'>$OB=\\dfrac{AB}{\\tan\\theta}\\approx"+r3(OB)+"$ 公尺，$OA=\\dfrac{AB}{\\sin\\theta}\\approx"+r3(OA)+"$ 公尺</span><span class='step'>內輪差 $=OA-OB\\approx$ <b class='ans'>$"+r3(diff)+"$ 公尺</b>（行人要保持超過這個距離）</span><span class='step'>"+areaFormula+"</span><span class='step'>$\\approx$ <b class='ans'>$"+r3(areaA)+"-"+r3(areaB)+"\\pi$ 平方公尺</b></span>"+special;
+  }
+  rd($("out6"));
 }
 ["s6ab","s6th"].forEach(function(i){$(i).addEventListener("input",s6)});
 
 /* ---------- quizzes ---------- */
 var QS={
- q1:[{q:"圓的半徑為 6，圓心角 60° 所對的弧長是？",o:["2π","6π","π","12π"],a:0,e:"弧長 = 2π×6×60/360 = 2π。"},{q:"兩個同心圓的圓心角都是 90°，則兩個弧的度數？",o:["外圓較大","內圓較大","都是 90°","要看半徑"],a:2,e:"弧的度數 = 所對圓心角的度數，和半徑無關，但弧長不同。"}],
- q2:[{q:"同圓中，弦 AB = 弦 CD，則？",o:["弧 AB = 弧 CD 的度數","∠AOB ≠ ∠COD","弧 AB 比弧 CD 長","兩弧無法比較"],a:0,e:"等弦對等弧（△AOB ≅ △COD，SSS）。"},{q:"正八邊形的頂點在圓 O 上，相鄰兩頂點與圓心的夾角是？",o:["30°","45°","60°","135°"],a:1,e:"360° ÷ 8 = 45°。"}],
- q3:[{q:"圓心角 ∠AOC = 70°，B 在優弧上，則圓周角 ∠ABC = ？",o:["35°","70°","140°","110°"],a:0,e:"圓周角 = 圓心角的一半 = 35°。"},{q:"AB 是圓的直徑，C 在圓上，則 ∠ACB = ？",o:["45°","60°","90°","180°"],a:2,e:"半圓所對的圓周角是 90°。"}],
- q4:[{q:"圓中弦 AB ∥ 弦 CD，則下列何者正確？",o:["弧 AC = 弧 BD","弧 AB = 弧 CD","弦 AB = 弦 CD","∠A = ∠C"],a:0,e:"平行弦所截的兩段弧度數相等。"},{q:"圓中弧 AC = 弧 BD，則 AB 與 CD 的關係是？",o:["相交","平行","垂直","重合"],a:1,e:"連接 AD，內錯角相等，所以 AB ∥ CD。"}],
- q5:[{q:"圓內接四邊形 ABCD 中，∠A = 80°，則 ∠C = ？",o:["80°","100°","110°","280°"],a:1,e:"對角互補：180° − 80° = 100°。"},{q:"∠BAD = 115°，延長 BC 到 E，則外角 ∠DCE = ？",o:["65°","115°","180°","245°"],a:1,e:"外角等於它的內對角 ∠BAD。"}],
- q6:[{q:"課本 Q1：AB = 4，轉彎角度 30°，內輪差是？",o:["8 − 4√3","8 + 4√3","4√3","4"],a:0,e:"OA = 8，OB = 4√3，OA − OB = 8 − 4√3。"},{q:"車長 AB 固定，轉彎角度越大，內輪差會？",o:["越小","不變","越大","先小後大"],a:2,e:"內輪差 = AB(1/sinθ − 1/tanθ) = AB·tan(θ/2)，θ 越大值越大。"}]
+ q1:[{q:"圓的半徑為 6，圓心角 $60^\\circ$ 所對的弧長是？",o:["$2\\pi$","$6\\pi$","$\\pi$","$12\\pi$"],a:0,e:"弧長 $=2\\pi\\times6\\times\\dfrac{60}{360}=2\\pi$。"},{q:"兩個同心圓的圓心角都是 $90^\\circ$，則兩個弧的度數？",o:["外圓較大","內圓較大","都是 $90^\\circ$","要看半徑"],a:2,e:"弧的度數 $=$ 所對圓心角的度數，和半徑無關，但弧長不同。"}],
+ q2:[{q:"同圓中，弦 $AB=$ 弦 $CD$，則兩弦所對的劣弧？",o:["度數相等","$\\arc{AB}$ 比 $\\arc{CD}$ 長","$\\arc{CD}$ 比 $\\arc{AB}$ 長","無法比較"],a:0,e:"等弦對等弧（$\\triangle AOB\\cong\\triangle COD$，SSS）。"},{q:"正八邊形的頂點在圓 $O$ 上，相鄰兩頂點與圓心的夾角是？",o:["$30^\\circ$","$45^\\circ$","$60^\\circ$","$135^\\circ$"],a:1,e:"$360^\\circ\\div8=45^\\circ$。"}],
+ q3:[{q:"圓心角 $\\angle AOC=70^\\circ$，$B$ 在優弧上，則圓周角 $\\angle ABC=$？",o:["$35^\\circ$","$70^\\circ$","$140^\\circ$","$110^\\circ$"],a:0,e:"圓周角 $=$ 圓心角的一半 $=35^\\circ$。"},{q:"$AB$ 是圓的直徑，$C$ 在圓上，則 $\\angle ACB=$？",o:["$45^\\circ$","$60^\\circ$","$90^\\circ$","$180^\\circ$"],a:2,e:"半圓所對的圓周角是 $90^\\circ$。"}],
+ q4:[{q:"圓中弦 $AB\\parallel$ 弦 $CD$，則下列何者正確？",o:["$\\arc{AC}=\\arc{BD}$","$\\arc{AB}=\\arc{CD}$","$\\overline{AB}=\\overline{CD}$","$\\angle A=\\angle C$"],a:0,e:"平行弦所截的兩段弧度數相等。"},{q:"圓中 $\\arc{AC}=\\arc{BD}$，則 $AB$ 與 $CD$ 的關係是？",o:["相交","平行","垂直","重合"],a:1,e:"連接 $AD$，內錯角相等，所以 $AB\\parallel CD$。"}],
+ q5:[{q:"圓內接四邊形 $ABCD$ 中，$\\angle A=80^\\circ$，則 $\\angle C=$？",o:["$80^\\circ$","$100^\\circ$","$110^\\circ$","$280^\\circ$"],a:1,e:"對角互補：$180^\\circ-80^\\circ=100^\\circ$。"},{q:"$\\angle BAD=115^\\circ$，延長 $BC$ 到 $E$，則外角 $\\angle DCE=$？",o:["$65^\\circ$","$115^\\circ$","$180^\\circ$","$245^\\circ$"],a:1,e:"外角等於它的內對角 $\\angle BAD$。"}],
+ q6:[{q:"課本 Q1：$AB=4$，轉彎角度 $30^\\circ$，內輪差是？",o:["$8-4\\sqrt{3}$","$8+4\\sqrt{3}$","$4\\sqrt{3}$","$4$"],a:0,e:"$OA=8$，$OB=4\\sqrt{3}$，$OA-OB=8-4\\sqrt{3}$。"},{q:"車長 $AB$ 固定，轉彎角度越大，內輪差會？",o:["越小","不變","越大","先小後大"],a:2,e:"內輪差 $=AB\\left(\\dfrac{1}{\\sin\\theta}-\\dfrac{1}{\\tan\\theta}\\right)=AB\\tan\\dfrac{\\theta}{2}$，$\\theta$ 越大值越大。"}]
 };
 Object.keys(QS).forEach(function(id){
   var box=$(id),h="<h3>形成性評量</h3>";
   QS[id].forEach(function(q,qi){h+="<div class='q' data-q='"+id+"' data-i='"+qi+"'><p>Q"+(qi+1)+"　"+q.q+"</p><div class='opts'>"+q.o.map(function(t,oi){return "<button type='button' data-o='"+oi+"'>"+String.fromCharCode(65+oi)+". "+t+"</button>"}).join("")+"</div><div class='fb'></div></div>"});
-  box.innerHTML=h;
+  box.innerHTML=h;rd(box);
 });
 document.addEventListener("click",function(ev){
   var b=ev.target.closest(".opts button");if(!b)return;
   var qd=b.closest(".q"),q=QS[qd.dataset.q][+qd.dataset.i],o=+b.dataset.o,fb=qd.querySelector(".fb");
   qd.querySelectorAll(".opts button").forEach(function(x){x.classList.remove("right","wrong")});
-  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e}
+  if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e;rd(fb)}
   else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
 });
 
@@ -438,7 +478,7 @@ $("penClr").addEventListener("click",function(){penE.clear()});
 /* ---------- init ---------- */
 function all(){s1();s2();s2n();s3();s4();s5();s6()}
 var rt;window.addEventListener("resize",function(){all();});
-all();
+all();rd(document.body);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(all);
 })();
 </script>

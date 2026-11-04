@@ -225,9 +225,9 @@ body.tmode .teacher{display:block}
 <section class="pt" id="s7">
   <h2>⑦ 根式的近似值</h2><p class="std">課本 P.84–85 · 例 6、數養知識</p>
   <div class="concept-card"><div class="concept-card-body">
-    <div class="cb"><span class="card-label">定義</span><p>每取一次近似值就產生一次誤差；取近似值的次數越多，結果與實際值差距越大。</p></div>
+    <div class="cb"><span class="card-label">定義</span><p>每取一次近似值就可能帶入一點誤差。這些誤差在後續運算中可能<b style="color:var(--pink)">累積放大</b>（例如除以近似值、兩個相近的數相減）、<b style="color:var(--pink)">互相抵消</b>（例如一個取大、一個取小），或<b style="color:var(--pink)">縮小</b>，必須依運算方式判斷，不是取越多次差距就一定越大。</p></div>
     <div class="cb"><span class="card-label">公式／性質</span><p class="f">√500 = 10√5 ≒ 10×2.236 = 22.36</p></div>
-    <div class="cb"><span class="card-label">重要提醒</span><ul><li>先化為最簡根式，再代入已知的近似值。</li><li>要算 3√10/√6，建議先化簡再求近似值，誤差較小。</li></ul></div>
+    <div class="cb"><span class="card-label">重要提醒</span><ul><li>先化為最簡根式，再代入已知的近似值。</li><li>要算 3√10/√6，建議先化簡再求近似值：取近似的次數少，誤差來源少，通常也比較容易控制（除以近似值時誤差尤其可能被放大）。</li><li>「先化簡」只是較穩妥的做法，不保證每一題都更準；實際誤差要看運算方式。</li></ul></div>
     <div class="cb"><span class="card-label">例</span><p>已知 √5≒2.236：<br>√45 = 3√5 ≒ 6.708</p></div>
   </div></div>
   <div class="lab"><h3>互動：誤差比一比（c√m ÷ √n）</h3>
@@ -235,7 +235,7 @@ body.tmode .teacher{display:block}
     <div class="out" id="apxOut"></div>
   </div>
   <div id="q7"></div>
-  <div class="teacher"><b>教學提示：</b>讓學生分組，一組先各自取近似再相除，一組先化簡，比較誰更接近計算機直接算出的值。</div>
+  <div class="teacher"><b>教學提示：</b>讓學生分組，一組先各自取近似再相除，一組先化簡，比較誰更接近計算機直接算出的值。可多換幾組 c、m、n 觀察：有時先取近似的誤差較大，有時兩個誤差剛好互相抵消而差距很小，藉此讓學生體會「誤差不一定越取越大，要看運算方式」。</div>
 </section>
 
 <!-- summary -->
@@ -409,7 +409,11 @@ function apxOut(){
   var A=r3(c*Math.sqrt(m)),B=r3(Math.sqrt(n)),step=r3(A/B),exact=c*Math.sqrt(m)/Math.sqrt(n);
   var s=simp(m*n),simpStr=fmt(c*s[0],n,s[1]);
   var g=gcd(c*s[0],n),pp=c*s[0]/g,qq=n/g,sv=r3(pp*Math.sqrt(s[1])/qq);
-  $("apxOut").innerHTML="<span class='step'>做法一（先取近似）："+c+"√"+m+" ≒ "+A+"，√"+n+" ≒ "+B+"，相除 ≒ <b class='bad'>"+step+"</b>（誤差 "+r3(Math.abs(step-exact))+"）</span><span class='step'>做法二（先化簡）：= "+simpStr+" ≒ <b class='ok'>"+sv+"</b></span><span class='step'>計算機直接算 ≒ "+r3(exact)+"</span>";
+  var e1=Math.abs(step-exact),e2=Math.abs(sv-exact),cmp;
+  if(Math.abs(e1-e2)<0.0005)cmp="這組數字兩種做法的誤差差不多。";
+  else if(e1>e2)cmp="這組數字：先取近似的誤差較大（誤差被放大）。";
+  else cmp="這組數字：先取近似的誤差反而較小（誤差剛好互相抵消）。";
+  $("apxOut").innerHTML="<span class='step'>做法一（先取近似）："+c+"√"+m+" ≒ "+A+"，√"+n+" ≒ "+B+"，相除 ≒ <b>"+step+"</b>（與計算機差 "+r3(e1)+"）</span><span class='step'>做法二（先化簡）：= "+simpStr+" ≒ <b>"+sv+"</b>（與計算機差 "+r3(e2)+"）</span><span class='step'>計算機直接算 ≒ "+r3(exact)+"</span><span class='step'>"+cmp+"換幾組 c、m、n 試試：誤差可能放大、抵消或縮小，要看運算方式。</span>";
 }
 ["ac","am","an"].forEach(function(i){$(i).addEventListener("input",apxOut)});
 
@@ -421,7 +425,7 @@ var QS={
  q4:[{q:"6/√3 化簡為？",o:["2√3","6√3","3√2","2"],a:0,e:"6√3/3 = 2√3。"},{q:"1/(√3−1) 化簡為？",o:["(√3+1)/2","(√3−1)/2","√3+1","1/2"],a:0,e:"同乘 (√3+1)，分母 3−1 = 2。"}],
  q5:[{q:"下列哪一個與 √12 是同類方根？",o:["√18","√27","√20","√8"],a:1,e:"√12 = 2√3，√27 = 3√3，根號內都是 3。"},{q:"√8 + √18 = ？",o:["√26","5√2","6√2","13√2"],a:1,e:"√8 = 2√2，√18 = 3√2，合併得 5√2。"}],
  q6:[{q:"(√6 + √2)(√6 − √2) = ？",o:["4","8","6−2√12","2"],a:0,e:"平方差：(√6)² − (√2)² = 6 − 2 = 4。"},{q:"(√3 + 1)² = ？",o:["4","3+1","4+2√3","4+√3"],a:2,e:"(√3)² + 2×√3×1 + 1² = 4 + 2√3。"}],
- q7:[{q:"已知 √3≒1.732，√300 ≒ ？",o:["17.32","5.196","173.2","3.464"],a:0,e:"√300 = 10√3 ≒ 10×1.732 = 17.32。"},{q:"為了讓近似值誤差較小，應該？",o:["每個根號都先取近似再算","先化簡再取近似","全部取整數","先平方再開根"],a:1,e:"取近似的次數越少，累積誤差越小，所以先化簡。"}]
+ q7:[{q:"已知 √3≒1.732，√300 ≒ ？",o:["17.32","5.196","173.2","3.464"],a:0,e:"√300 = 10√3 ≒ 10×1.732 = 17.32。"},{q:"為了讓近似值誤差較小，應該？",o:["每個根號都先取近似再算","先化簡再取近似","全部取整數","先平方再開根"],a:1,e:"先化簡可減少取近似的次數，讓誤差來源變少、較易控制（例如避免除以近似值而放大誤差），所以較穩妥；但誤差可能放大、抵消或縮小，仍要依運算方式判斷。"}]
 };
 Object.keys(QS).forEach(function(id){
   var box=$(id),h="<h3>形成性評量</h3>";
