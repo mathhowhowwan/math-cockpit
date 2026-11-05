@@ -63,9 +63,6 @@ canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10p
 .opts button.right{background:rgba(165,214,167,.25);border-color:var(--green)}
 .opts button.wrong{background:rgba(255,138,128,.2);border-color:var(--pink)}
 .fb{margin-top:8px;font-size:.93rem;min-height:1.2em}
-.teacher{display:none;border:1px dashed var(--pink);border-radius:10px;padding:12px 14px;margin-top:14px;background:rgba(255,138,128,.07)}
-body.tmode .teacher{display:block}
-.teacher b{color:var(--pink)}
 .cheat{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
 .panel{position:fixed;right:max(12px,env(safe-area-inset-right,0px));bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:55;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .tools{display:none;width:min(280px,calc(100vw - 32px));background:#10190f;border:2px solid var(--wood);border-radius:12px;padding:12px}
@@ -76,8 +73,6 @@ body.tmode .teacher{display:block}
 .penbar .sw{width:30px;height:30px;min-height:30px;padding:0;border-radius:50%}
 #pen{position:fixed;inset:0;z-index:40;pointer-events:none;touch-action:none}
 #pen.active{pointer-events:auto;cursor:crosshair}
-#pw{display:none;align-items:center;gap:6px}
-#pw.show{display:flex}
 .btn-home-nav{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.35);color:#fff8e1;padding:6px 16px;border-radius:20px;font-size:0.85rem;text-decoration:none;white-space:nowrap;transition:background 0.2s;flex-shrink:0;min-height:44px}
 .btn-home-nav:hover{background:rgba(255,255,255,0.25)}
 @media(max-width:1024px){section.pt{padding:18px}}
@@ -97,8 +92,6 @@ body.tmode .teacher{display:block}
   <div><h1>圓心角、圓周角與弧互動教材</h1><small>第 2 章 圓 · 2-2 圓心角、圓周角與弧的關係</small></div>
   <div class="modebar">
     <span style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a><a class="btn-home-nav" href="https://mathhowhowwan.github.io/math-hub/" target="_top">🎓 回數學教學中心</a></span>
-    <button id="modeBtn" type="button">教師模式</button>
-    <span id="pw"><input type="password" id="pwIn" placeholder="密碼" aria-label="教師密碼"><button type="button" id="pwGo">進入</button></span>
   </div>
 </header>
 
@@ -125,7 +118,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out1"></div>
   </div>
   <div id="q1"></div>
-  <div class="teacher"><b>教學提示：</b>先問學生「看到弧的符號時，你怎麼知道它是在說度數還是長度？」再看例 1：度數相同、長度不同。課本海盜船情境的答案：角度一樣，因為船首與中間所夾的圓心角固定。</div>
 </section>
 
 <section class="pt" id="s2">
@@ -145,7 +137,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out2n"></div>
   </div>
   <div id="q2"></div>
-  <div class="teacher"><b>教學提示：</b>讓學生把弧 CD 調到 $300^\circ$ 左右，會看到弧比較大但弦比較短；再把弧 AB 設 $80^\circ$、弧 CD 設 $280^\circ$，兩弦竟然相等，因為這是劣弧與優弧的組合（$80^\circ+280^\circ=360^\circ$）。所以課本結論只說同為劣弧的等弧與等弦互相對應，不說「弧大弦就長」。</div>
 </section>
 
 <section class="pt" id="s3">
@@ -163,7 +154,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out3"></div>
   </div>
   <div id="q3"></div>
-  <div class="teacher"><b>教學提示：</b>把弧 $BC$ 調成 $180^\circ$，$BC$ 就是直徑，無論 $A$ 在哪裡，$\angle BAC$ 都是 $90^\circ$（半圓的圓周角）。再慢慢拖動 $A$：當 $AB$ 或 $AC$ 剛好通過圓心 $O$ 時就是「圓心在一邊上」，其他位置則是圓心在角的內部或外部，課本三種情形都能看到。小翊的說法「同弧所對圓周角相等」正確；小妍的說法錯在 $\angle AEB=\angle CED$（對頂角）不能推出 $AB=CD$。</div>
 </section>
 
 <section class="pt" id="s4">
@@ -183,7 +173,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out4"></div>
   </div>
   <div id="q4"></div>
-  <div class="teacher"><b>教學提示：</b>學生常以為要用全等三角形證明。這裡的關鍵是「連一條線，把兩段弧變成兩個圓周角」，再用內錯角相等。</div>
 </section>
 
 <section class="pt" id="s5">
@@ -201,7 +190,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out5"></div>
   </div>
   <div id="q5"></div>
-  <div class="teacher"><b>教學提示：</b>讓學生拖到任何位置，兩組對角和都停在 $180^\circ$。再用 $\arc{BCD}+\arc{BAD}=360^\circ$ 說明為什麼。教學指引提到圓外一點作切線，其實是用「半圓的圓周角是直角」，不是教學重點，讓學生知道尺規真的畫得出來即可。</div>
 </section>
 
 <section class="pt" id="s6">
@@ -219,7 +207,6 @@ body.tmode .teacher{display:block}
     <div class="out" id="out6"></div>
   </div>
   <div id="q6"></div>
-  <div class="teacher"><b>教學提示：</b>課本建議討論「為什麼車越長或轉彎角度越大，內輪差就會越大？」拖動兩個滑桿讓學生觀察。轉彎角度剛好是 $30^\circ$、$45^\circ$、$60^\circ$ 時，頁面會用根號與 $\pi$ 顯示精確值。可連結交通安全，培養對公共安全的責任感。</div>
 </section>
 
 <section class="pt" id="sum">
@@ -232,7 +219,6 @@ body.tmode .teacher{display:block}
     <div class="cb"><span class="card-label">圓內接四邊形</span><p class="f">$\angle A+\angle C = 180^\circ$<br>$\angle B+\angle D = 180^\circ$</p></div>
     <div class="cb"><span class="card-label">等弧等弦</span><p class="f">$\arc{AB} = \arc{CD} \iff \overline{AB} = \overline{CD}$<br>（同為劣弧）</p></div>
   </div>
-  <div class="teacher"><b>常見錯誤彙整：</b>(1) 把圓周角當成圓心角（忘了除以 2）；(2) 圓周角所對的弧是優弧時，仍用劣弧計算；(3) 由 $\angle AEB=\angle CED$（對頂角）推出 $AB=CD$；(4) 半徑不同的圓，以為相同圓心角的弧長也相等；(5) 以為弧越大弦一定越長（超過 $180^\circ$ 就不成立）。</div>
 </section>
 <div style="text-align:center;margin:36px 0 8px"><span style="display:inline-flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center"><a class="btn-home-nav" href="../index.html">🏠 回首頁</a><a class="btn-home-nav" href="https://mathhowhowwan.github.io/math-hub/" target="_top">🎓 回數學教學中心</a></span></div>
 </div>
@@ -447,13 +433,6 @@ document.addEventListener("click",function(ev){
   if(o===q.a){b.classList.add("right");fb.innerHTML="<span class='ok'>答對了！</span> "+q.e;rd(fb)}
   else{b.classList.add("wrong");fb.innerHTML="<span class='bad'>再想想看。</span>"}
 });
-
-/* ---------- teacher mode ---------- */
-var tm=false;
-function setT(v){tm=v;document.body.classList.toggle("tmode",v);$("modeBtn").classList.toggle("on",v);$("modeBtn").textContent=v?"教師模式（開）":"教師模式";$("pw").classList.remove("show")}
-$("modeBtn").addEventListener("click",function(){if(tm){setT(false)}else{$("pw").classList.toggle("show");$("pwIn").focus()}});
-function tryPw(){if($("pwIn").value==="math2026"){setT(true);$("pwIn").value=""}else{$("pwIn").value="";$("pwIn").placeholder="密碼錯誤"}}
-$("pwGo").addEventListener("click",tryPw);$("pwIn").addEventListener("keydown",function(e){if(e.key==="Enter")tryPw()});
 
 /* ---------- tools ---------- */
 $("toolBtn").addEventListener("click",function(){$("tools").classList.toggle("open")});
