@@ -79,6 +79,7 @@ canvas.viz{width:100%;display:block;background:rgba(0,0,0,.28);border-radius:10p
 @media(max-width:768px){.concept-card-body,.opts{grid-template-columns:1fr}header h1{font-size:1.05rem}.penbar{max-width:calc(100vw - 110px)}}
 @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
 .katex{font-size:1.06em}.f .katex{font-size:1.12em}.opts button .katex{font-size:1.02em}
+.cb p{line-height:2.1}.cb li{line-height:1.9}
 </style>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap">
 <link rel="stylesheet" href="katex/katex.min.css">
@@ -263,8 +264,8 @@ function arcD(c,cx,cy,r,f,t,col,lw){c.beginPath();c.arc(cx,cy,r,-f*D,-t*D,true);
 function seg(c,p,q,col,lw,dash){c.beginPath();c.setLineDash(dash||[]);c.moveTo(p[0],p[1]);c.lineTo(q[0],q[1]);c.strokeStyle=col||"#e8e4d8";c.lineWidth=lw||2;c.stroke();c.setLineDash([])}
 function pt(c,p,lab,cx,cy,col){col=col||"#ffd54f";c.beginPath();c.arc(p[0],p[1],4,0,7);c.fillStyle=col;c.fill();var dx=p[0]-cx,dy=p[1]-cy,L=Math.hypot(dx,dy)||1;c.fillStyle=col;c.font="bold 15px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(lab,p[0]+dx/L*15,p[1]+dy/L*15)}
 function angAt(P,Q,R){var a=Math.atan2(Q[1]-P[1],Q[0]-P[0]),b=Math.atan2(R[1]-P[1],R[0]-P[0]),d=Math.abs(a-b)/D;return d>180?360-d:d}
-function fmtPi(r,x){var n=2*r*x,d=360,g=gcd(n,d);n/=g;d/=g;var num=(n===1?"":n)+"\pi";return d===1?num:"\dfrac{"+num+"}{"+d+"}"}
-var KOPT={delimiters:[{left:"$",right:"$",display:false}],macros:{"\arc":"\overset{\frown}{#1}"},throwOnError:false,strict:false};
+function fmtPi(r,x){var n=2*r*x,d=360,g=gcd(n,d);n/=g;d/=g;var num=(n===1?"":n)+"\\pi";return d===1?num:"\\dfrac{"+num+"}{"+d+"}"}
+var KOPT={delimiters:[{left:"$",right:"$",display:false}],macros:{"\\arc":"\\overset{\\frown}{#1}"},throwOnError:false,strict:false};
 function rd(el){if(window.renderMathInElement)renderMathInElement(el,KOPT)}
 function radius(w,h,pad){return Math.max(20,Math.min(w,h)/2-pad)}
 function lblText(c,t,x,y,col,sz){c.fillStyle=col||"#e8e4d8";c.font="bold "+(sz||14)+"px 'Noto Sans TC',sans-serif";c.textAlign="center";c.textBaseline="middle";c.fillText(t,x,y)}
